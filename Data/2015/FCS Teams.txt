@@ -1,0 +1,125 @@
+Abilene Christian
+Alabama A&M
+Alabama State
+Albany
+Alcorn State
+Arkansas-Pine Bluff
+Austin Peay
+Bethune-Cookman
+Brown
+Bryant
+Bucknell
+Butler
+Cal Poly
+California-Davis
+Campbell
+Central Arkansas
+Central Connecticut State
+Charleston Southern
+Chattanooga
+Citadel
+Coastal Carolina
+Colgate
+Columbia
+Cornell
+Dartmouth
+Davidson
+Dayton
+Delaware
+Delaware State
+Drake
+Duquesne
+East Tennessee State
+Eastern Illinois
+Eastern Kentucky
+Eastern Washington
+Elon
+Florida A&M
+Fordham
+Furman
+Gardner-Webb
+Georgetown
+Grambling State
+Hampton
+Harvard
+Holy Cross
+Houston Baptist
+Howard
+Idaho State
+Illinois State
+Incarnate Word
+Indiana State
+Jackson State
+Jacksonville
+Jacksonville State
+James Madison
+Kennesaw State
+Lafayette
+Lamar
+Lehigh Mountain
+Liberty
+Maine
+Marist
+McNeese State
+Mercer
+Mississippi Valley State
+Missouri State
+Monmouth
+Montana
+Montana State
+Morehead State
+Morgan State
+Murray State
+New Hampshire
+Nicholls State
+Norfolk State
+North Carolina A&T
+North Carolina Central
+North Dakota
+North Dakota State
+Northern Arizona
+Northern Colorado
+Northern Iowa
+Northwestern State
+Penn
+Portland State
+Prairie View A&M
+Presbyterian
+Princeton
+Rhode Island
+Richmond
+Robert Morris
+Sacramento State
+Sacred Heart
+Saint Francis
+Sam Houston State
+Samford
+San Diego
+Savannah State
+South Carolina State
+South Dakota
+South Dakota State
+Southeast Missouri State
+Southeastern Louisiana
+Southern
+Southern Illinois
+Southern Utah
+Stephen F. Austin
+Stetson
+Stony Brook
+Tennessee-Martin
+Tennessee State
+Tennessee Tech
+Texas Southern
+Towson
+Valparaiso
+Villanova
+Virginia Military Institute
+Wagner
+Weber State
+Western Carolina
+Western Illinois
+William & Mary
+Wofford
+Yale
+Youngstown State
