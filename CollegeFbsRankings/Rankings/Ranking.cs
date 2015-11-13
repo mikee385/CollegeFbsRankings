@@ -70,17 +70,17 @@ namespace CollegeFbsRankings.Rankings
 
         public class GameValue : Value
         {
-            private readonly Game _game;
+            private readonly IGame _game;
             private readonly String _shortTitle;
 
-            public GameValue(Game game, IEnumerable<double> values, IEnumerable<IComparable> tieBreakers, string summary)
+            public GameValue(IGame game, IEnumerable<double> values, IEnumerable<IComparable> tieBreakers, string summary)
                 : base(GetTitle(game), values, tieBreakers, summary)
             {
                 _game = game;
                 _shortTitle = String.Format("{0} vs. {1}", game.HomeTeam.Name, game.AwayTeam.Name);
             }
 
-            public Game Game
+            public IGame Game
             {
                 get { return _game; }
             }
@@ -90,7 +90,7 @@ namespace CollegeFbsRankings.Rankings
                 get { return _shortTitle; }
             }
 
-            private static string GetTitle(Game game)
+            private static string GetTitle(IGame game)
             {
                 return String.Format("Week {0} {1} vs. {2} ({3})", 
                     game.Week, 
@@ -130,12 +130,14 @@ namespace CollegeFbsRankings.Rankings
 
         public static IEnumerable<TeamValue> ForTeams(this IEnumerable<TeamValue> ranking, IReadOnlyList<Team> teams)
         {
-            return ranking.Where(rank => teams.Contains(rank.Team));
+            var teamKeys = teams.Select(team => team.Key).ToList();
+            return ranking.Where(rank => teamKeys.Contains(rank.Team.Key));
         }
 
         public static IEnumerable<GameValue> ForGames(this IEnumerable<GameValue> ranking, IReadOnlyList<Game> games)
         {
-            return ranking.Where(rank => games.Contains(rank.Game));
+            var gameKeys = games.Select(game => game.Key).ToList();
+            return ranking.Where(rank => gameKeys.Contains(rank.Game.Key));
         }
 
         public static string Format(string title, IReadOnlyList<Value> ranking)

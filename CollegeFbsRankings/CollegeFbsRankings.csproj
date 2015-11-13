@@ -44,16 +44,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Enumerables\CompletedGameEnumerable.cs" />
-    <Compile Include="Enumerables\Extensions.cs" />
-    <Compile Include="Enumerables\FutureGameEnumerable.cs" />
-    <Compile Include="Enumerables\GameEnumerable.cs" />
-    <Compile Include="Enumerables\TeamCompletedGameEnumerable.cs" />
-    <Compile Include="Enumerables\TeamFutureGameEnumerable.cs" />
-    <Compile Include="Enumerables\TeamGameEnumerable.cs" />
     <Compile Include="Games\CompletedGame.cs" />
     <Compile Include="Games\FutureGame.cs" />
     <Compile Include="Games\Game.cs" />
+    <Compile Include="Games\TeamCompletedGame.cs" />
+    <Compile Include="Games\TeamFutureGame.cs" />
+    <Compile Include="Games\TeamGame.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rankings\GameStrength.cs" />

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-using CollegeFbsRankings.Enumerables;
+using CollegeFbsRankings.Games;
 using CollegeFbsRankings.Teams;
 
 namespace CollegeFbsRankings.Rankings
@@ -55,8 +55,8 @@ namespace CollegeFbsRankings.Rankings
             }
 
             private static TeamValue CalculateValue(Team team,
-                Func<Team, ITeamGameEnumerable> teamGameFilter,
-                Func<Team, ITeamGameEnumerable> opponentGameFilter)
+                Func<Team, IEnumerable<ITeamGame>> teamGameFilter,
+                Func<Team, IEnumerable<ITeamGame>> opponentGameFilter)
             {
                 var writer = new StringWriter();
                 writer.WriteLine(team.Name + " Games:");
@@ -67,8 +67,7 @@ namespace CollegeFbsRankings.Rankings
                 var allOpponentGameTotal = 0;
                 foreach (var game in teamGames)
                 {
-                    var opponent = team.GetOpponent(game);
-                    var opponentGames = opponentGameFilter(opponent).Completed();
+                    var opponentGames = opponentGameFilter(game.Opponent).Completed().ToList();
                     var opponentGameTotal = opponentGames.Count();
                     var opponentWinTotal = opponentGames.Won().Count();
 

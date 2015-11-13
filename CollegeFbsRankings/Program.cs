@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-using CollegeFbsRankings.Enumerables;
 using CollegeFbsRankings.Games;
 using CollegeFbsRankings.Rankings;
 using CollegeFbsRankings.Teams;
@@ -104,7 +103,7 @@ namespace CollegeFbsRankings
             #region Read Games
 
             var gameFile = new StreamReader(GameFileName);
-            var games = new List<Game>();
+            var games = new List<IGame>();
             var skippedGameLines = new List<String>();
 
             var rankedTeamRegex = new Regex(RankedTeamPattern);
@@ -304,7 +303,7 @@ namespace CollegeFbsRankings
                         secondTeamScore = 0;
                     }
                     
-                    if (firstTeam == secondTeam)
+                    if (firstTeam.Key == secondTeam.Key)
                     {
                         throw new Exception(String.Format(
                             "First team name \"{2}\" and second team name \"{3}\" are the same on line {0}\n\t{1}",
@@ -328,7 +327,7 @@ namespace CollegeFbsRankings
                         awayTeamScore = firstTeamScore;
                     }
 
-                    Game game;
+                    IGame game;
                     if (hasFirstTeamScore && hasSecondTeamScore)
                     {
                         if (firstTeamScore == secondTeamScore)
@@ -338,7 +337,7 @@ namespace CollegeFbsRankings
                                 lineCount, line, firstTeamScoreString, secondTeamScoreString));
                         }
 
-                        game = new CompletedGame(key, date, week, homeTeam, homeTeamScore, awayTeam, awayTeamScore, tvString, notesString);
+                        game = CompletedGame.New(key, date, week, homeTeam, homeTeamScore, awayTeam, awayTeamScore, tvString, notesString);
                     }
                     else if (hasFirstTeamScore && !hasSecondTeamScore)
                     {
@@ -354,7 +353,7 @@ namespace CollegeFbsRankings
                     }
                     else
                     {
-                        game = new FutureGame(key, date, week, homeTeam, awayTeam, tvString, notesString);
+                        game = FutureGame.New(key, date, week, homeTeam, awayTeam, tvString, notesString);
                     }
 
                     games.Add(game);

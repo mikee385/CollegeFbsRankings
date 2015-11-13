@@ -13,7 +13,26 @@ namespace CollegeFbsRankings.Games
         Fcs
     }
 
-    public abstract class Game
+    public interface IGame
+    {
+        int Key { get; }
+
+        DateTime Date { get; }
+
+        int Week { get; }
+
+        Team HomeTeam { get; }
+
+        Team AwayTeam { get; }
+
+        string TV { get; }
+
+        string Notes { get; }
+
+        eGameType Type { get; }
+    }
+
+    public abstract class Game : IGame
     {
         private readonly int _key;
         private readonly DateTime _date;
@@ -89,6 +108,19 @@ namespace CollegeFbsRankings.Games
         public eGameType Type
         {
             get { return _type; }
+        }
+    }
+
+    public static class GameExtensions
+    {
+        public static IEnumerable<T> Fbs<T>(this IEnumerable<T> games) where T : IGame
+        {
+            return games.Where(g => g.Type == eGameType.Fbs);
+        }
+
+        public static IEnumerable<T> Fcs<T>(this IEnumerable<T> games) where T : IGame
+        {
+            return games.Where(g => g.Type == eGameType.Fcs);
         }
     }
 }

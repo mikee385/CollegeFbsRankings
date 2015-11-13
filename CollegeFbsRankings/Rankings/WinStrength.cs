@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-using CollegeFbsRankings.Enumerables;
 using CollegeFbsRankings.Games;
 using CollegeFbsRankings.Teams;
 
@@ -29,8 +28,8 @@ namespace CollegeFbsRankings.Rankings
             }
 
             private static TeamValue CalculateValue(Team team,
-                Func<Team, ITeamGameEnumerable> teamGameFilter,
-                Func<Team, ITeamGameEnumerable> opponentGameFilter)
+                Func<Team, IEnumerable<ITeamGame>> teamGameFilter,
+                Func<Team, IEnumerable<ITeamGame>> opponentGameFilter)
             {
                 var writer = new StringWriter();
                 writer.WriteLine(team.Name + " Games:");
@@ -39,13 +38,11 @@ namespace CollegeFbsRankings.Rankings
 
                 var allOpponentWinTotal = 0;
                 var allOpponentGameTotal = 0;
-                foreach (var game in teamGames.OfType<CompletedGame>())
+                foreach (var game in teamGames)
                 {
-                    var opponent = team.GetOpponent(game);
-
-                    var opponentGames = opponentGameFilter(opponent).Completed();
+                    var opponentGames = opponentGameFilter(game.Opponent).Completed().ToList();
                     var opponentGameTotal = opponentGames.Count();
-                    var opponentWinTotal = team.DidWin(game) ? opponentGames.Won().Count() : 0;
+                    var opponentWinTotal = game.IsWin ? opponentGames.Won().Count() : 0;
 
                     writer.WriteLine("Week {0} {1} beat {3} = {2}-{4} ({5} / {6})",
                         game.Week,

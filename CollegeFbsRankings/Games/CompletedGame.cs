@@ -7,13 +7,32 @@ using CollegeFbsRankings.Teams;
 
 namespace CollegeFbsRankings.Games
 {
+    public interface ICompletedGame : IGame
+    {
+        int HomeTeamScore { get; }
 
-    public class CompletedGame : Game
+        int AwayTeamScore { get; }
+
+        Team WinningTeam { get; }
+
+        Team LosingTeam { get; }
+
+        int WinningTeamScore { get; }
+
+        int LosingTeamScore { get; }
+    }
+
+    public class CompletedGame : Game, ICompletedGame
     {
         private readonly int _homeTeamScore;
         private readonly int _awayTeamScore;
 
-        public CompletedGame(int key, DateTime date, int week, Team homeTeam, int homeTeamScore, Team awayTeam, int awayTeamScore, string tv, string notes)
+        public static ICompletedGame New(int key, DateTime date, int week, Team homeTeam, int homeTeamScore, Team awayTeam, int awayTeamScore, string tv, string notes)
+        {
+            return new CompletedGame(key, date, week, homeTeam, homeTeamScore, awayTeam, awayTeamScore, tv, notes);
+        }
+
+        protected CompletedGame(int key, DateTime date, int week, Team homeTeam, int homeTeamScore, Team awayTeam, int awayTeamScore, string tv, string notes)
             : base(key, date, week, homeTeam, awayTeam, tv, notes)
         {
             _homeTeamScore = homeTeamScore;
@@ -88,6 +107,14 @@ namespace CollegeFbsRankings.Games
                 throw new Exception(String.Format("Score is identical for {0} vs. {1}: {2}-{3}",
                     HomeTeam.Name, AwayTeam.Name, HomeTeamScore, AwayTeamScore));
             }
+        }
+    }
+
+    public static class CompletedGameExtensions
+    {
+        public static IEnumerable<ICompletedGame> Completed(this IEnumerable<IGame> games)
+        {
+            return games.OfType<ICompletedGame>();
         }
     }
 }
