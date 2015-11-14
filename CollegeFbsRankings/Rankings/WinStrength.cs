@@ -13,34 +13,38 @@ namespace CollegeFbsRankings.Rankings
     {
         public static class WinStrength
         {
-            public static IReadOnlyList<TeamValue> Overall(IEnumerable<Team> teams)
+            public static IReadOnlyList<TeamValue> Overall(IEnumerable<Team> teams, int week)
             {
                 return teams
-                    .Select(team => CalculateValue(team, t => t.Games, o => o.Games))
+                    .Select(team => CalculateValue(team, 
+                        t => t.Games.Where(g => g.Week <= week).Completed(), 
+                        o => o.Games.Where(g => g.Week <= week).Completed()))
                     .Sorted();
             }
 
-            public static IReadOnlyList<TeamValue> Fbs(IEnumerable<Team> teams)
+            public static IReadOnlyList<TeamValue> Fbs(IEnumerable<Team> teams, int week)
             {
                 return teams
-                    .Select(team => CalculateValue(team, t => t.Games.Fbs(), o => o.Games.Fbs()))
+                    .Select(team => CalculateValue(team, 
+                        t => t.Games.Where(g => g.Week <= week).Completed().Fbs(), 
+                        o => o.Games.Where(g => g.Week <= week).Completed().Fbs()))
                     .Sorted();
             }
 
             private static TeamValue CalculateValue(Team team,
-                Func<Team, IEnumerable<ITeamGame>> teamGameFilter,
-                Func<Team, IEnumerable<ITeamGame>> opponentGameFilter)
+                Func<Team, IEnumerable<ITeamCompletedGame>> teamGameFilter,
+                Func<Team, IEnumerable<ITeamCompletedGame>> opponentGameFilter)
             {
                 var writer = new StringWriter();
                 writer.WriteLine(team.Name + " Games:");
 
-                var teamGames = teamGameFilter(team).Completed();
+                var teamGames = teamGameFilter(team).ToList();
 
                 var allOpponentWinTotal = 0;
                 var allOpponentGameTotal = 0;
                 foreach (var game in teamGames)
                 {
-                    var opponentGames = opponentGameFilter(game.Opponent).Completed().ToList();
+                    var opponentGames = opponentGameFilter(game.Opponent).ToList();
                     var opponentGameTotal = opponentGames.Count();
                     var opponentWinTotal = game.IsWin ? opponentGames.Won().Count() : 0;
 
