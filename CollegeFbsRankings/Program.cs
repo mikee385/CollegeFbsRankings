@@ -31,7 +31,6 @@ namespace CollegeFbsRankings
 
         static void Main()
         {
-
             #region Read FBS Teams
 
             var fbsTeamFile = new StreamReader(FbsTeamFileName);
@@ -120,13 +119,13 @@ namespace CollegeFbsRankings
                     if (lineSplit.Length > 12)
                     {
                         throw new Exception(String.Format(
-                            "Too many items on line {0}\n\t{1}", 
+                            "Too many items on line {0}\n\t{1}",
                             lineCount, line));
                     }
                     if (lineSplit.Length < 12)
                     {
                         throw new Exception(String.Format(
-                            "Too few items on line {0}\n\t{1}", 
+                            "Too few items on line {0}\n\t{1}",
                             lineCount, line));
                     }
 
@@ -147,7 +146,7 @@ namespace CollegeFbsRankings
                     if (!Int32.TryParse(keyString, out key))
                     {
                         throw new Exception(String.Format(
-                            "Unable to convert key \"{2}\" to an Int32 on line {0}\n\t{1}", 
+                            "Unable to convert key \"{2}\" to an Int32 on line {0}\n\t{1}",
                             lineCount, line, keyString));
                     }
 
@@ -155,7 +154,7 @@ namespace CollegeFbsRankings
                     if (!Int32.TryParse(weekString, out week))
                     {
                         throw new Exception(String.Format(
-                            "Unable to convert week \"{2}\" to an Int32 on line {0}\n\t{1}", 
+                            "Unable to convert week \"{2}\" to an Int32 on line {0}\n\t{1}",
                             lineCount, line, weekString));
                     }
 
@@ -163,7 +162,7 @@ namespace CollegeFbsRankings
                     if (!DateTime.TryParse(dateString + " " + timeString, out date))
                     {
                         throw new Exception(String.Format(
-                            "Unable to convert date \"{2}\" and time \"{3}\" to a DateTime on line {0}\n\t{1}", 
+                            "Unable to convert date \"{2}\" and time \"{3}\" to a DateTime on line {0}\n\t{1}",
                             lineCount, line, dateString, timeString));
                     }
 
@@ -302,7 +301,7 @@ namespace CollegeFbsRankings
                         hasSecondTeamScore = false;
                         secondTeamScore = 0;
                     }
-                    
+
                     if (firstTeam.Key == secondTeam.Key)
                     {
                         throw new Exception(String.Format(
@@ -551,7 +550,6 @@ namespace CollegeFbsRankings
 
                 #endregion
             }
-            
         }
 
         #region Output Methods
