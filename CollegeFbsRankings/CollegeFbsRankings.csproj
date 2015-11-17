@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Conferences\FbsConference.cs" />
     <Compile Include="Games\CompletedGame.cs" />
     <Compile Include="Games\FutureGame.cs" />
     <Compile Include="Games\Game.cs" />
@@ -57,6 +58,7 @@
     <Compile Include="Rankings\Ranking.cs" />
     <Compile Include="Rankings\ScheduleStrength.cs" />
     <Compile Include="Rankings\WinStrength.cs" />
+    <Compile Include="Conferences\Conference.cs" />
     <Compile Include="Teams\FbsTeam.cs" />
     <Compile Include="Teams\FcsTeam.cs" />
     <Compile Include="Teams\Team.cs" />

@@ -3,19 +3,21 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
+using CollegeFbsRankings.Conferences;
+
 namespace CollegeFbsRankings.Teams
 {
     public class FbsTeam : Team
     {
-        private readonly string _conference;
+        private readonly FbsConference _conference;
 
-        public FbsTeam(int key, string name, string conference)
+        public FbsTeam(int key, string name, FbsConference conference)
             : base(key, name)
         {
             _conference = conference;
         }
 
-        public string Conference
+        public FbsConference Conference
         {
             get { return _conference; }
         }
