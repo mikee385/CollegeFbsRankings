@@ -9,17 +9,24 @@ namespace CollegeFbsRankings.Teams
 {
     public class FbsTeam : Team
     {
-        private readonly FbsConference _conference;
+        private readonly Conference<FbsTeam> _conference;
+        private readonly Division<FbsTeam> _division;
 
-        public FbsTeam(int key, string name, FbsConference conference)
+        public FbsTeam(int key, string name, Conference<FbsTeam> conference, Division<FbsTeam> division)
             : base(key, name)
         {
             _conference = conference;
+            _division = division;
         }
 
-        public FbsConference Conference
+        public Conference<FbsTeam> Conference
         {
             get { return _conference; }
+        }
+
+        public Division<FbsTeam> Division
+        {
+            get { return _division; }
         }
     }
 }

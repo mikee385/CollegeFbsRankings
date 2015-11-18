@@ -59,7 +59,8 @@ namespace CollegeFbsRankings.Games
                 if (AwayTeamScore > HomeTeamScore)
                     return AwayTeam;
 
-                throw new Exception(String.Format("Score is identical for {0} vs. {1}: {2}-{3}",
+                throw new Exception(String.Format(
+                    "Score is identical for {0} vs. {1}: {2}-{3}",
                     HomeTeam.Name, AwayTeam.Name, HomeTeamScore, AwayTeamScore));
             }
         }
@@ -74,7 +75,8 @@ namespace CollegeFbsRankings.Games
                 if (AwayTeamScore > HomeTeamScore)
                     return HomeTeam;
 
-                throw new Exception(String.Format("Score is identical for {0} vs. {1}: {2}-{3}",
+                throw new Exception(String.Format(
+                    "Score is identical for {0} vs. {1}: {2}-{3}",
                     HomeTeam.Name, AwayTeam.Name, HomeTeamScore, AwayTeamScore));
             }
         }
@@ -89,7 +91,8 @@ namespace CollegeFbsRankings.Games
                 if (AwayTeamScore > HomeTeamScore)
                     return AwayTeamScore;
 
-                throw new Exception(String.Format("Score is identical for {0} vs. {1}: {2}-{3}",
+                throw new Exception(String.Format(
+                    "Score is identical for {0} vs. {1}: {2}-{3}",
                     HomeTeam.Name, AwayTeam.Name, HomeTeamScore, AwayTeamScore));
             }
         }
@@ -104,7 +107,8 @@ namespace CollegeFbsRankings.Games
                 if (AwayTeamScore > HomeTeamScore)
                     return HomeTeamScore;
 
-                throw new Exception(String.Format("Score is identical for {0} vs. {1}: {2}-{3}",
+                throw new Exception(String.Format(
+                    "Score is identical for {0} vs. {1}: {2}-{3}",
                     HomeTeam.Name, AwayTeam.Name, HomeTeamScore, AwayTeamScore));
             }
         }

@@ -1,24 +1,25 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using CollegeFbsRankings.Teams;
 
 namespace CollegeFbsRankings.Conferences
 {
-    public abstract class Conference
+    public class Conference<TTeam> where TTeam : Team
     {
         private readonly int _key;
         private readonly string _name;
-        private readonly List<Team> _teams;
+        private readonly List<TTeam> _teams;
+        private readonly List<Division<TTeam>> _divisions;
 
-        protected Conference(int key, string name)
+        public Conference(int key, string name)
         {
             _key = key;
             _name = name;
-            _teams = new List<Team>();
+            _teams = new List<TTeam>();
+            _divisions = new List<Division<TTeam>>();
         }
 
         public int Key
@@ -31,19 +32,55 @@ namespace CollegeFbsRankings.Conferences
             get { return _name; }
         }
 
-        protected IEnumerable<Team> Teams
+        public IEnumerable<TTeam> Teams
         {
-            get { return _teams; }
+            get
+            {
+                if (_divisions.Any())
+                    return _divisions.SelectMany(d => d.Teams);
+
+                return _teams;
+            }
         }
 
-        protected void AddTeam(Team team)
+        public void AddTeam(TTeam team)
         {
-            _teams.Add(team);
+            if (!_divisions.Any())
+                _teams.Add(team);
+            else
+            {
+                throw new Exception(String.Format(
+                    "Cannot add team {0} to conference {1} without assigning them to a division",
+                    team.Name, Name));
+            }
         }
 
-        protected void RemoveTeam(Team team)
+        public void RemoveTeam(TTeam team)
         {
-            _teams.RemoveAll(t => t.Key == team.Key);
+            if (!_divisions.Any())
+                _teams.RemoveAll(t => t.Key == team.Key);
+            else
+            {
+                foreach (var division in _divisions)
+                    division.RemoveTeam(team);
+            }
+        }
+
+        public IEnumerable<Division<TTeam>> Divisions
+        {
+            get { return _divisions; }
+        }
+
+        public void AddDivision(Division<TTeam> division)
+        {
+            if (!_teams.Any())
+                _divisions.Add(division);
+            else
+            {
+                throw new Exception(String.Format(
+                    "Cannot add division {0} to conference {1} since the conference already contains teams that are not assigned to a division",
+                    division.Name, Name));
+            }
         }
     }
 }

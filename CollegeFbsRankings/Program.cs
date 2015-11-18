@@ -38,11 +38,12 @@ namespace CollegeFbsRankings
 
             var fbsTeamFile = new StreamReader(FbsTeamFileName);
             var fbsTeams = new List<FbsTeam>();
-            var fbsConferences = new List<FbsConference>();
+            var fbsConferences = new List<Conference<FbsTeam>>();
             var skippedFbsTeamLines = new List<String>();
 
             var conferenceDivisionRegex = new Regex(ConferenceDivisionPattern);
             var conferenceKey = 0;
+            var divisionKey = 0;
 
             String line;
             while ((line = fbsTeamFile.ReadLine()) != null)
@@ -55,7 +56,7 @@ namespace CollegeFbsRankings
                     var name = lineSplit[1];
                     var conferenceNameString = lineSplit[2];
 
-                    String conferenceName, divisionName;
+                    string conferenceName, divisionName;
                     var conferenceMatch = conferenceDivisionRegex.Match(conferenceNameString);
                     if (conferenceMatch.Success)
                     {
@@ -67,20 +68,40 @@ namespace CollegeFbsRankings
                         conferenceName = conferenceNameString;
                         divisionName = null;
                     }
-
+                    
                     var conference = fbsConferences.SingleOrDefault(c => c.Name == conferenceName);
                     if (conference == null)
                     {
                         Interlocked.Increment(ref conferenceKey);
 
-                        conference = new FbsConference(conferenceKey, conferenceName);
+                        conference = new Conference<FbsTeam>(conferenceKey, conferenceName);
                         fbsConferences.Add(conference);
                     }
 
-                    var team = new FbsTeam(key, name, conference);
+                    Division<FbsTeam> division;
+                    if (divisionName != null)
+                    {
+                        division = conference.Divisions.SingleOrDefault(d => d.Name == divisionName);
+                        if (division == null)
+                        {
+                            Interlocked.Increment(ref divisionKey);
+
+                            division = new Division<FbsTeam>(divisionKey, divisionName);
+                            conference.AddDivision(division);
+                        }
+                    }
+                    else
+                    {
+                        division = null;
+                    }
+
+                    var team = new FbsTeam(key, name, conference, division);
                     fbsTeams.Add(team);
 
-                    conference.AddTeam(team);
+                    if (division != null)
+                        division.AddTeam(team);
+                    else
+                        conference.AddTeam(team);
                 }
                 else
                 {
@@ -94,16 +115,30 @@ namespace CollegeFbsRankings
             //    Console.WriteLine(String.Join(",",
             //        conference.Key,
             //        conference.Name));
+
+            //    foreach (var division in conference.Divisions)
+            //    {
+            //        Console.WriteLine("    " + String.Join(",",
+            //            division.Key,
+            //            division.Name));
+            //    }
             //}
             //Console.WriteLine();
 
             //Console.WriteLine("Number of FBS Teams = {0}", fbsTeams.Count);
             //foreach (var team in fbsTeams)
             //{
-            //    Console.WriteLine(String.Join(",",
+            //    Console.Write(String.Join(",",
             //        team.Key,
             //        team.Name,
             //        team.Conference.Name));
+
+            //    if (team.Division != null)
+            //    {
+            //        Console.Write(("," + team.Division.Name));
+            //    }
+
+            //    Console.WriteLine();
             //}
             //Console.WriteLine();
 
