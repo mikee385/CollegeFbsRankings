@@ -54,6 +54,7 @@
     <Compile Include="Games\TeamGame.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rankings\ConferenceStrength.cs" />
     <Compile Include="Rankings\GameStrength.cs" />
     <Compile Include="Rankings\Performance.cs" />
     <Compile Include="Rankings\Ranking.cs" />

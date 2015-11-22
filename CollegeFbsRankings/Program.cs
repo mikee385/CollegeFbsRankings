@@ -522,6 +522,9 @@ namespace CollegeFbsRankings
                 var overallGameStrengthByWeek = Ranking.GameStrength.ByWeek(games, overallPerformanceRankings);
                 var fbsGameStrengthByWeek = Ranking.GameStrength.ByWeek(games.Fbs(), fbsPerformanceRankings);
 
+                var overallConferenceStrength = Ranking.ConferenceStrength.Overall(fbsConferences, overallPerformanceRankings);
+                var fbsConferenceStrength = Ranking.ConferenceStrength.Overall(fbsConferences, fbsPerformanceRankings);
+
                 #endregion
 
                 #region Output Results to Console
@@ -574,6 +577,9 @@ namespace CollegeFbsRankings
                 var overallGameStrengthByWeekFileName = Path.Combine(outputFolder, "Game Strength By Week.txt");
                 var fbsGameStrengthByWeekFileName = Path.Combine(fbsOutputFolder, "Game Strength By Week.txt");
 
+                var overallConferenceStrengthFileName = Path.Combine(outputFolder, "Conference Strength.txt");
+                var fbsConferenceStrengthFileName = Path.Combine(fbsOutputFolder, "Conference Strength.txt");
+
                 var facebookFileName = Path.Combine(outputFolder, "Facebook Output.txt");
 
                 #endregion
@@ -620,6 +626,9 @@ namespace CollegeFbsRankings
                     builder.AppendLine();
                 }
                 WriteStringToFile(fbsGameStrengthByWeekFileName, builder.ToString());
+
+                WriteRankingsToFile(overallConferenceStrengthFileName, "Conference Strength (Overall)", overallConferenceStrength);
+                WriteRankingsToFile(fbsConferenceStrengthFileName, "Conference Strength (FBS)", fbsConferenceStrength);
 
                 WriteStringToFile(facebookFileName, FormatFacebookRankings(week,
                     fbsPerformanceRankings.Take(25), top25FbsFutureScheduleStrength, fbsGameStrengthByWeek));

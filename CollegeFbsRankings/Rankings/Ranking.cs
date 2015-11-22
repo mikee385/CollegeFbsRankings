@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
+using CollegeFbsRankings.Conferences;
 using CollegeFbsRankings.Games;
 using CollegeFbsRankings.Teams;
 
@@ -97,6 +98,27 @@ namespace CollegeFbsRankings.Rankings
                     game.HomeTeam.Name, 
                     game.AwayTeam.Name, 
                     game.Date);
+            }
+        }
+
+        public class ConferenceValue<TTeam> : Value where TTeam : Team
+        {
+            private readonly Conference<TTeam> _conference;
+
+            public ConferenceValue(Conference<TTeam> conference, IEnumerable<double> values, IEnumerable<IComparable> tieBreakers, string summary)
+                : base(GetTitle(conference), values, tieBreakers, summary)
+            {
+                _conference = conference;
+            }
+
+            public Conference<TTeam> Conference
+            {
+                get { return _conference; }
+            }
+
+            private static string GetTitle(Conference<TTeam> conference)
+            {
+                return conference.Name;
             }
         }
 
