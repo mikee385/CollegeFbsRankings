@@ -338,15 +338,15 @@ namespace CollegeFbsRankings_Legacy
 
             foreach (var rank in ranking)
             {
-                var currentValues = new[] {rank.Value.RankingValue, rank.Value.WinPercentage};
+                var currentValues = new[] {rank.Value.RankingValue, rank.Value.WinPercentage, rank.Value.OpponentWinPercentage};
                 if (index != 1)
                 {
                     if (!currentValues.SequenceEqual(previousValues))
                         outputIndex = index;
                 }
 
-                Console.WriteLine("{0,-4} {1,-" + (maxTeamNameLength + 3) + "} {2:F8}   {3:F8}",
-                    outputIndex, rank.Key, currentValues[0], currentValues[1]);
+                Console.WriteLine("{0,-4} {1,-" + (maxTeamNameLength + 3) + "} {2:F8}   {3:F8}   {4:F8}",
+                    outputIndex, rank.Key, currentValues[0], currentValues[1], currentValues[2]);
 
                 ++index;
                 previousValues = currentValues;
