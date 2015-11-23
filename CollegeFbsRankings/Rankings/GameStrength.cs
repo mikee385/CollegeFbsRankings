@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 
 using CollegeFbsRankings.Games;
+using CollegeFbsRankings.Teams;
 
 namespace CollegeFbsRankings.Rankings
 {
@@ -12,79 +13,76 @@ namespace CollegeFbsRankings.Rankings
     {
         public static class GameStrength
         {
-            public static IReadOnlyList<GameValue> Overall(IEnumerable<IGame> games, IReadOnlyList<TeamValue> rankings)
+            public static IReadOnlyList<GameValue> Overall(IEnumerable<IGame> games, Dictionary<Team, Data> performanceData)
             {
-                return games.Fbs()
-                    .Select(game => CalculateValue(game, rankings))
-                    .Sorted();
+                return Calculate(games, performanceData);
             }
 
-            public static Dictionary<int, IReadOnlyList<GameValue>> ByWeek(IEnumerable<IGame> games, IReadOnlyList<TeamValue> rankings)
+            public static Dictionary<int, IReadOnlyList<GameValue>> ByWeek(IEnumerable<IGame> games, Dictionary<Team, Data> performanceData)
             {
-                var data = new Dictionary<int, List<GameValue>>();
-                foreach (var game in games.Fbs())
+                return games.GroupBy(g => g.Week).ToDictionary(group => group.Key, group => Calculate(group, performanceData));
+            }
+
+            private static IReadOnlyList<GameValue> Calculate(IEnumerable<IGame> games, Dictionary<Team, Data> performanceData)
+            {
+                return games.Select(game =>
                 {
-                    var gameValue = CalculateValue(game, rankings);
-
-                    List<GameValue> existingData;
-                    if (data.TryGetValue(game.Week, out existingData))
-                    {
-                        existingData.Add(gameValue);
-                    }
-                    else
-                    {
-                        data.Add(game.Week, new List<GameValue> {gameValue});
-                    }
-                }
-
-                return data.ToDictionary(week => week.Key, week => week.Value.Sorted());
-            }
-
-            private static GameValue CalculateValue(IGame game, IReadOnlyList<TeamValue> rankings)
-            {
-                var writer = new StringWriter();
-                writer.WriteLine("Week {0} {1} vs. {2} ({3}):",
-                    game.Week,
-                    game.HomeTeam.Name,
-                    game.AwayTeam.Name,
-                    game.Date);
-
-                var homeTeamValues = rankings.Single(rank => rank.Team.Key == game.HomeTeam.Key).Values.ToList();
-                var awayTeamValues = rankings.Single(rank => rank.Team.Key == game.AwayTeam.Key).Values.ToList();
-
-                writer.WriteLine("{0} Values:", game.HomeTeam.Name);
-                for (int i = 0; i < homeTeamValues.Count; ++i)
-                    writer.WriteLine("    {0}. {1}", i + 1, homeTeamValues[i]);
-
-                writer.WriteLine("{0} Values:", game.AwayTeam.Name);
-                for (int i = 0; i < awayTeamValues.Count; ++i)
-                    writer.WriteLine("    {0}. {1}", i + 1, awayTeamValues[i]);
-
-                var gameValues = homeTeamValues.Zip(awayTeamValues, 
-                    (homeValue, awayValue) => new[]
-                    {
-                        homeValue * awayValue,
-                        Math.Max(homeValue, awayValue),
-                        Math.Min(homeValue, awayValue)
-                    })
-                    .SelectMany(values => values)
-                    .ToList();
-
-                writer.WriteLine("Combined Values:");
-                for (int i = 0; i < gameValues.Count; ++i)
-                    writer.WriteLine("    {0}. {1}", i + 1, gameValues[i]);
-
-                return new GameValue(
-                    game,
-                    gameValues,
-                    new IComparable[]
-                    {
+                    var writer = new StringWriter();
+                    writer.WriteLine("Week {0} {1} vs. {2} ({3}):",
                         game.Week,
                         game.HomeTeam.Name,
                         game.AwayTeam.Name,
-                        game.Date
-                    }, 
-                    writer.ToString());
+                        game.Date);
+
+                    var homeTeamData = performanceData[game.HomeTeam];
+
+                    writer.WriteLine("{0}: Team = {1} / {2}, Opponent = {3} / {4}",
+                        game.HomeTeam.Name,
+                        homeTeamData.WinTotal,
+                        homeTeamData.GameTotal,
+                        homeTeamData.OpponentWinTotal,
+                        homeTeamData.OpponentGameTotal);
+
+                    var awayTeamData = performanceData[game.AwayTeam];
+
+                    writer.WriteLine("{0}: Team = {1} / {2}, Opponent = {3} / {4}",
+                        game.AwayTeam.Name,
+                        awayTeamData.WinTotal,
+                        awayTeamData.GameTotal,
+                        awayTeamData.OpponentWinTotal,
+                        awayTeamData.OpponentGameTotal);
+
+                    var teamGameTotal = homeTeamData.GameTotal + awayTeamData.GameTotal;
+                    var teamWinTotal = homeTeamData.WinTotal + awayTeamData.WinTotal;
+                    var teamWinPercentage = (double)teamWinTotal / teamGameTotal;
+
+                    var opponentGameTotal = homeTeamData.OpponentGameTotal + awayTeamData.OpponentGameTotal;
+                    var opponentWinTotal = homeTeamData.OpponentWinTotal + awayTeamData.OpponentWinTotal;
+                    var opponentWinPercentage = (double)opponentWinTotal / opponentGameTotal;
+
+                    var performance = teamWinPercentage * opponentWinPercentage;
+
+                    writer.WriteLine();
+                    writer.WriteLine("Team Wins    : {0} / {1} ({2})", teamWinTotal, teamGameTotal, teamWinPercentage);
+                    writer.WriteLine("Opponent Wins: {0} / {1} ({2})", opponentWinTotal, opponentGameTotal, opponentWinPercentage);
+                    writer.WriteLine("Performance  : {0}", performance);
+
+                    return new GameValue(game,
+                        new[]
+                        {
+                            performance,
+                            teamWinPercentage,
+                            opponentWinPercentage
+                        },
+                        new IComparable[]
+                        {
+                            game.Week,
+                            game.HomeTeam.Name,
+                            game.AwayTeam.Name,
+                            game.Date
+                        },
+                        writer.ToString());
+                }).Sorted();
             }
         }
     }

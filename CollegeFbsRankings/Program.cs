@@ -492,19 +492,23 @@ namespace CollegeFbsRankings
             {
                 #region Calculate Rankings
 
-                var overallPerformanceRankings = Ranking.Performance.Overall(fbsTeams, week);
-                var fbsPerformanceRankings = Ranking.Performance.Fbs(fbsTeams, week);
+                var allTeams = fbsTeams.Cast<Team>().Concat(fcsTeams).ToList();
+                var overallData = Ranking.Data.Overall(allTeams, week);
+                var fbsData = Ranking.Data.Fbs(fbsTeams, week);
 
-                var overallWinStrength = Ranking.WinStrength.Overall(fbsTeams, week);
-                var fbsWinStrength = Ranking.WinStrength.Fbs(fbsTeams, week);
+                var overallPerformanceRankings = Ranking.Performance.Overall(fbsTeams, overallData);
+                var fbsPerformanceRankings = Ranking.Performance.Overall(fbsTeams, fbsData);
 
-                var overallScheduleStrength = Ranking.ScheduleStrength.Overall(fbsTeams, week);
-                var completedScheduleStrength = Ranking.ScheduleStrength.Completed(fbsTeams, week);
-                var futureScheduleStrength = Ranking.ScheduleStrength.Future(fbsTeams, week);
+                var overallWinStrength = Ranking.WinStrength.Overall(fbsTeams, overallData);
+                var fbsWinStrength = Ranking.WinStrength.Overall(fbsTeams, fbsData);
 
-                var fbsOverallScheduleStrength = Ranking.ScheduleStrength.Fbs.Overall(fbsTeams, week);
-                var fbsCompletedScheduleStrength = Ranking.ScheduleStrength.Fbs.Completed(fbsTeams, week);
-                var fbsFutureScheduleStrength = Ranking.ScheduleStrength.Fbs.Future(fbsTeams, week);
+                var overallScheduleStrength = Ranking.ScheduleStrength.Overall(fbsTeams, overallData);
+                var completedScheduleStrength = Ranking.ScheduleStrength.Completed(fbsTeams, week, overallData);
+                var futureScheduleStrength = Ranking.ScheduleStrength.Future(fbsTeams, week, overallData);
+
+                var fbsOverallScheduleStrength = Ranking.ScheduleStrength.Overall(fbsTeams, fbsData);
+                var fbsCompletedScheduleStrength = Ranking.ScheduleStrength.Completed(fbsTeams, week, fbsData);
+                var fbsFutureScheduleStrength = Ranking.ScheduleStrength.Future(fbsTeams, week, fbsData);
 
                 var top25Teams = fbsPerformanceRankings.Take(25).Select(rank => rank.Team).ToList();
 
@@ -516,14 +520,16 @@ namespace CollegeFbsRankings
                 var top25FbsCompletedScheduleStrength = fbsCompletedScheduleStrength.ForTeams(top25Teams).ToList();
                 var top25FbsFutureScheduleStrength = fbsFutureScheduleStrength.ForTeams(top25Teams).ToList();
 
-                var overallGameStrength = Ranking.GameStrength.Overall(games, overallPerformanceRankings);
-                var fbsGameStrength = Ranking.GameStrength.Overall(games.Fbs(), fbsPerformanceRankings);
+                var fbsGames = games.Fbs().ToList();
 
-                var overallGameStrengthByWeek = Ranking.GameStrength.ByWeek(games, overallPerformanceRankings);
-                var fbsGameStrengthByWeek = Ranking.GameStrength.ByWeek(games.Fbs(), fbsPerformanceRankings);
+                var overallGameStrength = Ranking.GameStrength.Overall(fbsGames, overallData);
+                var fbsGameStrength = Ranking.GameStrength.Overall(fbsGames, fbsData);
 
-                var overallConferenceStrength = Ranking.ConferenceStrength.Overall(fbsConferences, overallPerformanceRankings);
-                var fbsConferenceStrength = Ranking.ConferenceStrength.Overall(fbsConferences, fbsPerformanceRankings);
+                var overallGameStrengthByWeek = Ranking.GameStrength.ByWeek(fbsGames, overallData);
+                var fbsGameStrengthByWeek = Ranking.GameStrength.ByWeek(fbsGames, fbsData);
+
+                var overallConferenceStrength = Ranking.ConferenceStrength.Overall(fbsConferences, overallData);
+                var fbsConferenceStrength = Ranking.ConferenceStrength.Overall(fbsConferences, fbsData);
 
                 #endregion
 

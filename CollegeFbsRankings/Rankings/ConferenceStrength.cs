@@ -15,51 +15,57 @@ namespace CollegeFbsRankings.Rankings
     {
         public static class ConferenceStrength
         {
-            public static IReadOnlyList<ConferenceValue<TTeam>> Overall<TTeam>(
-                IEnumerable<Conference<TTeam>> conferences, 
-                IReadOnlyList<TeamValue> rankings) where TTeam : Team
+            public static IReadOnlyList<ConferenceValue<TTeam>> Overall<TTeam>(IEnumerable<Conference<TTeam>> conferences, Dictionary<Team, Data> performanceData) where TTeam : Team
             {
-                return conferences
-                    .Select(conference => CalculateValue(conference, rankings))
-                    .Sorted();
-            }
-
-            private static ConferenceValue<TTeam> CalculateValue<TTeam>(Conference<TTeam> conference, IReadOnlyList<TeamValue> rankings) where TTeam : Team
-            {
-                var writer = new StringWriter();
-                writer.WriteLine(conference.Name);
-
-                var conferenceValues = new List<List<double>>();
-                foreach (var team in conference.Teams)
+                return conferences.Select(conference =>
                 {
-                    var teamValues = rankings.Single(rank => rank.Team.Key == team.Key).Values.ToList();
+                    var writer = new StringWriter();
+                    writer.WriteLine(conference.Name + " Teams:");
 
-                    for(int i = conferenceValues.Count; i < teamValues.Count; ++i)
-                        conferenceValues.Add(new List<double>());
+                    var teamGameTotal = 0;
+                    var teamWinTotal = 0;
+                    var opponentGameTotal = 0;
+                    var opponentWinTotal = 0;
 
-                    writer.WriteLine("{0} Values:", team.Name);
-                    for (int i = 0; i < teamValues.Count; ++i)
+                    foreach (var team in conference.Teams.OrderBy(t => t.Name))
                     {
-                        writer.WriteLine("    {0}. {1}", i + 1, teamValues[i]);
+                        var teamData = performanceData[team];
 
-                        conferenceValues[i].Add(teamValues[i]);
+                        teamGameTotal += teamData.GameTotal;
+                        teamWinTotal += teamData.WinTotal;
+                        opponentGameTotal += teamData.OpponentGameTotal;
+                        opponentWinTotal += teamData.OpponentWinTotal;
+
+                        writer.WriteLine("{0}: Team = {1} / {2}, Opponent = {3} / {4}",
+                            team.Name,
+                            teamData.WinTotal,
+                            teamData.GameTotal,
+                            teamData.OpponentWinTotal,
+                            teamData.OpponentGameTotal);
                     }
-                }
+                    
+                    var teamWinPercentage = (double)teamWinTotal / teamGameTotal;
+                    var opponentWinPercentage = (double)opponentWinTotal / opponentGameTotal;
+                    var performance = teamWinPercentage * opponentWinPercentage;
 
-                var combinedValues = conferenceValues.Select(values => values.Average()).ToList();
+                    writer.WriteLine();
+                    writer.WriteLine("Team Wins    : {0} / {1} ({2})", teamWinTotal, teamGameTotal, teamWinPercentage);
+                    writer.WriteLine("Opponent Wins: {0} / {1} ({2})", opponentWinTotal, opponentGameTotal, opponentWinPercentage);
+                    writer.WriteLine("Performance  : {0}", performance);
 
-                writer.WriteLine("Combined Values:");
-                for (int i = 0; i < combinedValues.Count; ++i)
-                    writer.WriteLine("    {0}. {1}", i + 1, combinedValues[i]);
-
-                return new ConferenceValue<TTeam>(
-                    conference,
-                    combinedValues,
-                    new IComparable[]
-                    {
-                        conference.Name
-                    },
-                    writer.ToString());
+                    return new ConferenceValue<TTeam>(conference,
+                        new[]
+                        {
+                            performance,
+                            teamWinPercentage,
+                            opponentWinPercentage
+                        },
+                        new IComparable[]
+                        {
+                            conference.Name
+                        },
+                        writer.ToString());
+                }).Sorted();
             }
         }
     }
