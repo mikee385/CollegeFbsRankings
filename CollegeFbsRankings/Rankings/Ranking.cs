@@ -68,7 +68,7 @@ namespace CollegeFbsRankings.Rankings
                         var opponentGameTotal = opponentGames.Count();
                         var opponentWinTotal = game.IsWin ? opponentGames.Won().Count() : 0;
 
-                        writer.WriteLine("Week {0} {1} beat {3} = {2}-{4} ({5} / {6})",
+                        writer.WriteLine("    Week {0} {1} beat {3} = {2}-{4} ({5} / {6})",
                             game.Week,
                             game.WinningTeam.Name,
                             game.WinningTeamScore,

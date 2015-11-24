@@ -550,43 +550,45 @@ namespace CollegeFbsRankings
                 #region Create Output File Names
 
                 var outputFolder = Path.Combine(ResultsFolder, Year, "Week " + week);
-                var top25OutputFolder = Path.Combine(outputFolder, "Top 25");
+
+                var overallOutputFolder = Path.Combine(outputFolder, "Overall");
+                var overallTop25OutputFolder = Path.Combine(overallOutputFolder, "Top 25");
 
                 var fbsOutputFolder = Path.Combine(outputFolder, "FBS");
                 var fbsTop25OutputFolder = Path.Combine(fbsOutputFolder, "Top 25");
 
-                var overallPerformanceFileName = Path.Combine(outputFolder, "Performance Rankings.txt");
+                var overallPerformanceFileName = Path.Combine(overallOutputFolder, "Performance Rankings.txt");
                 var fbsPerformanceFileName = Path.Combine(fbsOutputFolder, "Performance Rankings.txt");
 
-                var overallWinStrengthFileName = Path.Combine(outputFolder, "Win Strength.txt");
+                var overallWinStrengthFileName = Path.Combine(overallOutputFolder, "Win Strength.txt");
                 var fbsWinStrengthFileName = Path.Combine(fbsOutputFolder, "Win Strength.txt");
 
-                var overallScheduleStrengthFileName = Path.Combine(outputFolder, "Overall Schedule Stength.txt");
-                var completedScheduleStrengthFileName = Path.Combine(outputFolder, "Completed Schedule Stength.txt");
-                var futureScheduleStrengthFileName = Path.Combine(outputFolder, "Future Schedule Stength.txt");
+                var overallScheduleStrengthFileName = Path.Combine(overallOutputFolder, "Overall Schedule Stength.txt");
+                var completedScheduleStrengthFileName = Path.Combine(overallOutputFolder, "Completed Schedule Stength.txt");
+                var futureScheduleStrengthFileName = Path.Combine(overallOutputFolder, "Future Schedule Stength.txt");
 
                 var fbsOverallScheduleStrengthFileName = Path.Combine(fbsOutputFolder, "Overall Schedule Stength.txt");
                 var fbsCompletedScheduleStrengthFileName = Path.Combine(fbsOutputFolder, "Completed Schedule Stength.txt");
                 var fbsFutureScheduleStrengthFileName = Path.Combine(fbsOutputFolder, "Future Schedule Stength.txt");
 
-                var top25OverallScheduleStrengthFileName = Path.Combine(top25OutputFolder, "Overall Schedule Stength.txt");
-                var top25CompletedScheduleStrengthFileName = Path.Combine(top25OutputFolder, "Completed Schedule Stength.txt");
-                var top25FutureScheduleStrengthFileName = Path.Combine(top25OutputFolder, "Future Schedule Stength.txt");
+                var top25OverallScheduleStrengthFileName = Path.Combine(overallTop25OutputFolder, "Overall Schedule Stength.txt");
+                var top25CompletedScheduleStrengthFileName = Path.Combine(overallTop25OutputFolder, "Completed Schedule Stength.txt");
+                var top25FutureScheduleStrengthFileName = Path.Combine(overallTop25OutputFolder, "Future Schedule Stength.txt");
 
                 var top25FbsOverallScheduleStrengthFileName = Path.Combine(fbsTop25OutputFolder, "Overall Schedule Stength.txt");
                 var top25FbsCompletedScheduleStrengthFileName = Path.Combine(fbsTop25OutputFolder, "Completed Schedule Stength.txt");
                 var top25FbsFutureScheduleStrengthFileName = Path.Combine(fbsTop25OutputFolder, "Future Schedule Stength.txt");
 
-                var overallGameStrengthFileName = Path.Combine(outputFolder, "Game Strength.txt");
+                var overallGameStrengthFileName = Path.Combine(overallOutputFolder, "Game Strength.txt");
                 var fbsGameStrengthFileName = Path.Combine(fbsOutputFolder, "Game Strength.txt");
 
-                var overallGameStrengthByWeekFileName = Path.Combine(outputFolder, "Game Strength By Week.txt");
+                var overallGameStrengthByWeekFileName = Path.Combine(overallOutputFolder, "Game Strength By Week.txt");
                 var fbsGameStrengthByWeekFileName = Path.Combine(fbsOutputFolder, "Game Strength By Week.txt");
 
-                var overallConferenceStrengthFileName = Path.Combine(outputFolder, "Conference Strength.txt");
+                var overallConferenceStrengthFileName = Path.Combine(overallOutputFolder, "Conference Strength.txt");
                 var fbsConferenceStrengthFileName = Path.Combine(fbsOutputFolder, "Conference Strength.txt");
 
-                var facebookFileName = Path.Combine(outputFolder, "Facebook Output.txt");
+                var summaryFileName = Path.Combine(outputFolder, "Summary.txt");
 
                 #endregion
 
@@ -636,7 +638,7 @@ namespace CollegeFbsRankings
                 WriteRankingsToFile(overallConferenceStrengthFileName, "Conference Strength (Overall)", overallConferenceStrength);
                 WriteRankingsToFile(fbsConferenceStrengthFileName, "Conference Strength (FBS)", fbsConferenceStrength);
 
-                WriteStringToFile(facebookFileName, FormatFacebookRankings(week,
+                WriteStringToFile(summaryFileName, FormatRankingSummary(week,
                     fbsPerformanceRankings.Take(25), top25FbsFutureScheduleStrength, fbsGameStrengthByWeek));
 
                 #endregion
@@ -645,7 +647,7 @@ namespace CollegeFbsRankings
 
         #region Output Methods
 
-        private static string FormatFacebookRankings(int week,
+        private static string FormatRankingSummary(int week,
             IEnumerable<Ranking.TeamValue> performanceRanking,
             IEnumerable<Ranking.TeamValue> futureScheduleStrengthRanking,
             Dictionary<int, IReadOnlyList<Ranking.GameValue>> gameStrengthRanking)

@@ -36,7 +36,7 @@ namespace CollegeFbsRankings.Rankings
 
                     var homeTeamData = performanceData[game.HomeTeam];
 
-                    writer.WriteLine("{0}: Team = {1} / {2}, Opponent = {3} / {4}",
+                    writer.WriteLine("    {0}: Team = {1} / {2}, Opponent = {3} / {4}",
                         game.HomeTeam.Name,
                         homeTeamData.WinTotal,
                         homeTeamData.GameTotal,
@@ -45,7 +45,7 @@ namespace CollegeFbsRankings.Rankings
 
                     var awayTeamData = performanceData[game.AwayTeam];
 
-                    writer.WriteLine("{0}: Team = {1} / {2}, Opponent = {3} / {4}",
+                    writer.WriteLine("    {0}: Team = {1} / {2}, Opponent = {3} / {4}",
                         game.AwayTeam.Name,
                         awayTeamData.WinTotal,
                         awayTeamData.GameTotal,

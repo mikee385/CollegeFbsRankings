@@ -36,7 +36,7 @@ namespace CollegeFbsRankings.Rankings
                         opponentGameTotal += teamData.OpponentGameTotal;
                         opponentWinTotal += teamData.OpponentWinTotal;
 
-                        writer.WriteLine("{0}: Team = {1} / {2}, Opponent = {3} / {4}",
+                        writer.WriteLine("    {0}: Team = {1} / {2}, Opponent = {3} / {4}",
                             team.Name,
                             teamData.WinTotal,
                             teamData.GameTotal,
