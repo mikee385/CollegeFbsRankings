@@ -667,6 +667,8 @@ namespace CollegeFbsRankings
                 var experimentOverallConferenceStrengthFileName = Path.Combine(experimentOverallOutputFolder, "Conference Strength.txt");
                 var experimentFbsConferenceStrengthFileName = Path.Combine(experimentFbsOutputFolder, "Conference Strength.txt");
 
+                var experimentSummaryFileName = Path.Combine(experimentOutputFolder, "Summary.txt");
+
                 #endregion
 
                 #region Output Results to Files
@@ -761,6 +763,9 @@ namespace CollegeFbsRankings
 
                 WriteRankingsToFile(experimentOverallConferenceStrengthFileName, "Conference Strength (Overall)", experimentOverallConferenceStrength);
                 WriteRankingsToFile(experimentFbsConferenceStrengthFileName, "Conference Strength (FBS)", experimentFbsConferenceStrength);
+
+                WriteStringToFile(experimentSummaryFileName, FormatRankingSummary(week,
+                    experimentFbsPerformanceRankings.Take(25), experimentTop25FbsFutureScheduleStrength, experimentFbsGameStrengthByWeek));
 
                 #endregion
             }
