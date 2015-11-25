@@ -46,6 +46,12 @@
   <ItemGroup>
     <Compile Include="Conferences\Conference.cs" />
     <Compile Include="Conferences\Division.cs" />
+    <Compile Include="Experiments\ConferenceStrength.cs" />
+    <Compile Include="Experiments\Experiment.cs" />
+    <Compile Include="Experiments\GameStrength.cs" />
+    <Compile Include="Experiments\Performance.cs" />
+    <Compile Include="Experiments\ScheduleStrength.cs" />
+    <Compile Include="Experiments\WinStrength.cs" />
     <Compile Include="Games\CompletedGame.cs" />
     <Compile Include="Games\FutureGame.cs" />
     <Compile Include="Games\Game.cs" />
