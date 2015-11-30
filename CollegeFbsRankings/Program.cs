@@ -33,7 +33,7 @@ namespace CollegeFbsRankings
         private const string ConferenceDivisionPattern = @"^(.*) \((.*)\)$";
         private const string RankedTeamPattern = @"^\(([0-9+]+)\) (.*)$";
 
-        static void Main()
+        public static void Main()
         {
             #region Read FBS Teams
 
@@ -479,7 +479,7 @@ namespace CollegeFbsRankings
                 Console.WriteLine("WARNING: Potentially cancelled games were removed:");
                 foreach (var game in potentiallyCancelledGames)
                 {
-                    Console.WriteLine("    {0} Week {1} {2} vs. {3} - {4}",
+                    Console.WriteLine("    {0} Week {1,-2} {2} vs. {3} - {4}",
                         game.Key,
                         game.Week,
                         game.HomeTeam.Name,

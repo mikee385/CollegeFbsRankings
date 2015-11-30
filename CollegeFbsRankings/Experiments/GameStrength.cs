@@ -29,7 +29,7 @@ namespace CollegeFbsRankings.Experiments
                 return games.Select(game =>
                 {
                     var writer = new StringWriter();
-                    writer.WriteLine("Week {0} {1} vs. {2} ({3}):",
+                    writer.WriteLine("Week {0,-2} {1} vs. {2} ({3}):",
                         game.Week,
                         game.HomeTeam.Name,
                         game.AwayTeam.Name,
@@ -57,9 +57,15 @@ namespace CollegeFbsRankings.Experiments
 
                     var teamGameTotal = homeTeamData.GameTotal + awayTeamData.GameTotal;
                     var teamWinTotal = homeTeamData.WinTotal + awayTeamData.WinTotal;
-                    var teamWinValue = homeTeamData.WinValue + awayTeamData.WinValue;
+                    var teamPerformanceSum = homeTeamData.PerformanceValue * homeTeamData.GameTotal + 
+                                             awayTeamData.PerformanceValue * awayTeamData.GameTotal;
 
-                    var gameData = new Data(teamGameTotal, teamWinTotal, teamWinValue, String.Empty);
+                    var gameData = new Data(
+                        teamGameTotal, 
+                        teamWinTotal, 
+                        (teamGameTotal > 0) ? teamPerformanceSum / teamGameTotal : 0.0, 
+                        String.Empty);
+
                     var teamValue = gameData.TeamValue;
                     var opponentValue = gameData.OpponentValue;
                     var performanceValue = gameData.PerformanceValue;

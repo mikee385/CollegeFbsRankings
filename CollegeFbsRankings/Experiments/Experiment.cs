@@ -1,10 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 using CollegeFbsRankings.Games;
 using CollegeFbsRankings.Teams;
@@ -17,7 +15,6 @@ namespace CollegeFbsRankings.Experiments
         {
             public readonly int GameTotal;
             public readonly int WinTotal;
-            public readonly double WinValue;
 
             public readonly double PerformanceValue;
             public readonly double TeamValue;
@@ -25,15 +22,14 @@ namespace CollegeFbsRankings.Experiments
 
             public readonly string Summary;
 
-            public Data(int gameTotal, int winTotal, double winValue, string summary)
+            public Data(int gameTotal, int winTotal, double performanceValue, string summary)
             {
                 GameTotal = gameTotal;
                 WinTotal = winTotal;
-                WinValue = winValue;
 
-                PerformanceValue = (WinTotal + WinValue) / GameTotal;
-                TeamValue = (double)WinTotal / GameTotal;
-                OpponentValue = WinValue/GameTotal;
+                PerformanceValue = performanceValue;
+                TeamValue = (GameTotal > 0) ? (double)WinTotal / GameTotal : 0.0;
+                OpponentValue = PerformanceValue - TeamValue;
 
                 Summary = summary;
             }
@@ -52,97 +48,110 @@ namespace CollegeFbsRankings.Experiments
                 IEnumerable<Team> teams,
                 Func<Team, IEnumerable<ITeamCompletedGame>> teamGameFilter)
             {
-
-                var previousResults = teams.ToDictionary(team => team, team =>
+                var basicData = new Dictionary<Team, BasicData>();
+                foreach (var team in teams)
                 {
-                    var teamGames = teamGameFilter(team).ToList();
-                    var teamGameTotal = teamGames.Count();
-                    var teamWinTotal = teamGames.Won().Count();
+                    var index = basicData.Count;
+                    var games = teamGameFilter(team).ToList();
 
-                    return new Data(teamGameTotal, teamWinTotal, 0.0, String.Empty);
-                });
+                    basicData.Add(team, new BasicData(index, games));
+                }
 
-                var didConverge = false;
-                const int numIterations = 100;
-                for (int i = 0; i < numIterations; ++i)
+                var n = basicData.Count;
+                var a = new Matrix(n);
+                var b = new Vector(n);
+
+                foreach (var pair in basicData)
                 {
-                    var currentResults = new Dictionary<Team, Data>();
-                    foreach (var teamData in previousResults)
+                    var team = pair.Key;
+                    var teamData = pair.Value;
+
+                    a.Set(teamData.Index, teamData.Index, 1.0);
+                    b.Set(teamData.Index, teamData.WinPercentage);
+                    foreach (var game in teamData.Games.Won())
                     {
-                        var team = teamData.Key;
+                        var opponentIndex = basicData[game.Opponent].Index;
+                        var existingValue = a.Get(teamData.Index, opponentIndex);
 
-                        var teamGames = teamGameFilter(team).ToList();
-                        var teamGameTotal = teamGames.Count;
+                        a.Set(teamData.Index, opponentIndex, existingValue - (1.0 / teamData.GameTotal));
+                    }
+                }
 
-                        var teamWins = teamGames.Won().ToList();
-                        var teamWinTotal = teamWins.Count;
+                var luDecomp = a.LUDecompose();
+                var x = luDecomp.LUSolve(b);
 
-                        var writer = new StringWriter();
-                        writer.WriteLine(team.Name + " Games:");
-                        
-                        var teamWinValue = 0.0;
-                        if (teamGameTotal > 0)
+                var results = new Dictionary<Team, Data>();
+                foreach (var pair in basicData)
+                {
+                    var team = pair.Key;
+                    var teamData = pair.Value;
+                    
+                    var writer = new StringWriter();
+                    writer.WriteLine(team.Name + " Games:");
+                    
+                    if (teamData.GameTotal > 0)
+                    {
+                        var maxOpponentLength = teamData.Games.Max(game => game.Opponent.Name.Length);
+                        var maxTeamTitleLength = team.Name.Length + maxOpponentLength + 6;
+
+                        foreach (var game in teamData.Games)
                         {
-                            var maxOpponentLength = teamGames.Max(game => game.Opponent.Name.Length);
-                            var maxTeamTitleLength = team.Name.Length + maxOpponentLength + 6;
-                            
-                            foreach (var game in teamGames)
-                            {
-                                var opponentData = previousResults[game.Opponent];
-                                var opponentValue = (game.IsWin) ? opponentData.PerformanceValue : 0.0;
+                            var opponentData = basicData[game.Opponent];
+                            var opponentValue = (game.IsWin) ? x.Get(opponentData.Index) : 0.0;
 
-                                var teamTitle = String.Format("{0} beat {1}",
-                                    game.WinningTeam.Name,
-                                    game.LosingTeam.Name);
+                            var teamTitle = String.Format("{0} beat {1}",
+                                game.WinningTeam.Name,
+                                game.LosingTeam.Name);
 
-                                writer.WriteLine("    Week {0,-2} {1,-" + maxTeamTitleLength + "} = {2,2}-{3,2} ({4,2} / {5,2}) ({6:F8})",
-                                    game.Week,
-                                    teamTitle,
-                                    game.WinningTeamScore,
-                                    game.LosingTeamScore,
-                                    opponentData.WinTotal,
-                                    opponentData.GameTotal,
-                                    opponentValue);
-
-                                teamWinValue += opponentValue;
-                            }
+                            writer.WriteLine("    Week {0,-2} {1,-" + maxTeamTitleLength + "} = {2,2}-{3,2} ({4,2} / {5,2}) ({6:F8})",
+                                game.Week,
+                                teamTitle,
+                                game.WinningTeamScore,
+                                game.LosingTeamScore,
+                                opponentData.WinTotal,
+                                opponentData.GameTotal,
+                                opponentValue);
                         }
-                        else
-                        {
-                            writer.WriteLine("    [None]");
-                        }
-                        
-                        currentResults.Add(team, new Data(
-                            teamGameTotal, 
-                            teamWinTotal, 
-                            teamWinValue, 
+                    }
+                    else
+                    {
+                        writer.WriteLine("    [None]");
+                    }
+                    var performanceValue = x.Get(teamData.Index);
+
+                    results.Add(team, new Data(
+                            teamData.GameTotal,
+                            teamData.WinTotal,
+                            performanceValue,
                             writer.ToString()));
-                    }
-
-                    var maxDelta = currentResults.Max(pair =>
-                    {
-                        var team = pair.Key;
-                        var currentValue = pair.Value.PerformanceValue;
-                        var previousValue = previousResults[team].PerformanceValue;
-
-                        return Math.Abs(previousValue - currentValue);
-                    });
-
-                    previousResults = currentResults;
-
-                    if (maxDelta < 1.0e-9)
-                    {
-                        didConverge = true;
-                        break;
-                    }
                 }
 
-                if (!didConverge)
+                return results;
+            }
+
+            private class BasicData
+            {
+                public readonly int Index;
+                public readonly IReadOnlyList<ITeamCompletedGame> Games;
+
+                public readonly int GameTotal;
+                public readonly int WinTotal;
+
+                public readonly double WinPercentage;
+
+                public BasicData(int index, IReadOnlyList<ITeamCompletedGame> games)
                 {
-                    throw new Exception("Unable to converge to a solution.");
-                }
+                    Index = index;
+                    Games = games;
 
-                return previousResults;
+                    GameTotal = Games.Count;
+                    WinTotal = Games.Won().Count();
+
+                    if (GameTotal > 0)
+                        WinPercentage = (double)WinTotal / GameTotal;
+                    else
+                        WinPercentage = 0.0;
+                }
             }
         }
     }

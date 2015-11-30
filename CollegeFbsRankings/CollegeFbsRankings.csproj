@@ -58,6 +58,8 @@
     <Compile Include="Games\TeamCompletedGame.cs" />
     <Compile Include="Games\TeamFutureGame.cs" />
     <Compile Include="Games\TeamGame.cs" />
+    <Compile Include="Experiments\Internal\Matrix.cs" />
+    <Compile Include="Experiments\Internal\Vector.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rankings\ConferenceStrength.cs" />

@@ -51,7 +51,7 @@ namespace CollegeFbsRankings.Rankings
                             opponentGameTotal += opponentData.GameTotal;
                             opponentWinTotal += opponentData.WinTotal;
 
-                            writer.WriteLine("    Week {0} {1} vs. {2} ({3} / {4})",
+                            writer.WriteLine("    Week {0,-2} {1} vs. {2} ({3} / {4})",
                                 game.Week,
                                 game.HomeTeam.Name,
                                 game.AwayTeam.Name,

@@ -307,7 +307,7 @@ namespace CollegeFbsRankings_Legacy
                 var opponentTeamName = isWin ? game.LosingTeamName : game.WinningTeamName;
                 var opponentFbsData = data[opponentTeamName];
 
-                Console.WriteLine("    Week {0} {1} beat {3} = {2}-{4} ({5} / {6})",
+                Console.WriteLine("    Week {0,-2} {1} beat {3} = {2}-{4} ({5} / {6})",
                     game.Week,
                     game.WinningTeamName,
                     game.WinningTeamScore,

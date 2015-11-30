@@ -20,6 +20,7 @@ namespace CollegeFbsRankings.Experiments
                     var teamData = performanceData[team];
 
                     var opponentValue = teamData.OpponentValue;
+                    var teamValue = teamData.TeamValue;
 
                     var writer = new StringWriter();
                     writer.WriteLine(teamData.Summary);
@@ -28,7 +29,8 @@ namespace CollegeFbsRankings.Experiments
                     return new Ranking.TeamValue(team,
                         new[]
                         {
-                            opponentValue
+                            opponentValue,
+                            teamValue
                         },
                         new IComparable[]
                         {

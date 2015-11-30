@@ -43,7 +43,7 @@ namespace CollegeFbsRankings.Experiments
 
                     var scheduleGameTotal = 0;
                     var scheduleWinTotal = 0;
-                    var scheduleWinValue = 0.0;
+                    var schedulePerformanceSum = 0.0;
 
                     if (teamGames.Count > 0)
                     {
@@ -57,7 +57,7 @@ namespace CollegeFbsRankings.Experiments
                             {
                                 scheduleGameTotal += opponentData.GameTotal;
                                 scheduleWinTotal += opponentData.WinTotal;
-                                scheduleWinValue += opponentData.WinValue;
+                                schedulePerformanceSum += opponentData.PerformanceValue * opponentData.GameTotal;
 
                                 var teamTitle = String.Format("{0} vs. {1}",
                                     game.HomeTeam.Name,
@@ -77,8 +77,13 @@ namespace CollegeFbsRankings.Experiments
                         writer.WriteLine("    [None]");
                     }
                     writer.WriteLine();
+                    
+                    var scheduleData = new Data(
+                        scheduleGameTotal, 
+                        scheduleWinTotal,
+                        (scheduleGameTotal > 0) ? schedulePerformanceSum / scheduleGameTotal : 0.0, 
+                        String.Empty);
 
-                    var scheduleData = new Data(scheduleGameTotal, scheduleWinTotal, scheduleWinValue, String.Empty);
                     var teamValue = scheduleData.TeamValue;
                     var opponentValue = scheduleData.OpponentValue;
                     var performanceValue = scheduleData.PerformanceValue;

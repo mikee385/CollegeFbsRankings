@@ -25,7 +25,7 @@ namespace CollegeFbsRankings.Experiments
 
                     var teamGameTotal = 0;
                     var teamWinTotal = 0;
-                    var teamWinValue = 0.0;
+                    var teamPerformanceSum = 0.0;
                     
                     foreach (var team in conference.Teams.OrderBy(t => t.Name))
                     {
@@ -33,7 +33,7 @@ namespace CollegeFbsRankings.Experiments
 
                         teamGameTotal += teamData.GameTotal;
                         teamWinTotal += teamData.WinTotal;
-                        teamWinValue += teamData.WinValue;
+                        teamPerformanceSum += teamData.PerformanceValue * teamData.GameTotal;
 
                         writer.WriteLine("    {0,-" + maxTeamLength + "}: Team = {1:F8} ({2,2} / {3,2}), Opponent = {4:F8}",
                             team.Name,
@@ -43,7 +43,12 @@ namespace CollegeFbsRankings.Experiments
                             teamData.OpponentValue);
                     }
 
-                    var conferenceData = new Data(teamGameTotal, teamWinTotal, teamWinValue, String.Empty);
+                    var conferenceData = new Data(
+                        teamGameTotal, 
+                        teamWinTotal, 
+                        (teamGameTotal > 0) ? teamPerformanceSum / teamGameTotal : 0.0, 
+                        String.Empty);
+
                     var teamValue = conferenceData.TeamValue;
                     var opponentValue = conferenceData.OpponentValue;
                     var performanceValue = conferenceData.PerformanceValue;
