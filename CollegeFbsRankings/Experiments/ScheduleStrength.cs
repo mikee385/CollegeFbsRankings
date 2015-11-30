@@ -41,10 +41,7 @@ namespace CollegeFbsRankings.Experiments
 
                     var teamGames = teamGameFilter(team.Games).ToList();
 
-                    var scheduleGameTotal = 0;
-                    var scheduleWinTotal = 0;
-                    var schedulePerformanceSum = 0.0;
-
+                    var scheduleData = new Data(0, 0, 0.0, String.Empty);
                     if (teamGames.Count > 0)
                     {
                         var maxOpponentLength = teamGames.Max(game => game.Opponent.Name.Length);
@@ -55,10 +52,6 @@ namespace CollegeFbsRankings.Experiments
                             Data opponentData;
                             if (performanceData.TryGetValue(game.Opponent, out opponentData))
                             {
-                                scheduleGameTotal += opponentData.GameTotal;
-                                scheduleWinTotal += opponentData.WinTotal;
-                                schedulePerformanceSum += opponentData.PerformanceValue * opponentData.GameTotal;
-
                                 var teamTitle = String.Format("{0} vs. {1}",
                                     game.HomeTeam.Name,
                                     game.AwayTeam.Name);
@@ -69,6 +62,8 @@ namespace CollegeFbsRankings.Experiments
                                     opponentData.WinTotal,
                                     opponentData.GameTotal,
                                     opponentData.PerformanceValue);
+
+                                scheduleData = Data.Combine(scheduleData, opponentData);
                             }
                         }
                     }
@@ -77,19 +72,15 @@ namespace CollegeFbsRankings.Experiments
                         writer.WriteLine("    [None]");
                     }
                     writer.WriteLine();
-                    
-                    var scheduleData = new Data(
-                        scheduleGameTotal, 
-                        scheduleWinTotal,
-                        (scheduleGameTotal > 0) ? schedulePerformanceSum / scheduleGameTotal : 0.0, 
-                        String.Empty);
 
+                    var gameTotal = scheduleData.GameTotal;
+                    var winTotal = scheduleData.WinTotal;
                     var teamValue = scheduleData.TeamValue;
                     var opponentValue = scheduleData.OpponentValue;
                     var performanceValue = scheduleData.PerformanceValue;
 
                     writer.WriteLine();
-                    writer.WriteLine("Team Value    : {0:F8} ({1} / {2})", teamValue, scheduleWinTotal, scheduleGameTotal);
+                    writer.WriteLine("Team Value    : {0:F8} ({1} / {2})", teamValue, winTotal, gameTotal);
                     writer.WriteLine("Opponent Value: {0:F8}", opponentValue);
                     writer.WriteLine("Performance   : {0:F8}", performanceValue);
 

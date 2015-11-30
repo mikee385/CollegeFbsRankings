@@ -34,6 +34,18 @@ namespace CollegeFbsRankings.Experiments
                 Summary = summary;
             }
 
+            public static Data Combine(Data data1, Data data2)
+            {
+                var gameTotal = data1.GameTotal + data2.GameTotal;
+                var winTotal = data1.WinTotal + data2.WinTotal;
+
+                var performanceValue = (gameTotal > 0)
+                    ? (data1.PerformanceValue * data1.GameTotal + data2.PerformanceValue * data2.GameTotal) / gameTotal
+                    : 0.0;
+
+                return new Data(gameTotal, winTotal, performanceValue, String.Empty);
+            }
+
             public static Dictionary<Team, Data> Overall(IEnumerable<Team> teams, int week)
             {
                 return Get(teams, t => t.Games.Where(g => g.Week <= week).Completed());

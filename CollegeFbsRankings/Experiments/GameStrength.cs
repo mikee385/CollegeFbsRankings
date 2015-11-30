@@ -55,23 +55,16 @@ namespace CollegeFbsRankings.Experiments
                         awayTeamData.GameTotal,
                         awayTeamData.OpponentValue);
 
-                    var teamGameTotal = homeTeamData.GameTotal + awayTeamData.GameTotal;
-                    var teamWinTotal = homeTeamData.WinTotal + awayTeamData.WinTotal;
-                    var teamPerformanceSum = homeTeamData.PerformanceValue * homeTeamData.GameTotal + 
-                                             awayTeamData.PerformanceValue * awayTeamData.GameTotal;
+                    var gameData = Data.Combine(homeTeamData, awayTeamData);
 
-                    var gameData = new Data(
-                        teamGameTotal, 
-                        teamWinTotal, 
-                        (teamGameTotal > 0) ? teamPerformanceSum / teamGameTotal : 0.0, 
-                        String.Empty);
-
+                    var gameTotal = gameData.GameTotal;
+                    var winTotal = gameData.WinTotal;
                     var teamValue = gameData.TeamValue;
                     var opponentValue = gameData.OpponentValue;
                     var performanceValue = gameData.PerformanceValue;
 
                     writer.WriteLine();
-                    writer.WriteLine("Team Value    : {0:F8} ({1} / {2})", teamValue, teamWinTotal, teamGameTotal);
+                    writer.WriteLine("Team Value    : {0:F8} ({1} / {2})", teamValue, winTotal, gameTotal);
                     writer.WriteLine("Opponent Value: {0:F8}", opponentValue);
                     writer.WriteLine("Performance   : {0:F8}", performanceValue);
 

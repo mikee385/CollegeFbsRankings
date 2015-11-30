@@ -23,17 +23,10 @@ namespace CollegeFbsRankings.Experiments
 
                     var maxTeamLength = conference.Teams.Max(team => team.Name.Length);
 
-                    var teamGameTotal = 0;
-                    var teamWinTotal = 0;
-                    var teamPerformanceSum = 0.0;
-                    
+                    var conferenceData = new Data(0, 0, 0.0, String.Empty);                    
                     foreach (var team in conference.Teams.OrderBy(t => t.Name))
                     {
                         var teamData = performanceData[team];
-
-                        teamGameTotal += teamData.GameTotal;
-                        teamWinTotal += teamData.WinTotal;
-                        teamPerformanceSum += teamData.PerformanceValue * teamData.GameTotal;
 
                         writer.WriteLine("    {0,-" + maxTeamLength + "}: Team = {1:F8} ({2,2} / {3,2}), Opponent = {4:F8}",
                             team.Name,
@@ -41,20 +34,18 @@ namespace CollegeFbsRankings.Experiments
                             teamData.WinTotal,
                             teamData.GameTotal,
                             teamData.OpponentValue);
+
+                        conferenceData = Data.Combine(conferenceData, teamData);
                     }
 
-                    var conferenceData = new Data(
-                        teamGameTotal, 
-                        teamWinTotal, 
-                        (teamGameTotal > 0) ? teamPerformanceSum / teamGameTotal : 0.0, 
-                        String.Empty);
-
+                    var gameTotal = conferenceData.GameTotal;
+                    var winTotal = conferenceData.WinTotal;
                     var teamValue = conferenceData.TeamValue;
                     var opponentValue = conferenceData.OpponentValue;
                     var performanceValue = conferenceData.PerformanceValue;
 
                     writer.WriteLine();
-                    writer.WriteLine("Team Value    : {0:F8} ({1} / {2})", teamValue, teamWinTotal, teamGameTotal);
+                    writer.WriteLine("Team Value    : {0:F8} ({1} / {2})", teamValue, winTotal, gameTotal);
                     writer.WriteLine("Opponent Value: {0:F8}", opponentValue);
                     writer.WriteLine("Performance   : {0:F8}", performanceValue);
 
