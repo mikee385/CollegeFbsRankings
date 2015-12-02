@@ -80,7 +80,8 @@ namespace CollegeFbsRankings.Experiments
 
                     a.Set(teamData.Index, teamData.Index, 1.0);
                     b.Set(teamData.Index, teamData.WinPercentage);
-                    foreach (var game in teamData.Games.Won())
+                    
+                    foreach (var game in teamData.Games.Fbs().Won())
                     {
                         var opponentIndex = basicData[game.Opponent].Index;
                         var existingValue = a.Get(teamData.Index, opponentIndex);
@@ -109,7 +110,9 @@ namespace CollegeFbsRankings.Experiments
                         foreach (var game in teamData.Games)
                         {
                             var opponentData = basicData[game.Opponent];
-                            var opponentValue = (game.IsWin) ? x.Get(opponentData.Index) : 0.0;
+                            var opponentValue = (game.IsWin && game.Opponent is FbsTeam) 
+                                ? x.Get(opponentData.Index) 
+                                : 0.0;
 
                             var teamTitle = String.Format("{0} beat {1}",
                                 game.WinningTeam.Name,
