@@ -826,12 +826,20 @@ Rk,Wk,Date,Time,Day,Winner/Tie,Pts,,Loser/Tie,Pts,TV,Notes
 813,13,Nov 28 2015,3:30 PM,Sat,Wisconsin,31,@,Minnesota,21,,
 814,13,Nov 28 2015,2:00 PM,Sat,Wyoming,35,,Nevada-Las Vegas,28,,
 Rk,Wk,Date,Time,Day,Winner/Tie,Pts,,Loser/Tie,Pts,TV,Notes
-815,14,Dec 5 2015,12:00 PM,Sat,Appalachian State,,@,South Alabama,,,
-816,14,Dec 5 2015,2:00 PM,Sat,Georgia State,,@,Georgia Southern,,,
-817,14,Dec 5 2015,3:00 PM,Sat,New Mexico State,,@,Louisiana-Monroe,,,
-818,14,Dec 5 2015,12:00 PM,Sat,Texas,,@,(7) Baylor,,,
-819,14,Dec 5 2015,12:00 PM,Sat,Texas State,,@,Arkansas State,,,
-820,14,Dec 5 2015,12:00 PM,Sat,Troy,,@,Louisiana-Lafayette,,,
-821,14,Dec 5 2015,12:00 PM,Sat,West Virginia,,@,Kansas State,,,
+815,14,Dec 4 2015,8:00 PM,Fri,Northern Illinois,,,Bowling Green State,,,Ford Field - Detroit Michigan
+816,14,Dec 5 2015,12:00 PM,Sat,Appalachian State,,@,South Alabama,,,
+817,14,Dec 5 2015,4:00 PM,Sat,(10) Florida,,,(2) Alabama,,,Georgia Dome - Atlanta Georgia
+818,14,Dec 5 2015,2:00 PM,Sat,Georgia State,,@,Georgia Southern,,,
+819,14,Dec 5 2015,12:00 PM,Sat,(21) Houston,,@,(25) Temple,,,
+820,14,Dec 5 2015,8:00 PM,Sat,(6) Michigan State,,,(3) Iowa,,,Lucas Oil Stadium - Indianapolis Indiana
+821,14,Dec 5 2015,3:00 PM,Sat,New Mexico State,,@,Louisiana-Monroe,,,
+822,14,Dec 5 2015,8:00 PM,Sat,(11) North Carolina,,,(1) Clemson,,,Bank of America Stadium - Charlotte North Carolina
+823,14,Dec 5 2015,7:30 PM,Sat,San Diego State,,@,Air Force,,,
+824,14,Dec 5 2015,7:45 PM,Sat,(13) Stanford,,,Southern California,,,Levi's Stadium - Santa Clara California
+825,14,Dec 5 2015,12:00 PM,Sat,Texas,,@,(7) Baylor,,,
+826,14,Dec 5 2015,12:00 PM,Sat,Texas State,,@,Arkansas State,,,
+827,14,Dec 5 2015,12:00 PM,Sat,Troy,,@,Louisiana-Lafayette,,,
+828,14,Dec 5 2015,12:00 PM,Sat,West Virginia,,@,Kansas State,,,
+829,14,Dec 5 2015,12:00 PM,Sat,Western Kentucky,,@,Southern Mississippi,,,
 Rk,Wk,Date,Time,Day,Winner/Tie,Pts,,Loser/Tie,Pts,TV,Notes
-822,15,Dec 12 2015,3:00 PM,Sat,(16) Navy,,,Army,,,Lincoln Financial Field - Philadelphia Pennsylvania
+830,15,Dec 12 2015,3:00 PM,Sat,(16) Navy,,,Army,,,Lincoln Financial Field - Philadelphia Pennsylvania
