@@ -9,20 +9,13 @@ namespace CollegeFbsRankings.Teams
 {
     public abstract class Team
     {
-        private readonly int _key;
         private readonly string _name;
         private readonly List<ITeamGame> _games;
 
-        protected Team(int key, string name)
+        protected Team(string name)
         {
-            _key = key;
             _name = name;
             _games = new List<ITeamGame>();
-        }
-
-        public int Key
-        {
-            get { return _key; }
         }
 
         public string Name

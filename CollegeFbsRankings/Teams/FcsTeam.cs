@@ -7,8 +7,8 @@ namespace CollegeFbsRankings.Teams
 {
     public class FcsTeam : Team
     {
-        public FcsTeam(int key, string name)
-            : base(key, name)
+        public FcsTeam(string name)
+            : base(name)
         { }
     }
 }

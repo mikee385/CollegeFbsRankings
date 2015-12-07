@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
 
 using CollegeFbsRankings.Conferences;
 using CollegeFbsRankings.Experiments;
@@ -17,7 +16,7 @@ namespace CollegeFbsRankings
 {
     class Program
     {
-        private const string Year = "2015";
+        private const string Year = "2014";
 
         #region Directories and File Names
 
@@ -25,7 +24,6 @@ namespace CollegeFbsRankings
         private const string ResultsFolder = @"..\..\Results";
 
         private static readonly string FbsTeamFileName = Path.Combine(DataFolder, Year, "FBS Teams.txt");
-        private static readonly string FcsTeamFileName = Path.Combine(DataFolder, Year, "FCS Teams.txt");
         private static readonly string GameFileName = Path.Combine(DataFolder, Year, "FBS Scores.txt");
 
         #endregion
@@ -43,8 +41,6 @@ namespace CollegeFbsRankings
             var skippedFbsTeamLines = new List<String>();
 
             var conferenceDivisionRegex = new Regex(ConferenceDivisionPattern);
-            var conferenceKey = 0;
-            var divisionKey = 0;
 
             String line;
             while ((line = fbsTeamFile.ReadLine()) != null)
@@ -53,7 +49,6 @@ namespace CollegeFbsRankings
                 {
                     var lineSplit = line.Split(',');
 
-                    var key = Convert.ToInt32(lineSplit[0]);
                     var name = lineSplit[1];
                     var conferenceNameString = lineSplit[2];
 
@@ -73,9 +68,7 @@ namespace CollegeFbsRankings
                     var conference = fbsConferences.SingleOrDefault(c => c.Name == conferenceName);
                     if (conference == null)
                     {
-                        Interlocked.Increment(ref conferenceKey);
-
-                        conference = new Conference<FbsTeam>(conferenceKey, conferenceName);
+                        conference = new Conference<FbsTeam>(conferenceName);
                         fbsConferences.Add(conference);
                     }
 
@@ -85,9 +78,7 @@ namespace CollegeFbsRankings
                         division = conference.Divisions.SingleOrDefault(d => d.Name == divisionName);
                         if (division == null)
                         {
-                            Interlocked.Increment(ref divisionKey);
-
-                            division = new Division<FbsTeam>(divisionKey, divisionName);
+                            division = new Division<FbsTeam>(divisionName);
                             conference.AddDivision(division);
                         }
                     }
@@ -96,7 +87,7 @@ namespace CollegeFbsRankings
                         division = null;
                     }
 
-                    var team = new FbsTeam(key, name, conference, division);
+                    var team = new FbsTeam(name, conference, division);
                     fbsTeams.Add(team);
 
                     if (division != null)
@@ -151,38 +142,14 @@ namespace CollegeFbsRankings
             //Console.WriteLine();
 
             #endregion
-
-            #region Read FCS Teams
-
-            var fcsTeamFile = new StreamReader(FcsTeamFileName);
-            var fcsTeams = new List<FcsTeam>();
-
-            var count = 0;
-            while ((line = fcsTeamFile.ReadLine()) != null)
-            {
-                ++count;
-
-                fcsTeams.Add(new FcsTeam(count, line));
-            }
-
-            //Console.WriteLine("Number of FCS Teams = {0}", fcsTeams.Count);
-            //foreach (var team in fcsTeams)
-            //{
-            //    Console.WriteLine(String.Join(",",
-            //        team.Key,
-            //        team.Name));
-            //}
-            //Console.WriteLine();
-
-            #endregion
-
-            var allTeams = fbsTeams.Cast<Team>().Concat(fcsTeams).ToList();
-
+            
             #region Read Games
 
             var gameFile = new StreamReader(GameFileName);
             var games = new List<IGame>();
             var skippedGameLines = new List<String>();
+
+            var fcsTeams = new List<FcsTeam>();
 
             var rankedTeamRegex = new Regex(RankedTeamPattern);
 
@@ -272,9 +239,10 @@ namespace CollegeFbsRankings
 
                     if (firstFbsTeams.Count < 1 && firstFcsTeams.Count < 1)
                     {
-                        throw new Exception(String.Format(
-                            "Unable to find a team with the name \"{2}\" on line {0}\n\t{1}",
-                            lineCount, line, firstTeamName));
+                        var fcsTeam = new FcsTeam(firstTeamName);
+
+                        fcsTeams.Add(fcsTeam);
+                        firstFcsTeams.Add(fcsTeam);
                     }
 
                     Team firstTeam;
@@ -345,9 +313,10 @@ namespace CollegeFbsRankings
 
                     if (secondFbsTeams.Count < 1 && secondFcsTeams.Count < 1)
                     {
-                        throw new Exception(String.Format(
-                            "Unable to find a team with the name \"{2}\" on line {0}\n\t{1}",
-                            lineCount, line, secondTeamName));
+                        var fcsTeam = new FcsTeam(secondTeamName);
+
+                        fcsTeams.Add(fcsTeam);
+                        secondFcsTeams.Add(fcsTeam);
                     }
 
                     Team secondTeam;
@@ -381,7 +350,7 @@ namespace CollegeFbsRankings
                         secondTeamScore = 0;
                     }
 
-                    if (firstTeam.Key == secondTeam.Key)
+                    if (firstTeam.Name == secondTeam.Name)
                     {
                         throw new Exception(String.Format(
                             "First team name \"{2}\" and second team name \"{3}\" are the same on line {0}\n\t{1}",
@@ -444,8 +413,18 @@ namespace CollegeFbsRankings
                 }
             }
 
+            //Console.WriteLine("Number of FCS Teams = {0}", fcsTeams.Count);
+            //foreach (var team in fcsTeams)
+            //{
+            //    Console.WriteLine(String.Join(",",
+            //        team.Key,
+            //        team.Name));
+            //}
+            //Console.WriteLine();
+
             #endregion
 
+            var allTeams = fbsTeams.Cast<Team>().Concat(fcsTeams).ToList();
             var currentWeek = games.Completed().Max(game => game.Week);
 
             #region Remove Cancelled Games

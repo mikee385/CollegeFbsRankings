@@ -27,9 +27,9 @@ namespace CollegeFbsRankings.Games
         {
             _game = game;
 
-            if (game.WinningTeam.Key == team.Key)
+            if (game.WinningTeam.Name == team.Name)
                 _isWin = true;
-            else if (game.LosingTeam.Key == team.Key)
+            else if (game.LosingTeam.Name == team.Name)
                 _isWin = false;
             else
             {
@@ -84,12 +84,12 @@ namespace CollegeFbsRankings.Games
 
         public static IEnumerable<T> Won<T>(this IEnumerable<T> games) where T : ITeamCompletedGame
         {
-            return games.Where(g => g.WinningTeam.Key == g.Team.Key);
+            return games.Where(g => g.WinningTeam.Name == g.Team.Name);
         }
 
         public static IEnumerable<T> Lost<T>(this IEnumerable<T> games) where T : ITeamCompletedGame
         {
-            return games.Where(g => g.LosingTeam.Key == g.Team.Key);
+            return games.Where(g => g.LosingTeam.Name == g.Team.Name);
         }
     }
 }

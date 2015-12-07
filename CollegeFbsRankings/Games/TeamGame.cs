@@ -25,10 +25,10 @@ namespace CollegeFbsRankings.Games
         {
             _team = team;
             _game = game;
-            
-            if (game.HomeTeam.Key == team.Key)
+
+            if (game.HomeTeam.Name == team.Name)
                 _opponent = game.AwayTeam;
-            else if (game.AwayTeam.Key == team.Key)
+            else if (game.AwayTeam.Name == team.Name)
                 _opponent = game.HomeTeam;
             else
             {
@@ -93,12 +93,12 @@ namespace CollegeFbsRankings.Games
     {
         public static IEnumerable<T> Home<T>(this IEnumerable<T> games) where T : ITeamGame
         {
-            return games.Where(g => g.HomeTeam.Key == g.Team.Key);
+            return games.Where(g => g.HomeTeam.Name == g.Team.Name);
         }
 
         public static IEnumerable<T> Away<T>(this IEnumerable<T> games) where T : ITeamGame
         {
-            return games.Where(g => g.AwayTeam.Key == g.Team.Key);
+            return games.Where(g => g.AwayTeam.Name == g.Team.Name);
         }
     }
 }

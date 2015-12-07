@@ -231,8 +231,8 @@ namespace CollegeFbsRankings.Rankings
 
         public static IEnumerable<TeamValue> ForTeams(this IEnumerable<TeamValue> ranking, IReadOnlyList<Team> teams)
         {
-            var teamKeys = teams.Select(team => team.Key).ToList();
-            return ranking.Where(rank => teamKeys.Contains(rank.Team.Key));
+            var teamNames = teams.Select(team => team.Name).ToList();
+            return ranking.Where(rank => teamNames.Contains(rank.Team.Name));
         }
 
         public static IEnumerable<GameValue> ForGames(this IEnumerable<GameValue> ranking, IReadOnlyList<Game> games)

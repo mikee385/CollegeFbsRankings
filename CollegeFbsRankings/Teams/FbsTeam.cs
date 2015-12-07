@@ -12,8 +12,8 @@ namespace CollegeFbsRankings.Teams
         private readonly Conference<FbsTeam> _conference;
         private readonly Division<FbsTeam> _division;
 
-        public FbsTeam(int key, string name, Conference<FbsTeam> conference, Division<FbsTeam> division)
-            : base(key, name)
+        public FbsTeam(string name, Conference<FbsTeam> conference, Division<FbsTeam> division)
+            : base(name)
         {
             _conference = conference;
             _division = division;

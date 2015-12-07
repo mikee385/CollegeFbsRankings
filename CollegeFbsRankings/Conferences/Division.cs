@@ -9,20 +9,13 @@ namespace CollegeFbsRankings.Conferences
 {
     public class Division<TTeam> where TTeam : Team
     {
-        private readonly int _key;
         private readonly string _name;
         private readonly List<TTeam> _teams;
 
-        public Division(int key, string name)
+        public Division(string name)
         {
-            _key = key;
             _name = name;
             _teams = new List<TTeam>();
-        }
-
-        public int Key
-        {
-            get { return _key; }
         }
 
         public string Name
@@ -42,7 +35,7 @@ namespace CollegeFbsRankings.Conferences
 
         public void RemoveTeam(TTeam team)
         {
-            _teams.RemoveAll(t => t.Key == team.Key);
+            _teams.RemoveAll(t => t.Name == team.Name);
         }
     }
 }

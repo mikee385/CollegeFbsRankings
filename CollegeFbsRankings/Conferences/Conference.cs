@@ -9,22 +9,15 @@ namespace CollegeFbsRankings.Conferences
 {
     public class Conference<TTeam> where TTeam : Team
     {
-        private readonly int _key;
         private readonly string _name;
         private readonly List<TTeam> _teams;
         private readonly List<Division<TTeam>> _divisions;
 
-        public Conference(int key, string name)
+        public Conference(string name)
         {
-            _key = key;
             _name = name;
             _teams = new List<TTeam>();
             _divisions = new List<Division<TTeam>>();
-        }
-
-        public int Key
-        {
-            get { return _key; }
         }
 
         public string Name
@@ -58,7 +51,7 @@ namespace CollegeFbsRankings.Conferences
         public void RemoveTeam(TTeam team)
         {
             if (!_divisions.Any())
-                _teams.RemoveAll(t => t.Key == team.Key);
+                _teams.RemoveAll(t => t.Name == team.Name);
             else
             {
                 foreach (var division in _divisions)
