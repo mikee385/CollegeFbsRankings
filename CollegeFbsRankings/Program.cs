@@ -16,15 +16,39 @@ namespace CollegeFbsRankings
 {
     class Program
     {
-        private const string Year = "2014";
+        private const int Year = 2015;
+
+        private static readonly Dictionary<int, int> RegularSeasonWeeksPerYear = new Dictionary<int, int>
+        {
+            {2015, 15},
+            {2014, 16},
+            {2013, 16},
+            {2012, 15},
+            {2011, 15},
+            {2010, 15},
+            {2009, 15},
+            {2008, 15},
+            {2007, 14},
+            {2006, 14},
+            {2005, 14},
+            {2004, 15},
+            {2003, 16},
+            {2002, 16},
+            {2001, 15},
+            {2000, 15},
+            {1999, 15},
+            {1998, 15}
+        };
+
 
         #region Directories and File Names
 
         private const string DataFolder = @"..\..\..\Data";
         private const string ResultsFolder = @"..\..\Results";
 
-        private static readonly string FbsTeamFileName = Path.Combine(DataFolder, Year, "FBS Teams.txt");
-        private static readonly string GameFileName = Path.Combine(DataFolder, Year, "FBS Scores.txt");
+        private static readonly string YearString = Convert.ToString(Year);
+        private static readonly string FbsTeamFileName = Path.Combine(DataFolder, YearString, "FBS Teams.txt");
+        private static readonly string GameFileName = Path.Combine(DataFolder, YearString, "FBS Scores.txt");
 
         #endregion
 
@@ -38,11 +62,11 @@ namespace CollegeFbsRankings
             var fbsTeamFile = new StreamReader(FbsTeamFileName);
             var fbsTeams = new List<FbsTeam>();
             var fbsConferences = new List<Conference<FbsTeam>>();
-            var skippedFbsTeamLines = new List<String>();
+            var skippedFbsTeamLines = new List<string>();
 
             var conferenceDivisionRegex = new Regex(ConferenceDivisionPattern);
 
-            String line;
+            string line;
             while ((line = fbsTeamFile.ReadLine()) != null)
             {
                 if (Char.IsDigit(line[0]))
@@ -147,9 +171,12 @@ namespace CollegeFbsRankings
 
             var gameFile = new StreamReader(GameFileName);
             var games = new List<IGame>();
-            var skippedGameLines = new List<String>();
+            var skippedGameLines = new List<string>();
 
             var fcsTeams = new List<FcsTeam>();
+
+            var regularSeasonWeeks = RegularSeasonWeeksPerYear[Year];
+            var bowlGames = new List<IGame>();
 
             var rankedTeamRegex = new Regex(RankedTeamPattern);
 
@@ -161,32 +188,77 @@ namespace CollegeFbsRankings
                 if (Char.IsDigit(line[0]))
                 {
                     var lineSplit = line.Split(',');
+                    
+                    string keyString;
+                    string weekString;
+                    string dateString;
+                    string timeString;
+                    string weekDayString;
+                    string firstTeamNameString;
+                    string firstTeamScoreString;
+                    string homeVsAwaySymbolString;
+                    string secondTeamNameString;
+                    string secondTeamScoreString;
+                    string tvString;
+                    string notesString;
 
-                    if (lineSplit.Length > 12)
+                    if (lineSplit.Length == 12)
+                    {
+                        keyString = lineSplit[0];
+                        weekString = lineSplit[1];
+                        dateString = lineSplit[2];
+                        timeString = lineSplit[3];
+                        weekDayString = lineSplit[4];
+                        firstTeamNameString = lineSplit[5];
+                        firstTeamScoreString = lineSplit[6];
+                        homeVsAwaySymbolString = lineSplit[7];
+                        secondTeamNameString = lineSplit[8];
+                        secondTeamScoreString = lineSplit[9];
+                        tvString = lineSplit[10];
+                        notesString = lineSplit[11];
+                    }
+                    else if (lineSplit.Length == 11)
+                    {
+                        keyString = lineSplit[0];
+                        weekString = lineSplit[1];
+                        dateString = lineSplit[2];
+                        timeString = lineSplit[3];
+                        weekDayString = lineSplit[4];
+                        firstTeamNameString = lineSplit[5];
+                        firstTeamScoreString = lineSplit[6];
+                        homeVsAwaySymbolString = lineSplit[7];
+                        secondTeamNameString = lineSplit[8];
+                        secondTeamScoreString = lineSplit[9];
+                        tvString = String.Empty;
+                        notesString = lineSplit[10];
+                    }
+                    else if (lineSplit.Length == 10)
+                    {
+                        keyString = lineSplit[0];
+                        weekString = lineSplit[1];
+                        dateString = lineSplit[2];
+                        timeString = String.Empty;
+                        weekDayString = lineSplit[3];
+                        firstTeamNameString = lineSplit[4];
+                        firstTeamScoreString = lineSplit[5];
+                        homeVsAwaySymbolString = lineSplit[6];
+                        secondTeamNameString = lineSplit[7];
+                        secondTeamScoreString = lineSplit[8];
+                        tvString = String.Empty;
+                        notesString = lineSplit[9];
+                    }
+                    else if (lineSplit.Length > 12)
                     {
                         throw new Exception(String.Format(
                             "Too many items on line {0}\n\t{1}",
                             lineCount, line));
                     }
-                    if (lineSplit.Length < 12)
+                    else
                     {
                         throw new Exception(String.Format(
                             "Too few items on line {0}\n\t{1}",
                             lineCount, line));
                     }
-
-                    var keyString = lineSplit[0];
-                    var weekString = lineSplit[1];
-                    var dateString = lineSplit[2];
-                    var timeString = lineSplit[3];
-                    var weekDayString = lineSplit[4];
-                    var firstTeamNameString = lineSplit[5];
-                    var firstTeamScoreString = lineSplit[6];
-                    var homeVsAwaySymbolString = lineSplit[7];
-                    var secondTeamNameString = lineSplit[8];
-                    var secondTeamScoreString = lineSplit[9];
-                    var tvString = lineSplit[10];
-                    var notesString = lineSplit[11];
 
                     int key;
                     if (!Int32.TryParse(keyString, out key))
@@ -214,7 +286,7 @@ namespace CollegeFbsRankings
 
                     // Weekday is ignored, since the DateTime already holds that information.
 
-                    String firstTeamName;
+                    string firstTeamName;
                     var firstTeamMatch = rankedTeamRegex.Match(firstTeamNameString);
                     if (firstTeamMatch.Success)
                         firstTeamName = firstTeamMatch.Groups[2].Captures[0].Value;
@@ -288,7 +360,7 @@ namespace CollegeFbsRankings
                             lineCount, line, homeVsAwaySymbolString));
                     }
 
-                    String secondTeamName;
+                    string secondTeamName;
                     var secondTeamMatch = rankedTeamRegex.Match(secondTeamNameString);
                     if (secondTeamMatch.Success)
                         secondTeamName = secondTeamMatch.Groups[2].Captures[0].Value;
@@ -403,9 +475,18 @@ namespace CollegeFbsRankings
                         game = FutureGame.New(key, date, week, homeTeam, awayTeam, tvString, notesString);
                     }
 
-                    games.Add(game);
-                    homeTeam.AddGame(game);
-                    awayTeam.AddGame(game);
+                    if (game.Week > regularSeasonWeeks)
+                    {
+                        bowlGames.Add(game);
+                        homeTeam.AddBowlGame(game);
+                        awayTeam.AddBowlGame(game);
+                    }
+                    else
+                    {
+                        games.Add(game);
+                        homeTeam.AddGame(game);
+                        awayTeam.AddGame(game);
+                    }
                 }
                 else
                 {
@@ -449,8 +530,9 @@ namespace CollegeFbsRankings
             Console.WriteLine("Number of Future Games = {0}", games.Future().Count());
             Console.WriteLine();
 
-            Console.WriteLine("Number of FBS Games = {0}", games.Completed().Fbs().Count());
-            Console.WriteLine("Number of FCS Games = {0}", games.Completed().Fcs().Count());
+            Console.WriteLine("Number of FBS  Games = {0}", games.Completed().Fbs().Count());
+            Console.WriteLine("Number of FCS  Games = {0}", games.Completed().Fcs().Count());
+            Console.WriteLine("Number of Bowl Games = {0}", bowlGames.Count);
             Console.WriteLine();
 
             if (potentiallyCancelledGames.Any())
@@ -467,6 +549,59 @@ namespace CollegeFbsRankings
                 }
                 Console.WriteLine();
             }
+
+            #endregion
+
+            #region Validate Bowl Games
+
+            var armyNavyGame = games.SingleOrDefault(g =>
+                (g.HomeTeam.Name == "Army" && g.AwayTeam.Name == "Navy") ||
+                (g.HomeTeam.Name == "Navy" && g.AwayTeam.Name == "Army"));
+
+            if (armyNavyGame == null)
+            {
+                Console.WriteLine("WARNING: Unable to find the Army-Navy Game");
+                Console.WriteLine();
+            }
+            else if (armyNavyGame.Week != regularSeasonWeeks)
+            {
+                Console.WriteLine("WARNING: The Army-Navy Game was not played on the last week of the season");
+                Console.WriteLine();
+            }
+
+            var bowlGameWeek = games
+                .GroupBy(g => g.Week)
+                .Where(list => list.All(g => g.Notes.Contains("Bowl")))
+                .Select(list => list.Key)
+                .OrderBy(week => week)
+                .FirstOrDefault();
+
+            if (bowlGameWeek > 0 && bowlGameWeek != regularSeasonWeeks + 1)
+            {
+                Console.WriteLine("WARNING: Regular Season End does not line up with Bowl Game Start: {0} vs. {1}",
+                    regularSeasonWeeks + 1, bowlGameWeek);
+                Console.WriteLine();
+            }
+
+            //var bowlGamesFirstWeek = bowlGames
+            //    .GroupBy(g => g.Week)
+            //    .OrderBy(list => list.Key)
+            //    .First();
+
+            //if (!bowlGamesFirstWeek.All(g => g.Notes.Contains("Bowl")))
+            //{
+            //    Console.WriteLine("WARNING: Bowl Game Week doesn't contain only bowl games:");
+            //    foreach (var game in bowlGamesFirstWeek)
+            //    {
+            //        Console.WriteLine("    {0} Week {1,-2} {2} vs. {3} - {4}",
+            //            game.Key,
+            //            game.Week,
+            //            game.HomeTeam.Name,
+            //            game.AwayTeam.Name,
+            //            game.Notes);
+            //    }
+            //    Console.WriteLine();
+            //}
 
             #endregion
 
@@ -566,7 +701,7 @@ namespace CollegeFbsRankings
 
                 #region Create Output File Names
 
-                var outputFolder = Path.Combine(ResultsFolder, Year, "Week " + week);
+                var outputFolder = Path.Combine(ResultsFolder, YearString, "Week " + week);
 
                 var overallOutputFolder = Path.Combine(outputFolder, "Overall");
                 var overallTop25OutputFolder = Path.Combine(overallOutputFolder, "Top 25");

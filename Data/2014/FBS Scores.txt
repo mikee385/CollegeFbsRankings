@@ -844,3 +844,46 @@ Rk,Wk,Date,Time,Day,Winner/Tie,Pts,,Loser/Tie,Pts,TV,Notes
 Rk,Wk,Date,Time,Day,Winner/Tie,Pts,,Loser/Tie,Pts,TV,Notes
 829,16,Dec 13 2014,3:00 PM,Sat,Navy,17,,Army,10,CBS,M&T Bank Stadium - Baltimore MD
 Rk,Wk,Date,Time,Day,Winner/Tie,Pts,,Loser/Tie,Pts,TV,Notes
+830,17,Dec 20 2014,5:45 PM,Sat,Air Force,38,,Western Michigan,24,ESPN,Famous Idaho Potato Bowl - Bronco Stadium Boise ID
+831,17,Dec 20 2014,9:15 PM,Sat,Bowling Green State,33,,South Alabama,28,ESPN,Raycom Media Camellia Bowl - Cramton Bowl Montgomery AL
+832,17,Dec 20 2014,11:00 AM,Sat,Louisiana-Lafayette,16,,Nevada,3,ESPN,R+L Carriers New Orleans Bowl - Mercedes-Benz Superdome New Orleans LA
+833,17,Dec 20 2014,3:30 PM,Sat,(23) Utah,45,,Colorado State,10,ABC,Royal Purple Las Vegas Bowl - Sam Boyd Stadium Las Vegas NV
+834,17,Dec 20 2014,2:20 PM,Sat,Utah State,21,,Texas-El Paso,6,ESPN,Gildan New Mexico Bowl - University Stadium Albuquerque NM
+835,17,Dec 22 2014,2:00 PM,Mon,Memphis,55,,Brigham Young,48,ESPN,Miami Beach Bowl - Marlins Park - Miami FL
+Rk,Wk,Date,Time,Day,Winner/Tie,Pts,,Loser/Tie,Pts,TV,Notes
+836,18,Dec 23 2014,6:00 PM,Tue,Marshall,52,,Northern Illinois,23,ESPN,Boca Raton Bowl - FAU Stadium - Boca Raton FL
+837,18,Dec 23 2014,9:30 PM,Tue,Navy,17,,San Diego State,16,ESPN,San Diego County Credit Union Poinsettia Bowl - Qualcomm Stadium San Diego CA
+838,18,Dec 24 2014,8:00 PM,Wed,Rice,30,,Fresno State,6,ESPN,Hawaii Bowl - Hawaiian Airlines Field at Aloha Stadium Honolulu HI
+839,18,Dec 24 2014,12:00 PM,Wed,Western Kentucky,49,,Central Michigan,48,ESPN,Popeyes Bahamas Bowl - Thomas Robinson National Stadium - Nassau Bahamas
+840,18,Dec 26 2014,1:00 PM,Fri,Louisiana Tech,35,,Illinois,18,ESPN,Zaxby`s Heart of Dallas Bowl - Cotton Bowl - Dallas TX
+841,18,Dec 26 2014,8:00 PM,Fri,North Carolina State,34,,Central Florida,27,ESPN,Bitcoin St. Petersburg Bowl - Tropicana Field St. Petersburg FL
+842,18,Dec 26 2014,4:30 PM,Fri,Rutgers,40,,North Carolina,21,ESPN,Quick Lane Bowl - Ford Field Detroit MI
+843,18,Dec 27 2014,2:10 PM,Sat,(15) Arizona State,36,,Duke,31,CBS,Hyundai Sun Bowl - Sun Bowl Stadium El Paso TX
+844,18,Dec 27 2014,4:30 PM,Sat,Penn State,31,,Boston College,30,ESPN,New Era Pinstripe Bowl - Yankee Stadium Bronx New York
+845,18,Dec 27 2014,3:30 PM,Sat,South Carolina,24,,Miami (FL),21,ABC,Duck Commander Independence Bowl - Independence Stadium Shreveport LA
+846,18,Dec 27 2014,8:00 PM,Sat,(24) Southern California,45,,(25) Nebraska,42,ESPN,National University Holiday Bowl - Qualcomm Stadium San Diego CA
+847,18,Dec 27 2014,1:00 PM,Sat,Virginia Tech,33,,Cincinnati,17,ESPN,Military Bowl - Navy-Marine Corps Memorial Stadium Annapolis MD
+Rk,Wk,Date,Time,Day,Winner/Tie,Pts,,Loser/Tie,Pts,TV,Notes
+848,19,Dec 29 2014,9:00 PM,Mon,Arkansas,31,,Texas,7,ESPN,Advocare V100 Texas Bowl - NRG Stadium Houston TX
+849,19,Dec 29 2014,5:30 PM,Mon,(18) Clemson,40,,Oklahoma,6,ESPN,Russell Athletic Bowl - Florida Citrus Bowl - Orlando FL
+850,19,Dec 29 2014,2:00 PM,Mon,Texas A&M,45,,West Virginia,37,ESPN,AutoZone Liberty Bowl - Liberty Bowl Memorial Stadium Memphis TN
+Rk,Wk,Date,Time,Day,Winner/Tie,Pts,,Loser/Tie,Pts,TV,Notes
+851,20,Dec 30 2014,6:45 PM,Tue,(13) Georgia,37,,(20) Louisville,14,ESPN,Belk Bowl - Bank of America Stadium Charlotte NC
+852,20,Dec 30 2014,3:00 PM,Tue,Notre Dame,31,,(22) Louisiana State,28,ESPN,Franklin American Mortgage Music City Bowl - LP Field Nashville TN
+853,20,Dec 30 2014,10:00 PM,Tue,Stanford,45,,Maryland,21,ESPN,Foster Farms Bowl - Levi`s Stadium Santa Clara CA
+854,20,Dec 31 2014,4:00 PM,Wed,(21) Boise State,38,,(12) Arizona,30,ESPN,Fiesta Bowl - University of Phoenix Stadium - Glendale AZ
+855,20,Dec 31 2014,8:00 PM,Wed,(10) Georgia Tech,49,,(8) Mississippi State,34,ESPN,Orange Bowl - Sun Life Stadium - Miami Gardens FL
+856,20,Dec 31 2014,12:30 PM,Wed,(6) Texas Christian,42,,(9) Mississippi,3,ESPN,Chick-fil-A Peach Bowl - Georgia Dome - Atlanta GA
+857,20,Jan 1 2015,12:30 PM,Thu,(7) Michigan State,42,,(4) Baylor,41,ESPN,Goodyear Cotton Bowl Classic - AT&T Stadium - Arlington TX
+858,20,Jan 1 2015,1:00 PM,Thu,(16) Missouri,33,,Minnesota,17,ABC,Buffalo Wild Wings Citrus Bowl - Florida Citrus Bowl - Orlando FL
+859,20,Jan 1 2015,9:00 PM,Thu,(5) Ohio State,42,,(1) Alabama,35,ESPN,Allstate Sugar Bowl - Mercedes-Benz Superdome - New Orleans LA
+860,20,Jan 1 2015,5:00 PM,Thu,(3) Oregon,59,,(2) Florida State,20,ESPN,Rose Bowl - Rose Bowl - Pasadena CA
+861,20,Jan 1 2015,12:00 PM,Thu,(17) Wisconsin,34,,(19) Auburn,31,ESPN 2,Outback Bowl - Raymond James Stadium Tampa FL
+862,20,Jan 2 2015,12:00 PM,Fri,Houston,35,,Pittsburgh,34,ESPN,Lockheed Martin Armed Forces Bowl - Amon G. Carter Stadium Fort Worth TX
+863,20,Jan 2 2015,10:15 PM,Fri,Oklahoma State,30,,Washington,22,ESPN,TicketCity Cactus Bowl - Sun Devil Stadium Tempe AZ
+864,20,Jan 2 2015,3:20 PM,Fri,Tennessee,45,,Iowa,28,ESPN,TaxSlayer Bowl - EverBank Field Jacksonville FL
+865,20,Jan 2 2015,6:45 PM,Fri,(14) UCLA,40,,(11) Kansas State,35,ESPN,Valero Alamo Bowl - Alamodome San Antonio TX
+866,20,Jan 3 2015,12:00 PM,Sat,Florida,28,,East Carolina,20,ESPN,Birmingham Bowl - Legion Field Birmingham AL
+867,20,Jan 4 2015,9:00 PM,Sun,Toledo,63,,Arkansas State,44,ESPN,GoDaddy Bowl - Ladd-Peebles Stadium Mobile AL
+Rk,Wk,Date,Time,Day,Winner/Tie,Pts,,Loser/Tie,Pts,TV,Notes
+868,21,Jan 12 2015,8:30 PM,Mon,(5) Ohio State,42,,(3) Oregon,20,ESPN,College Football Championship - AT&T Stadium - Arlington TX
