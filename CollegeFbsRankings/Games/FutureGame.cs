@@ -12,13 +12,13 @@ namespace CollegeFbsRankings.Games
 
     public class FutureGame : Game, IFutureGame
     {
-        public static IFutureGame New(int key, DateTime date, int week, Team homeTeam, Team awayTeam, string tv, string notes)
+        public static IFutureGame New(int key, DateTime date, int week, Team homeTeam, Team awayTeam, string tv, string notes, eSeasonType seasonType)
         {
-            return new FutureGame(key, date, week, homeTeam, awayTeam, tv, notes);
+            return new FutureGame(key, date, week, homeTeam, awayTeam, tv, notes, seasonType);
         }
 
-        protected FutureGame(int key, DateTime date, int week, Team homeTeam, Team awayTeam, string tv, string notes)
-            : base(key, date, week, homeTeam, awayTeam, tv, notes)
+        protected FutureGame(int key, DateTime date, int week, Team homeTeam, Team awayTeam, string tv, string notes, eSeasonType seasonType)
+            : base(key, date, week, homeTeam, awayTeam, tv, notes, seasonType)
         { }
     }
 

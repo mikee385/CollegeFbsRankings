@@ -7,10 +7,16 @@ using CollegeFbsRankings.Teams;
 
 namespace CollegeFbsRankings.Games
 {
-    public enum eGameType
+    public enum eTeamType
     {
         Fbs,
         Fcs
+    }
+
+    public enum eSeasonType
+    {
+        RegularSeason,
+        PostSeason
     }
 
     public interface IGame
@@ -29,7 +35,9 @@ namespace CollegeFbsRankings.Games
 
         string Notes { get; }
 
-        eGameType Type { get; }
+        eTeamType TeamType { get; }
+
+        eSeasonType SeasonType { get; }
     }
 
     public abstract class Game : IGame
@@ -41,9 +49,10 @@ namespace CollegeFbsRankings.Games
         private readonly Team _awayTeam;
         private readonly string _tv;
         private readonly string _notes;
-        private readonly eGameType _type;
+        private readonly eTeamType _teamType;
+        private readonly eSeasonType _seasonType;
         
-        protected Game(int key, DateTime date, int week, Team homeTeam, Team awayTeam, string tv, string notes)
+        protected Game(int key, DateTime date, int week, Team homeTeam, Team awayTeam, string tv, string notes, eSeasonType seasonType)
         {
             _key = key;
             _date = date;
@@ -56,18 +65,20 @@ namespace CollegeFbsRankings.Games
             if (_homeTeam is FbsTeam)
             {
                 if (_awayTeam is FbsTeam)
-                    _type = eGameType.Fbs;
+                    _teamType = eTeamType.Fbs;
                 else
-                    _type = eGameType.Fcs;
+                    _teamType = eTeamType.Fcs;
             }
             else if (_awayTeam is FbsTeam)
-                _type = eGameType.Fcs;
+                _teamType = eTeamType.Fcs;
             else
             {
                 throw new Exception(String.Format(
                     "Game {0} does not contain an FBS team: {1} vs. {2}",
                     _key, _homeTeam, _awayTeam));
             }
+
+            _seasonType = seasonType;
         }
 
         public int Key
@@ -105,9 +116,14 @@ namespace CollegeFbsRankings.Games
             get { return _notes; }
         }
 
-        public eGameType Type
+        public eTeamType TeamType
         {
-            get { return _type; }
+            get { return _teamType; }
+        }
+
+        public eSeasonType SeasonType
+        {
+            get { return _seasonType; }
         }
     }
 
@@ -115,12 +131,21 @@ namespace CollegeFbsRankings.Games
     {
         public static IEnumerable<T> Fbs<T>(this IEnumerable<T> games) where T : IGame
         {
-            return games.Where(g => g.Type == eGameType.Fbs);
+            return games.Where(g => g.TeamType == eTeamType.Fbs);
         }
 
         public static IEnumerable<T> Fcs<T>(this IEnumerable<T> games) where T : IGame
         {
-            return games.Where(g => g.Type == eGameType.Fcs);
+            return games.Where(g => g.TeamType == eTeamType.Fcs);
+        }
+        public static IEnumerable<T> RegularSeason<T>(this IEnumerable<T> games) where T : IGame
+        {
+            return games.Where(g => g.SeasonType == eSeasonType.RegularSeason);
+        }
+
+        public static IEnumerable<T> PostSeason<T>(this IEnumerable<T> games) where T : IGame
+        {
+            return games.Where(g => g.SeasonType == eSeasonType.PostSeason);
         }
     }
 }

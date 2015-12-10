@@ -455,6 +455,8 @@ namespace CollegeFbsRankings
                             awayTeamScore = firstTeamScore;
                         }
 
+                        var seasonType = (week > regularSeasonWeeks) ? eSeasonType.PostSeason : eSeasonType.RegularSeason;
+
                         IGame game;
                         if (hasFirstTeamScore && hasSecondTeamScore)
                         {
@@ -465,7 +467,7 @@ namespace CollegeFbsRankings
                                     lineCount, line, firstTeamScoreString, secondTeamScoreString));
                             }
 
-                            game = CompletedGame.New(key, date, week, homeTeam, homeTeamScore, awayTeam, awayTeamScore, tvString, notesString);
+                            game = CompletedGame.New(key, date, week, homeTeam, homeTeamScore, awayTeam, awayTeamScore, tvString, notesString, seasonType);
                         }
                         else if (hasFirstTeamScore && !hasSecondTeamScore)
                         {
@@ -481,10 +483,10 @@ namespace CollegeFbsRankings
                         }
                         else
                         {
-                            game = FutureGame.New(key, date, week, homeTeam, awayTeam, tvString, notesString);
+                            game = FutureGame.New(key, date, week, homeTeam, awayTeam, tvString, notesString, seasonType);
                         }
 
-                        if (game.Week > regularSeasonWeeks)
+                        if (seasonType == eSeasonType.PostSeason)
                         {
                             bowlGames.Add(game);
                             homeTeam.AddBowlGame(game);

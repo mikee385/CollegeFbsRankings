@@ -27,13 +27,13 @@ namespace CollegeFbsRankings.Games
         private readonly int _homeTeamScore;
         private readonly int _awayTeamScore;
 
-        public static ICompletedGame New(int key, DateTime date, int week, Team homeTeam, int homeTeamScore, Team awayTeam, int awayTeamScore, string tv, string notes)
+        public static ICompletedGame New(int key, DateTime date, int week, Team homeTeam, int homeTeamScore, Team awayTeam, int awayTeamScore, string tv, string notes, eSeasonType seasonType)
         {
-            return new CompletedGame(key, date, week, homeTeam, homeTeamScore, awayTeam, awayTeamScore, tv, notes);
+            return new CompletedGame(key, date, week, homeTeam, homeTeamScore, awayTeam, awayTeamScore, tv, notes, seasonType);
         }
 
-        protected CompletedGame(int key, DateTime date, int week, Team homeTeam, int homeTeamScore, Team awayTeam, int awayTeamScore, string tv, string notes)
-            : base(key, date, week, homeTeam, awayTeam, tv, notes)
+        protected CompletedGame(int key, DateTime date, int week, Team homeTeam, int homeTeamScore, Team awayTeam, int awayTeamScore, string tv, string notes, eSeasonType seasonType)
+            : base(key, date, week, homeTeam, awayTeam, tv, notes, seasonType)
         {
             _homeTeamScore = homeTeamScore;
             _awayTeamScore = awayTeamScore;

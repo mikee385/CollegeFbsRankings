@@ -73,9 +73,14 @@ namespace CollegeFbsRankings.Games
             get { return _game.Notes; }
         }
 
-        public eGameType Type
+        public eTeamType TeamType
         {
-            get { return _game.Type; }
+            get { return _game.TeamType; }
+        }
+
+        public eSeasonType SeasonType
+        {
+            get { return _game.SeasonType; }
         }
 
         public Team Team
