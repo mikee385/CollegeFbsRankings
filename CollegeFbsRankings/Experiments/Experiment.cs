@@ -46,16 +46,29 @@ namespace CollegeFbsRankings.Experiments
                 return new Data(gameTotal, winTotal, performanceValue, String.Empty);
             }
 
-            public static Dictionary<Team, Data> Overall(IEnumerable<Team> teams, int week)
+            public static Dictionary<Team, Data> FullSeason(IEnumerable<Team> teams)
+            {
+                return Get(teams, t => t.Games.Completed());
+            }
+
+            public static Dictionary<Team, Data> RegularSeason(IEnumerable<Team> teams, int week)
             {
                 return Get(teams, t => t.Games.Where(g => g.Week <= week).Completed().RegularSeason());
             }
 
-            public static Dictionary<Team, Data> Fbs(IEnumerable<Team> teams, int week)
+            public static class Fbs
             {
-                return Get(teams, t => t.Games.Where(g => g.Week <= week).Completed().RegularSeason().Fbs());
-            }
+                public static Dictionary<Team, Data> FullSeason(IEnumerable<Team> teams)
+                {
+                    return Get(teams, t => t.Games.Completed().Fbs());
+                }
 
+                public static Dictionary<Team, Data> RegularSeason(IEnumerable<Team> teams, int week)
+                {
+                    return Get(teams, t => t.Games.Where(g => g.Week <= week).Completed().RegularSeason().Fbs());
+                }
+            }
+            
             private static Dictionary<Team, Data> Get(
                 IEnumerable<Team> teams,
                 Func<Team, IEnumerable<ITeamCompletedGame>> teamGameFilter)

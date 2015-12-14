@@ -31,18 +31,35 @@ namespace CollegeFbsRankings.Rankings
                 Summary = summary;
             }
 
-            public static Dictionary<Team, Data> Overall(IEnumerable<Team> teams, int week)
+            public static Dictionary<Team, Data> FullSeason(IEnumerable<Team> teams)
+            {
+                return Get(teams,
+                        t => t.Games.Completed(),
+                        o => o.Games.Completed());
+            }
+
+            public static Dictionary<Team, Data> RegularSeason(IEnumerable<Team> teams, int week)
             {
                 return Get(teams,
                         t => t.Games.Where(g => g.Week <= week).Completed().RegularSeason(),
                         o => o.Games.Where(g => g.Week <= week).Completed().RegularSeason());
             }
 
-            public static Dictionary<Team, Data> Fbs(IEnumerable<Team> teams, int week)
+            public static class Fbs
             {
-                return Get(teams,
-                        t => t.Games.Where(g => g.Week <= week).Completed().RegularSeason().Fbs(),
-                        o => o.Games.Where(g => g.Week <= week).Completed().RegularSeason().Fbs());
+                public static Dictionary<Team, Data> FullSeason(IEnumerable<Team> teams)
+                {
+                    return Get(teams,
+                            t => t.Games.Completed().Fbs(),
+                            o => o.Games.Completed().Fbs());
+                }
+
+                public static Dictionary<Team, Data> RegularSeason(IEnumerable<Team> teams, int week)
+                {
+                    return Get(teams,
+                            t => t.Games.Where(g => g.Week <= week).Completed().RegularSeason().Fbs(),
+                            o => o.Games.Where(g => g.Week <= week).Completed().RegularSeason().Fbs());
+                }
             }
 
             private static Dictionary<Team, Data> Get(
