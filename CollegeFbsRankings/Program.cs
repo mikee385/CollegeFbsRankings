@@ -185,8 +185,6 @@ namespace CollegeFbsRankings
 
                 var fcsTeams = new List<FcsTeam>();
 
-                var bowlGames = new List<IGame>();
-
                 var rankedTeamRegex = new Regex(RankedTeamPattern);
 
                 var lineCount = 0;
@@ -486,18 +484,9 @@ namespace CollegeFbsRankings
                             game = FutureGame.New(key, date, week, homeTeam, awayTeam, tvString, notesString, seasonType);
                         }
 
-                        if (seasonType == eSeasonType.PostSeason)
-                        {
-                            bowlGames.Add(game);
-                            homeTeam.AddBowlGame(game);
-                            awayTeam.AddBowlGame(game);
-                        }
-                        else
-                        {
-                            games.Add(game);
-                            homeTeam.AddGame(game);
-                            awayTeam.AddGame(game);
-                        }
+                        games.Add(game);
+                        homeTeam.AddGame(game);
+                        awayTeam.AddGame(game);
                     }
                     else
                     {
@@ -517,7 +506,7 @@ namespace CollegeFbsRankings
                 #endregion
 
                 var allTeams = fbsTeams.Cast<Team>().Concat(fcsTeams).ToList();
-                var currentWeek = games.Completed().Max(game => game.Week);
+                var currentWeek = games.Completed().RegularSeason().Max(game => game.Week);
 
                 #region Remove Cancelled Games
 
@@ -541,9 +530,9 @@ namespace CollegeFbsRankings
                 Console.WriteLine("Number of Future Games = {0}", games.Future().Count());
                 Console.WriteLine();
 
-                Console.WriteLine("Number of FBS  Games = {0}", games.Completed().Fbs().Count());
-                Console.WriteLine("Number of FCS  Games = {0}", games.Completed().Fcs().Count());
-                Console.WriteLine("Number of Bowl Games = {0}", bowlGames.Count);
+                Console.WriteLine("Number of FBS  Games = {0}", games.Completed().RegularSeason().Fbs().Count());
+                Console.WriteLine("Number of FCS  Games = {0}", games.Completed().RegularSeason().Fcs().Count());
+                Console.WriteLine("Number of Bowl Games = {0}", games.PostSeason().Count());
                 Console.WriteLine();
 
                 if (potentiallyCancelledGames.Any())
@@ -560,59 +549,6 @@ namespace CollegeFbsRankings
                     }
                     Console.WriteLine();
                 }
-
-                #endregion
-
-                #region Validate Bowl Games
-
-                var armyNavyGame = games.SingleOrDefault(g =>
-                    (g.HomeTeam.Name == "Army" && g.AwayTeam.Name == "Navy") ||
-                    (g.HomeTeam.Name == "Navy" && g.AwayTeam.Name == "Army"));
-
-                if (armyNavyGame == null)
-                {
-                    Console.WriteLine("WARNING: Unable to find the Army-Navy Game");
-                    Console.WriteLine();
-                }
-                else if (armyNavyGame.Week != regularSeasonWeeks)
-                {
-                    Console.WriteLine("WARNING: The Army-Navy Game was not played on the last week of the season");
-                    Console.WriteLine();
-                }
-
-                var bowlGameWeek = games
-                    .GroupBy(g => g.Week)
-                    .Where(list => list.All(g => g.Notes.Contains("Bowl")))
-                    .Select(list => list.Key)
-                    .OrderBy(week => week)
-                    .FirstOrDefault();
-
-                if (bowlGameWeek > 0 && bowlGameWeek != regularSeasonWeeks + 1)
-                {
-                    Console.WriteLine("WARNING: Regular Season End does not line up with Bowl Game Start: {0} vs. {1}",
-                        regularSeasonWeeks + 1, bowlGameWeek);
-                    Console.WriteLine();
-                }
-
-                //var bowlGamesFirstWeek = bowlGames
-                //    .GroupBy(g => g.Week)
-                //    .OrderBy(list => list.Key)
-                //    .First();
-
-                //if (!bowlGamesFirstWeek.All(g => g.Notes.Contains("Bowl")))
-                //{
-                //    Console.WriteLine("WARNING: Bowl Game Week doesn't contain only bowl games:");
-                //    foreach (var game in bowlGamesFirstWeek)
-                //    {
-                //        Console.WriteLine("    {0} Week {1,-2} {2} vs. {3} - {4}",
-                //            game.Key,
-                //            game.Week,
-                //            game.HomeTeam.Name,
-                //            game.AwayTeam.Name,
-                //            game.Notes);
-                //    }
-                //    Console.WriteLine();
-                //}
 
                 #endregion
 
@@ -647,7 +583,7 @@ namespace CollegeFbsRankings
                     var top25FbsCompletedScheduleStrength = fbsCompletedScheduleStrength.ForTeams(top25Teams).ToList();
                     var top25FbsFutureScheduleStrength = fbsFutureScheduleStrength.ForTeams(top25Teams).ToList();
 
-                    var fbsGames = games.Fbs().ToList();
+                    var fbsGames = games.RegularSeason().Fbs().ToList();
 
                     var overallGameStrength = Ranking.GameStrength.Overall(fbsGames, overallData);
                     var fbsGameStrength = Ranking.GameStrength.Overall(fbsGames, fbsData);

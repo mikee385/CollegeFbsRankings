@@ -16,17 +16,17 @@ namespace CollegeFbsRankings.Experiments
         {
             public static IReadOnlyList<Ranking.TeamValue> Overall(IEnumerable<Team> teams, Dictionary<Team, Data> performanceData)
             {
-                return Calculate(teams, performanceData, games => games);
+                return Calculate(teams, performanceData, games => games.RegularSeason());
             }
 
             public static IReadOnlyList<Ranking.TeamValue> Completed(IEnumerable<Team> teams, int week, Dictionary<Team, Data> performanceData)
             {
-                return Calculate(teams, performanceData, games => games.Where(g => g.Week <= week).Completed());
+                return Calculate(teams, performanceData, games => games.Where(g => g.Week <= week).Completed().RegularSeason());
             }
 
             public static IReadOnlyList<Ranking.TeamValue> Future(IEnumerable<Team> teams, int week, Dictionary<Team, Data> performanceData)
             {
-                return Calculate(teams, performanceData, games => games.Where(g => g.Week > week));
+                return Calculate(teams, performanceData, games => games.Where(g => g.Week > week).RegularSeason());
             }
 
             private static IReadOnlyList<Ranking.TeamValue> Calculate(

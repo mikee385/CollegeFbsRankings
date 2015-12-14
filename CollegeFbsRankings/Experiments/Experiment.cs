@@ -48,12 +48,12 @@ namespace CollegeFbsRankings.Experiments
 
             public static Dictionary<Team, Data> Overall(IEnumerable<Team> teams, int week)
             {
-                return Get(teams, t => t.Games.Where(g => g.Week <= week).Completed());
+                return Get(teams, t => t.Games.Where(g => g.Week <= week).Completed().RegularSeason());
             }
 
             public static Dictionary<Team, Data> Fbs(IEnumerable<Team> teams, int week)
             {
-                return Get(teams, t => t.Games.Where(g => g.Week <= week).Completed().Fbs());
+                return Get(teams, t => t.Games.Where(g => g.Week <= week).Completed().RegularSeason().Fbs());
             }
 
             private static Dictionary<Team, Data> Get(
