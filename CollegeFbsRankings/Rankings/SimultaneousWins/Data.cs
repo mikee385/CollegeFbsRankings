@@ -5,11 +5,12 @@ using System.IO;
 using System.Linq;
 
 using CollegeFbsRankings.Games;
+using CollegeFbsRankings.LinearAlgebra;
 using CollegeFbsRankings.Teams;
 
-namespace CollegeFbsRankings.Experiments
+namespace CollegeFbsRankings.Rankings
 {
-    public static partial class Experiment
+    public static partial class SimultaneousWins
     {
         public class Data
         {

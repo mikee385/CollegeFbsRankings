@@ -4,12 +4,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-using CollegeFbsRankings.Rankings;
 using CollegeFbsRankings.Teams;
 
-namespace CollegeFbsRankings.Experiments
+namespace CollegeFbsRankings.Rankings
 {
-    public static partial class Experiment
+    public static partial class SingleDepthWins
     {
         public static class WinStrength
         {
@@ -19,18 +18,18 @@ namespace CollegeFbsRankings.Experiments
                 {
                     var teamData = performanceData[team];
 
-                    var opponentValue = teamData.OpponentValue;
-                    var teamValue = teamData.TeamValue;
+                    var opponentGameTotal = teamData.OpponentGameTotal;
+                    var opponentWinTotal = teamData.OpponentWinTotal;
+                    var opponentWinPercentage = (double)opponentWinTotal / opponentGameTotal;
 
                     var writer = new StringWriter();
                     writer.WriteLine(teamData.Summary);
-                    writer.WriteLine("Opponent Value: {0:F8}", opponentValue);
+                    writer.WriteLine("Opponent Wins: {0} / {1} ({2})", opponentWinTotal, opponentGameTotal, opponentWinPercentage);
 
                     return new Ranking.TeamValue(team,
                         new[]
                         {
-                            opponentValue,
-                            teamValue
+                            opponentWinPercentage
                         },
                         new IComparable[]
                         {

@@ -5,12 +5,11 @@ using System.IO;
 using System.Linq;
 
 using CollegeFbsRankings.Games;
-using CollegeFbsRankings.Rankings;
 using CollegeFbsRankings.Teams;
 
-namespace CollegeFbsRankings.Experiments
+namespace CollegeFbsRankings.Rankings
 {
-    public static partial class Experiment
+    public static partial class SingleDepthWins
     {
         public static class GameStrength
         {
@@ -29,51 +28,51 @@ namespace CollegeFbsRankings.Experiments
                 return games.Select(game =>
                 {
                     var writer = new StringWriter();
-                    writer.WriteLine("Week {0,-2} {1} vs. {2} ({3}):",
+                    writer.WriteLine("Week {0} {1} vs. {2} ({3}):",
                         game.Week,
                         game.HomeTeam.Name,
                         game.AwayTeam.Name,
                         game.Date);
 
-                    var maxTeamLength = Math.Max(game.HomeTeam.Name.Length, game.AwayTeam.Name.Length);
-
                     var homeTeamData = performanceData[game.HomeTeam];
 
-                    writer.WriteLine("    {0,-" + maxTeamLength + "}: Team = {1:F8} ({2,2} / {3,2}), Opponent = {4:F8}",
+                    writer.WriteLine("    {0}: Team = {1} / {2}, Opponent = {3} / {4}",
                         game.HomeTeam.Name,
-                        homeTeamData.TeamValue,
                         homeTeamData.WinTotal,
                         homeTeamData.GameTotal,
-                        homeTeamData.OpponentValue);
+                        homeTeamData.OpponentWinTotal,
+                        homeTeamData.OpponentGameTotal);
 
                     var awayTeamData = performanceData[game.AwayTeam];
 
-                    writer.WriteLine("    {0,-" + maxTeamLength + "}: Team = {1:F8} ({2,2} / {3,2}), Opponent = {4:F8}",
+                    writer.WriteLine("    {0}: Team = {1} / {2}, Opponent = {3} / {4}",
                         game.AwayTeam.Name,
-                        awayTeamData.TeamValue,
                         awayTeamData.WinTotal,
                         awayTeamData.GameTotal,
-                        awayTeamData.OpponentValue);
+                        awayTeamData.OpponentWinTotal,
+                        awayTeamData.OpponentGameTotal);
 
-                    var gameData = Data.Combine(homeTeamData, awayTeamData);
+                    var teamGameTotal = homeTeamData.GameTotal + awayTeamData.GameTotal;
+                    var teamWinTotal = homeTeamData.WinTotal + awayTeamData.WinTotal;
+                    var teamWinPercentage = (double)teamWinTotal / teamGameTotal;
 
-                    var gameTotal = gameData.GameTotal;
-                    var winTotal = gameData.WinTotal;
-                    var teamValue = gameData.TeamValue;
-                    var opponentValue = gameData.OpponentValue;
-                    var performanceValue = gameData.PerformanceValue;
+                    var opponentGameTotal = homeTeamData.OpponentGameTotal + awayTeamData.OpponentGameTotal;
+                    var opponentWinTotal = homeTeamData.OpponentWinTotal + awayTeamData.OpponentWinTotal;
+                    var opponentWinPercentage = (double)opponentWinTotal / opponentGameTotal;
+
+                    var performance = teamWinPercentage * opponentWinPercentage;
 
                     writer.WriteLine();
-                    writer.WriteLine("Team Value    : {0:F8} ({1} / {2})", teamValue, winTotal, gameTotal);
-                    writer.WriteLine("Opponent Value: {0:F8}", opponentValue);
-                    writer.WriteLine("Performance   : {0:F8}", performanceValue);
+                    writer.WriteLine("Team Wins    : {0} / {1} ({2})", teamWinTotal, teamGameTotal, teamWinPercentage);
+                    writer.WriteLine("Opponent Wins: {0} / {1} ({2})", opponentWinTotal, opponentGameTotal, opponentWinPercentage);
+                    writer.WriteLine("Performance  : {0}", performance);
 
                     return new Ranking.GameValue(game,
                         new[]
                         {
-                            performanceValue,
-                            teamValue,
-                            opponentValue
+                            performance,
+                            teamWinPercentage,
+                            opponentWinPercentage
                         },
                         new IComparable[]
                         {

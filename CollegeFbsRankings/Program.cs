@@ -7,7 +7,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 
 using CollegeFbsRankings.Conferences;
-using CollegeFbsRankings.Experiments;
 using CollegeFbsRankings.Games;
 using CollegeFbsRankings.Rankings;
 using CollegeFbsRankings.Teams;
@@ -554,423 +553,471 @@ namespace CollegeFbsRankings
 
                 for (int week = 1; week <= currentWeek; ++week)
                 {
-                    #region Calculate Rankings
-
-                    var overallData = Ranking.Data.RegularSeason(allTeams, week);
-                    var fbsData = Ranking.Data.Fbs.RegularSeason(fbsTeams, week);
-
-                    var overallPerformanceRankings = Ranking.Performance.Overall(fbsTeams, overallData);
-                    var fbsPerformanceRankings = Ranking.Performance.Overall(fbsTeams, fbsData);
-
-                    var overallWinStrength = Ranking.WinStrength.Overall(fbsTeams, overallData);
-                    var fbsWinStrength = Ranking.WinStrength.Overall(fbsTeams, fbsData);
-
-                    var overallScheduleStrength = Ranking.ScheduleStrength.Overall(fbsTeams, overallData);
-                    var completedScheduleStrength = Ranking.ScheduleStrength.Completed(fbsTeams, week, overallData);
-                    var futureScheduleStrength = Ranking.ScheduleStrength.Future(fbsTeams, week, overallData);
-
-                    var fbsOverallScheduleStrength = Ranking.ScheduleStrength.Overall(fbsTeams, fbsData);
-                    var fbsCompletedScheduleStrength = Ranking.ScheduleStrength.Completed(fbsTeams, week, fbsData);
-                    var fbsFutureScheduleStrength = Ranking.ScheduleStrength.Future(fbsTeams, week, fbsData);
-
-                    var top25Teams = fbsPerformanceRankings.Take(25).Select(rank => rank.Team).ToList();
-
-                    var top25OverallScheduleStrength = overallScheduleStrength.ForTeams(top25Teams).ToList();
-                    var top25CompletedScheduleStrength = completedScheduleStrength.ForTeams(top25Teams).ToList();
-                    var top25FutureScheduleStrength = futureScheduleStrength.ForTeams(top25Teams).ToList();
-
-                    var top25FbsOverallScheduleStrength = fbsOverallScheduleStrength.ForTeams(top25Teams).ToList();
-                    var top25FbsCompletedScheduleStrength = fbsCompletedScheduleStrength.ForTeams(top25Teams).ToList();
-                    var top25FbsFutureScheduleStrength = fbsFutureScheduleStrength.ForTeams(top25Teams).ToList();
-
                     var fbsGames = games.RegularSeason().Fbs().ToList();
-
-                    var overallGameStrength = Ranking.GameStrength.Overall(fbsGames, overallData);
-                    var fbsGameStrength = Ranking.GameStrength.Overall(fbsGames, fbsData);
-
-                    var overallGameStrengthByWeek = Ranking.GameStrength.ByWeek(fbsGames, overallData);
-                    var fbsGameStrengthByWeek = Ranking.GameStrength.ByWeek(fbsGames, fbsData);
-
-                    var overallConferenceStrength = Ranking.ConferenceStrength.Overall(fbsConferences, overallData);
-                    var fbsConferenceStrength = Ranking.ConferenceStrength.Overall(fbsConferences, fbsData);
-
-                    var experimentOverallData = Experiment.Data.RegularSeason(allTeams, week);
-                    var experimentFbsData = Experiment.Data.Fbs.RegularSeason(fbsTeams, week);
-
-                    var experimentOverallPerformanceRankings = Experiment.Performance.Overall(fbsTeams, experimentOverallData);
-                    var experimentFbsPerformanceRankings = Experiment.Performance.Overall(fbsTeams, experimentFbsData);
-
-                    var experimentOverallWinStrength = Experiment.WinStrength.Overall(fbsTeams, experimentOverallData);
-                    var experimentFbsWinStrength = Experiment.WinStrength.Overall(fbsTeams, experimentFbsData);
-
-                    var experimentOverallScheduleStrength = Experiment.ScheduleStrength.Overall(fbsTeams, experimentOverallData);
-                    var experimentCompletedScheduleStrength = Experiment.ScheduleStrength.Completed(fbsTeams, week, experimentOverallData);
-                    var experimentFutureScheduleStrength = Experiment.ScheduleStrength.Future(fbsTeams, week, experimentOverallData);
-
-                    var experimentFbsOverallScheduleStrength = Experiment.ScheduleStrength.Overall(fbsTeams, experimentFbsData);
-                    var experimentFbsCompletedScheduleStrength = Experiment.ScheduleStrength.Completed(fbsTeams, week, experimentFbsData);
-                    var experimentFbsFutureScheduleStrength = Experiment.ScheduleStrength.Future(fbsTeams, week, experimentFbsData);
-
-                    var experimentTop25Teams = experimentFbsPerformanceRankings.Take(25).Select(rank => rank.Team).ToList();
-
-                    var experimentTop25OverallScheduleStrength = experimentOverallScheduleStrength.ForTeams(experimentTop25Teams).ToList();
-                    var experimentTop25CompletedScheduleStrength = experimentCompletedScheduleStrength.ForTeams(experimentTop25Teams).ToList();
-                    var experimentTop25FutureScheduleStrength = experimentFutureScheduleStrength.ForTeams(experimentTop25Teams).ToList();
-
-                    var experimentTop25FbsOverallScheduleStrength = experimentFbsOverallScheduleStrength.ForTeams(experimentTop25Teams).ToList();
-                    var experimentTop25FbsCompletedScheduleStrength = experimentFbsCompletedScheduleStrength.ForTeams(experimentTop25Teams).ToList();
-                    var experimentTop25FbsFutureScheduleStrength = experimentFbsFutureScheduleStrength.ForTeams(experimentTop25Teams).ToList();
-
-                    var experimentOverallGameStrength = Experiment.GameStrength.Overall(fbsGames, experimentOverallData);
-                    var experimentFbsGameStrength = Experiment.GameStrength.Overall(fbsGames, experimentFbsData);
-
-                    var experimentOverallGameStrengthByWeek = Experiment.GameStrength.ByWeek(fbsGames, experimentOverallData);
-                    var experimentFbsGameStrengthByWeek = Experiment.GameStrength.ByWeek(fbsGames, experimentFbsData);
-
-                    var experimentOverallConferenceStrength = Experiment.ConferenceStrength.Overall(fbsConferences, experimentOverallData);
-                    var experimentFbsConferenceStrength = Experiment.ConferenceStrength.Overall(fbsConferences, experimentFbsData);
-
-                    #endregion
-
-                    #region Create Output File Names
 
                     var outputFolder = Path.Combine(ResultsFolder, yearString, "Week " + week);
 
-                    var overallOutputFolder = Path.Combine(outputFolder, "Overall");
-                    var overallTop25OutputFolder = Path.Combine(overallOutputFolder, "Top 25");
+                    #region Single Depth Wins
+                    {
+                        #region Calculate Rankings
 
-                    var fbsOutputFolder = Path.Combine(outputFolder, "FBS");
-                    var fbsTop25OutputFolder = Path.Combine(fbsOutputFolder, "Top 25");
+                        var overallData = SingleDepthWins.Data.RegularSeason(allTeams, week);
+                        var fbsData = SingleDepthWins.Data.Fbs.RegularSeason(fbsTeams, week);
 
-                    var overallPerformanceFileName = Path.Combine(overallOutputFolder, "Performance Rankings.txt");
-                    var fbsPerformanceFileName = Path.Combine(fbsOutputFolder, "Performance Rankings.txt");
+                        var overallPerformanceRankings = SingleDepthWins.Performance.Overall(fbsTeams, overallData);
+                        var fbsPerformanceRankings = SingleDepthWins.Performance.Overall(fbsTeams, fbsData);
 
-                    var overallWinStrengthFileName = Path.Combine(overallOutputFolder, "Win Strength.txt");
-                    var fbsWinStrengthFileName = Path.Combine(fbsOutputFolder, "Win Strength.txt");
+                        var overallWinStrength = SingleDepthWins.WinStrength.Overall(fbsTeams, overallData);
+                        var fbsWinStrength = SingleDepthWins.WinStrength.Overall(fbsTeams, fbsData);
 
-                    var overallScheduleStrengthFileName = Path.Combine(overallOutputFolder, "Overall Schedule Stength.txt");
-                    var completedScheduleStrengthFileName = Path.Combine(overallOutputFolder, "Completed Schedule Stength.txt");
-                    var futureScheduleStrengthFileName = Path.Combine(overallOutputFolder, "Future Schedule Stength.txt");
+                        var overallScheduleStrength = SingleDepthWins.ScheduleStrength.Overall(fbsTeams, overallData);
+                        var completedScheduleStrength = SingleDepthWins.ScheduleStrength.Completed(fbsTeams, week, overallData);
+                        var futureScheduleStrength = SingleDepthWins.ScheduleStrength.Future(fbsTeams, week, overallData);
 
-                    var fbsOverallScheduleStrengthFileName = Path.Combine(fbsOutputFolder, "Overall Schedule Stength.txt");
-                    var fbsCompletedScheduleStrengthFileName = Path.Combine(fbsOutputFolder, "Completed Schedule Stength.txt");
-                    var fbsFutureScheduleStrengthFileName = Path.Combine(fbsOutputFolder, "Future Schedule Stength.txt");
+                        var fbsOverallScheduleStrength = SingleDepthWins.ScheduleStrength.Overall(fbsTeams, fbsData);
+                        var fbsCompletedScheduleStrength = SingleDepthWins.ScheduleStrength.Completed(fbsTeams, week, fbsData);
+                        var fbsFutureScheduleStrength = SingleDepthWins.ScheduleStrength.Future(fbsTeams, week, fbsData);
 
-                    var top25OverallScheduleStrengthFileName = Path.Combine(overallTop25OutputFolder, "Overall Schedule Stength.txt");
-                    var top25CompletedScheduleStrengthFileName = Path.Combine(overallTop25OutputFolder, "Completed Schedule Stength.txt");
-                    var top25FutureScheduleStrengthFileName = Path.Combine(overallTop25OutputFolder, "Future Schedule Stength.txt");
+                        var top25Teams = fbsPerformanceRankings.Take(25).Select(rank => rank.Team).ToList();
 
-                    var top25FbsOverallScheduleStrengthFileName = Path.Combine(fbsTop25OutputFolder, "Overall Schedule Stength.txt");
-                    var top25FbsCompletedScheduleStrengthFileName = Path.Combine(fbsTop25OutputFolder, "Completed Schedule Stength.txt");
-                    var top25FbsFutureScheduleStrengthFileName = Path.Combine(fbsTop25OutputFolder, "Future Schedule Stength.txt");
+                        var top25OverallScheduleStrength = overallScheduleStrength.ForTeams(top25Teams).ToList();
+                        var top25CompletedScheduleStrength = completedScheduleStrength.ForTeams(top25Teams).ToList();
+                        var top25FutureScheduleStrength = futureScheduleStrength.ForTeams(top25Teams).ToList();
 
-                    var overallGameStrengthFileName = Path.Combine(overallOutputFolder, "Game Strength.txt");
-                    var fbsGameStrengthFileName = Path.Combine(fbsOutputFolder, "Game Strength.txt");
+                        var top25FbsOverallScheduleStrength = fbsOverallScheduleStrength.ForTeams(top25Teams).ToList();
+                        var top25FbsCompletedScheduleStrength = fbsCompletedScheduleStrength.ForTeams(top25Teams).ToList();
+                        var top25FbsFutureScheduleStrength = fbsFutureScheduleStrength.ForTeams(top25Teams).ToList();
 
-                    var overallGameStrengthByWeekFileName = Path.Combine(overallOutputFolder, "Game Strength By Week.txt");
-                    var fbsGameStrengthByWeekFileName = Path.Combine(fbsOutputFolder, "Game Strength By Week.txt");
+                        var overallGameStrength = SingleDepthWins.GameStrength.Overall(fbsGames, overallData);
+                        var fbsGameStrength = SingleDepthWins.GameStrength.Overall(fbsGames, fbsData);
 
-                    var overallConferenceStrengthFileName = Path.Combine(overallOutputFolder, "Conference Strength.txt");
-                    var fbsConferenceStrengthFileName = Path.Combine(fbsOutputFolder, "Conference Strength.txt");
+                        var overallGameStrengthByWeek = SingleDepthWins.GameStrength.ByWeek(fbsGames, overallData);
+                        var fbsGameStrengthByWeek = SingleDepthWins.GameStrength.ByWeek(fbsGames, fbsData);
 
-                    var summaryFileName = Path.Combine(outputFolder, "Summary.txt");
+                        var overallConferenceStrength = SingleDepthWins.ConferenceStrength.Overall(fbsConferences, overallData);
+                        var fbsConferenceStrength = SingleDepthWins.ConferenceStrength.Overall(fbsConferences, fbsData);
 
-                    var experimentOutputFolder = Path.Combine(outputFolder, "Experiment");
+                        #endregion
 
-                    var experimentOverallOutputFolder = Path.Combine(experimentOutputFolder, "Overall");
-                    var experimentOverallTop25OutputFolder = Path.Combine(experimentOverallOutputFolder, "Top 25");
+                        #region Create Output File Names
 
-                    var experimentFbsOutputFolder = Path.Combine(experimentOutputFolder, "FBS");
-                    var experimentFbsTop25OutputFolder = Path.Combine(experimentFbsOutputFolder, "Top 25");
+                        var rankingMethodOutputFolder = Path.Combine(outputFolder, "Single Depth Wins");
 
-                    var experimentOverallPerformanceFileName = Path.Combine(experimentOverallOutputFolder, "Performance Rankings.txt");
-                    var experimentFbsPerformanceFileName = Path.Combine(experimentFbsOutputFolder, "Performance Rankings.txt");
+                        var overallOutputFolder = Path.Combine(rankingMethodOutputFolder, "Overall");
+                        var overallTop25OutputFolder = Path.Combine(overallOutputFolder, "Top 25");
 
-                    var experimentOverallWinStrengthFileName = Path.Combine(experimentOverallOutputFolder, "Win Strength.txt");
-                    var experimentFbsWinStrengthFileName = Path.Combine(experimentFbsOutputFolder, "Win Strength.txt");
+                        var fbsOutputFolder = Path.Combine(rankingMethodOutputFolder, "FBS");
+                        var fbsTop25OutputFolder = Path.Combine(fbsOutputFolder, "Top 25");
 
-                    var experimentOverallScheduleStrengthFileName = Path.Combine(experimentOverallOutputFolder, "Overall Schedule Stength.txt");
-                    var experimentCompletedScheduleStrengthFileName = Path.Combine(experimentOverallOutputFolder, "Completed Schedule Stength.txt");
-                    var experimentFutureScheduleStrengthFileName = Path.Combine(experimentOverallOutputFolder, "Future Schedule Stength.txt");
+                        var overallPerformanceFileName = Path.Combine(overallOutputFolder, "Performance Rankings.txt");
+                        var fbsPerformanceFileName = Path.Combine(fbsOutputFolder, "Performance Rankings.txt");
 
-                    var experimentFbsOverallScheduleStrengthFileName = Path.Combine(experimentFbsOutputFolder, "Overall Schedule Stength.txt");
-                    var experimentFbsCompletedScheduleStrengthFileName = Path.Combine(experimentFbsOutputFolder, "Completed Schedule Stength.txt");
-                    var experimentFbsFutureScheduleStrengthFileName = Path.Combine(experimentFbsOutputFolder, "Future Schedule Stength.txt");
+                        var overallWinStrengthFileName = Path.Combine(overallOutputFolder, "Win Strength.txt");
+                        var fbsWinStrengthFileName = Path.Combine(fbsOutputFolder, "Win Strength.txt");
 
-                    var experimentTop25OverallScheduleStrengthFileName = Path.Combine(experimentOverallTop25OutputFolder, "Overall Schedule Stength.txt");
-                    var experimentTop25CompletedScheduleStrengthFileName = Path.Combine(experimentOverallTop25OutputFolder, "Completed Schedule Stength.txt");
-                    var experimentTop25FutureScheduleStrengthFileName = Path.Combine(experimentOverallTop25OutputFolder, "Future Schedule Stength.txt");
+                        var overallScheduleStrengthFileName = Path.Combine(overallOutputFolder, "Overall Schedule Stength.txt");
+                        var completedScheduleStrengthFileName = Path.Combine(overallOutputFolder, "Completed Schedule Stength.txt");
+                        var futureScheduleStrengthFileName = Path.Combine(overallOutputFolder, "Future Schedule Stength.txt");
 
-                    var experimentTop25FbsOverallScheduleStrengthFileName = Path.Combine(experimentFbsTop25OutputFolder, "Overall Schedule Stength.txt");
-                    var experimentTop25FbsCompletedScheduleStrengthFileName = Path.Combine(experimentFbsTop25OutputFolder, "Completed Schedule Stength.txt");
-                    var experimentTop25FbsFutureScheduleStrengthFileName = Path.Combine(experimentFbsTop25OutputFolder, "Future Schedule Stength.txt");
+                        var fbsOverallScheduleStrengthFileName = Path.Combine(fbsOutputFolder, "Overall Schedule Stength.txt");
+                        var fbsCompletedScheduleStrengthFileName = Path.Combine(fbsOutputFolder, "Completed Schedule Stength.txt");
+                        var fbsFutureScheduleStrengthFileName = Path.Combine(fbsOutputFolder, "Future Schedule Stength.txt");
 
-                    var experimentOverallGameStrengthFileName = Path.Combine(experimentOverallOutputFolder, "Game Strength.txt");
-                    var experimentFbsGameStrengthFileName = Path.Combine(experimentFbsOutputFolder, "Game Strength.txt");
+                        var top25OverallScheduleStrengthFileName = Path.Combine(overallTop25OutputFolder, "Overall Schedule Stength.txt");
+                        var top25CompletedScheduleStrengthFileName = Path.Combine(overallTop25OutputFolder, "Completed Schedule Stength.txt");
+                        var top25FutureScheduleStrengthFileName = Path.Combine(overallTop25OutputFolder, "Future Schedule Stength.txt");
 
-                    var experimentOverallGameStrengthByWeekFileName = Path.Combine(experimentOverallOutputFolder, "Game Strength By Week.txt");
-                    var experimentFbsGameStrengthByWeekFileName = Path.Combine(experimentFbsOutputFolder, "Game Strength By Week.txt");
+                        var top25FbsOverallScheduleStrengthFileName = Path.Combine(fbsTop25OutputFolder, "Overall Schedule Stength.txt");
+                        var top25FbsCompletedScheduleStrengthFileName = Path.Combine(fbsTop25OutputFolder, "Completed Schedule Stength.txt");
+                        var top25FbsFutureScheduleStrengthFileName = Path.Combine(fbsTop25OutputFolder, "Future Schedule Stength.txt");
 
-                    var experimentOverallConferenceStrengthFileName = Path.Combine(experimentOverallOutputFolder, "Conference Strength.txt");
-                    var experimentFbsConferenceStrengthFileName = Path.Combine(experimentFbsOutputFolder, "Conference Strength.txt");
+                        var overallGameStrengthFileName = Path.Combine(overallOutputFolder, "Game Strength.txt");
+                        var fbsGameStrengthFileName = Path.Combine(fbsOutputFolder, "Game Strength.txt");
 
-                    var experimentSummaryFileName = Path.Combine(experimentOutputFolder, "Summary.txt");
+                        var overallGameStrengthByWeekFileName = Path.Combine(overallOutputFolder, "Game Strength By Week.txt");
+                        var fbsGameStrengthByWeekFileName = Path.Combine(fbsOutputFolder, "Game Strength By Week.txt");
 
+                        var overallConferenceStrengthFileName = Path.Combine(overallOutputFolder, "Conference Strength.txt");
+                        var fbsConferenceStrengthFileName = Path.Combine(fbsOutputFolder, "Conference Strength.txt");
+
+                        var summaryFileName = Path.Combine(rankingMethodOutputFolder, "Summary.txt");
+
+                        #endregion
+
+                        #region Output Results to Files
+
+                        WriteRankingsToFile(overallPerformanceFileName, "Performance Rankings (Overall)", overallPerformanceRankings);
+                        WriteRankingsToFile(fbsPerformanceFileName, "Performance Rankings (FBS)", fbsPerformanceRankings);
+
+                        WriteRankingsToFile(overallWinStrengthFileName, "Win Strength (Overall)", overallWinStrength);
+                        WriteRankingsToFile(fbsWinStrengthFileName, "Win Strength (FBS)", fbsWinStrength);
+
+                        WriteRankingsToFile(overallScheduleStrengthFileName, "Schedule Strength (Overall)", overallScheduleStrength);
+                        WriteRankingsToFile(completedScheduleStrengthFileName, "Schedule Strength (Completed)", completedScheduleStrength);
+                        WriteRankingsToFile(futureScheduleStrengthFileName, "Schedule Strength (Future)", futureScheduleStrength);
+
+                        WriteRankingsToFile(fbsOverallScheduleStrengthFileName, "FBS Schedule Strength (Overall)", fbsOverallScheduleStrength);
+                        WriteRankingsToFile(fbsCompletedScheduleStrengthFileName, "FBS Schedule Strength (Completed)", fbsCompletedScheduleStrength);
+                        WriteRankingsToFile(fbsFutureScheduleStrengthFileName, "FBS Schedule Strength (Future)", fbsFutureScheduleStrength);
+
+                        WriteRankingsToFile(top25OverallScheduleStrengthFileName, "Top 25 Schedule Strength (Overall)", top25OverallScheduleStrength);
+                        WriteRankingsToFile(top25CompletedScheduleStrengthFileName, "Top 25 Schedule Strength (Completed)", top25CompletedScheduleStrength);
+                        WriteRankingsToFile(top25FutureScheduleStrengthFileName, "Top 25 Schedule Strength (Future)", top25FutureScheduleStrength);
+
+                        WriteRankingsToFile(top25FbsOverallScheduleStrengthFileName, "Top 25 FBS Schedule Strength (Overall)", top25FbsOverallScheduleStrength);
+                        WriteRankingsToFile(top25FbsCompletedScheduleStrengthFileName, "Top 25 FBS Schedule Strength (Completed)", top25FbsCompletedScheduleStrength);
+                        WriteRankingsToFile(top25FbsFutureScheduleStrengthFileName, "Top 25 FBS Schedule Strength (Future)", top25FbsFutureScheduleStrength);
+
+                        WriteRankingsToFile(overallGameStrengthFileName, "Game Strength (Overall)", overallGameStrength);
+                        WriteRankingsToFile(fbsGameStrengthFileName, "Game Strength (FBS)", fbsGameStrength);
+
+                        var builder = new StringBuilder();
+                        foreach (var gameWeek in overallGameStrengthByWeek)
+                        {
+                            builder.AppendLine(Ranking.Format(String.Format("Week {0} Game Strength (Overall)", gameWeek.Key), gameWeek.Value));
+                            builder.AppendLine();
+                        }
+                        WriteStringToFile(overallGameStrengthByWeekFileName, builder.ToString());
+
+                        builder = new StringBuilder();
+                        foreach (var gameWeek in fbsGameStrengthByWeek)
+                        {
+                            builder.AppendLine(Ranking.Format(String.Format("Week {0} Game Strength (FBS)", gameWeek.Key), gameWeek.Value));
+                            builder.AppendLine();
+                        }
+                        WriteStringToFile(fbsGameStrengthByWeekFileName, builder.ToString());
+
+                        WriteRankingsToFile(overallConferenceStrengthFileName, "Conference Strength (Overall)", overallConferenceStrength);
+                        WriteRankingsToFile(fbsConferenceStrengthFileName, "Conference Strength (FBS)", fbsConferenceStrength);
+
+                        WriteStringToFile(summaryFileName, FormatRankingSummary(year, week,
+                            fbsPerformanceRankings.Take(25), top25FbsFutureScheduleStrength, fbsGameStrengthByWeek));
+
+                        #endregion
+                    }
                     #endregion
 
-                    #region Output Results to Files
-
-                    WriteRankingsToFile(overallPerformanceFileName, "Performance Rankings (Overall)", overallPerformanceRankings);
-                    WriteRankingsToFile(fbsPerformanceFileName, "Performance Rankings (FBS)", fbsPerformanceRankings);
-
-                    WriteRankingsToFile(overallWinStrengthFileName, "Win Strength (Overall)", overallWinStrength);
-                    WriteRankingsToFile(fbsWinStrengthFileName, "Win Strength (FBS)", fbsWinStrength);
-
-                    WriteRankingsToFile(overallScheduleStrengthFileName, "Schedule Strength (Overall)", overallScheduleStrength);
-                    WriteRankingsToFile(completedScheduleStrengthFileName, "Schedule Strength (Completed)", completedScheduleStrength);
-                    WriteRankingsToFile(futureScheduleStrengthFileName, "Schedule Strength (Future)", futureScheduleStrength);
-
-                    WriteRankingsToFile(fbsOverallScheduleStrengthFileName, "FBS Schedule Strength (Overall)", fbsOverallScheduleStrength);
-                    WriteRankingsToFile(fbsCompletedScheduleStrengthFileName, "FBS Schedule Strength (Completed)", fbsCompletedScheduleStrength);
-                    WriteRankingsToFile(fbsFutureScheduleStrengthFileName, "FBS Schedule Strength (Future)", fbsFutureScheduleStrength);
-
-                    WriteRankingsToFile(top25OverallScheduleStrengthFileName, "Top 25 Schedule Strength (Overall)", top25OverallScheduleStrength);
-                    WriteRankingsToFile(top25CompletedScheduleStrengthFileName, "Top 25 Schedule Strength (Completed)", top25CompletedScheduleStrength);
-                    WriteRankingsToFile(top25FutureScheduleStrengthFileName, "Top 25 Schedule Strength (Future)", top25FutureScheduleStrength);
-
-                    WriteRankingsToFile(top25FbsOverallScheduleStrengthFileName, "Top 25 FBS Schedule Strength (Overall)", top25FbsOverallScheduleStrength);
-                    WriteRankingsToFile(top25FbsCompletedScheduleStrengthFileName, "Top 25 FBS Schedule Strength (Completed)", top25FbsCompletedScheduleStrength);
-                    WriteRankingsToFile(top25FbsFutureScheduleStrengthFileName, "Top 25 FBS Schedule Strength (Future)", top25FbsFutureScheduleStrength);
-
-                    WriteRankingsToFile(overallGameStrengthFileName, "Game Strength (Overall)", overallGameStrength);
-                    WriteRankingsToFile(fbsGameStrengthFileName, "Game Strength (FBS)", fbsGameStrength);
-
-                    var builder = new StringBuilder();
-                    foreach (var gameWeek in overallGameStrengthByWeek)
+                    #region Simultaneous Wins
                     {
-                        builder.AppendLine(Ranking.Format(String.Format("Week {0} Game Strength (Overall)", gameWeek.Key), gameWeek.Value));
-                        builder.AppendLine();
+                        #region Calculate Rankings
+
+                        var overallData = SimultaneousWins.Data.RegularSeason(allTeams, week);
+                        var fbsData = SimultaneousWins.Data.Fbs.RegularSeason(fbsTeams, week);
+
+                        var overallPerformanceRankings = SimultaneousWins.Performance.Overall(fbsTeams, overallData);
+                        var fbsPerformanceRankings = SimultaneousWins.Performance.Overall(fbsTeams, fbsData);
+
+                        var overallWinStrength = SimultaneousWins.WinStrength.Overall(fbsTeams, overallData);
+                        var fbsWinStrength = SimultaneousWins.WinStrength.Overall(fbsTeams, fbsData);
+
+                        var overallScheduleStrength = SimultaneousWins.ScheduleStrength.Overall(fbsTeams, overallData);
+                        var completedScheduleStrength = SimultaneousWins.ScheduleStrength.Completed(fbsTeams, week, overallData);
+                        var futureScheduleStrength = SimultaneousWins.ScheduleStrength.Future(fbsTeams, week, overallData);
+
+                        var fbsOverallScheduleStrength = SimultaneousWins.ScheduleStrength.Overall(fbsTeams, fbsData);
+                        var fbsCompletedScheduleStrength = SimultaneousWins.ScheduleStrength.Completed(fbsTeams, week, fbsData);
+                        var fbsFutureScheduleStrength = SimultaneousWins.ScheduleStrength.Future(fbsTeams, week, fbsData);
+
+                        var top25Teams = fbsPerformanceRankings.Take(25).Select(rank => rank.Team).ToList();
+
+                        var top25OverallScheduleStrength = overallScheduleStrength.ForTeams(top25Teams).ToList();
+                        var top25CompletedScheduleStrength = completedScheduleStrength.ForTeams(top25Teams).ToList();
+                        var top25FutureScheduleStrength = futureScheduleStrength.ForTeams(top25Teams).ToList();
+
+                        var top25FbsOverallScheduleStrength = fbsOverallScheduleStrength.ForTeams(top25Teams).ToList();
+                        var top25FbsCompletedScheduleStrength = fbsCompletedScheduleStrength.ForTeams(top25Teams).ToList();
+                        var top25FbsFutureScheduleStrength = fbsFutureScheduleStrength.ForTeams(top25Teams).ToList();
+
+                        var overallGameStrength = SimultaneousWins.GameStrength.Overall(fbsGames, overallData);
+                        var fbsGameStrength = SimultaneousWins.GameStrength.Overall(fbsGames, fbsData);
+
+                        var overallGameStrengthByWeek = SimultaneousWins.GameStrength.ByWeek(fbsGames, overallData);
+                        var fbsGameStrengthByWeek = SimultaneousWins.GameStrength.ByWeek(fbsGames, fbsData);
+
+                        var overallConferenceStrength = SimultaneousWins.ConferenceStrength.Overall(fbsConferences, overallData);
+                        var fbsConferenceStrength = SimultaneousWins.ConferenceStrength.Overall(fbsConferences, fbsData);
+
+                        #endregion
+
+                        #region Create Output File Names
+
+                        var rankingMethodOutputFolder = Path.Combine(outputFolder, "Simultaneous Wins");
+
+                        var overallOutputFolder = Path.Combine(rankingMethodOutputFolder, "Overall");
+                        var overallTop25OutputFolder = Path.Combine(overallOutputFolder, "Top 25");
+
+                        var fbsOutputFolder = Path.Combine(rankingMethodOutputFolder, "FBS");
+                        var fbsTop25OutputFolder = Path.Combine(fbsOutputFolder, "Top 25");
+
+                        var overallPerformanceFileName = Path.Combine(overallOutputFolder, "Performance Rankings.txt");
+                        var fbsPerformanceFileName = Path.Combine(fbsOutputFolder, "Performance Rankings.txt");
+
+                        var overallWinStrengthFileName = Path.Combine(overallOutputFolder, "Win Strength.txt");
+                        var fbsWinStrengthFileName = Path.Combine(fbsOutputFolder, "Win Strength.txt");
+
+                        var overallScheduleStrengthFileName = Path.Combine(overallOutputFolder, "Overall Schedule Stength.txt");
+                        var completedScheduleStrengthFileName = Path.Combine(overallOutputFolder, "Completed Schedule Stength.txt");
+                        var futureScheduleStrengthFileName = Path.Combine(overallOutputFolder, "Future Schedule Stength.txt");
+
+                        var fbsOverallScheduleStrengthFileName = Path.Combine(fbsOutputFolder, "Overall Schedule Stength.txt");
+                        var fbsCompletedScheduleStrengthFileName = Path.Combine(fbsOutputFolder, "Completed Schedule Stength.txt");
+                        var fbsFutureScheduleStrengthFileName = Path.Combine(fbsOutputFolder, "Future Schedule Stength.txt");
+
+                        var top25OverallScheduleStrengthFileName = Path.Combine(overallTop25OutputFolder, "Overall Schedule Stength.txt");
+                        var top25CompletedScheduleStrengthFileName = Path.Combine(overallTop25OutputFolder, "Completed Schedule Stength.txt");
+                        var top25FutureScheduleStrengthFileName = Path.Combine(overallTop25OutputFolder, "Future Schedule Stength.txt");
+
+                        var top25FbsOverallScheduleStrengthFileName = Path.Combine(fbsTop25OutputFolder, "Overall Schedule Stength.txt");
+                        var top25FbsCompletedScheduleStrengthFileName = Path.Combine(fbsTop25OutputFolder, "Completed Schedule Stength.txt");
+                        var top25FbsFutureScheduleStrengthFileName = Path.Combine(fbsTop25OutputFolder, "Future Schedule Stength.txt");
+
+                        var overallGameStrengthFileName = Path.Combine(overallOutputFolder, "Game Strength.txt");
+                        var fbsGameStrengthFileName = Path.Combine(fbsOutputFolder, "Game Strength.txt");
+
+                        var overallGameStrengthByWeekFileName = Path.Combine(overallOutputFolder, "Game Strength By Week.txt");
+                        var fbsGameStrengthByWeekFileName = Path.Combine(fbsOutputFolder, "Game Strength By Week.txt");
+
+                        var overallConferenceStrengthFileName = Path.Combine(overallOutputFolder, "Conference Strength.txt");
+                        var fbsConferenceStrengthFileName = Path.Combine(fbsOutputFolder, "Conference Strength.txt");
+
+                        var summaryFileName = Path.Combine(rankingMethodOutputFolder, "Summary.txt");
+
+                        #endregion
+
+                        #region Output Results to Files
+
+                        WriteRankingsToFile(overallPerformanceFileName, "Performance Rankings (Overall)", overallPerformanceRankings);
+                        WriteRankingsToFile(fbsPerformanceFileName, "Performance Rankings (FBS)", fbsPerformanceRankings);
+
+                        WriteRankingsToFile(overallWinStrengthFileName, "Win Strength (Overall)", overallWinStrength);
+                        WriteRankingsToFile(fbsWinStrengthFileName, "Win Strength (FBS)", fbsWinStrength);
+
+                        WriteRankingsToFile(overallScheduleStrengthFileName, "Schedule Strength (Overall)", overallScheduleStrength);
+                        WriteRankingsToFile(completedScheduleStrengthFileName, "Schedule Strength (Completed)", completedScheduleStrength);
+                        WriteRankingsToFile(futureScheduleStrengthFileName, "Schedule Strength (Future)", futureScheduleStrength);
+
+                        WriteRankingsToFile(fbsOverallScheduleStrengthFileName, "FBS Schedule Strength (Overall)", fbsOverallScheduleStrength);
+                        WriteRankingsToFile(fbsCompletedScheduleStrengthFileName, "FBS Schedule Strength (Completed)", fbsCompletedScheduleStrength);
+                        WriteRankingsToFile(fbsFutureScheduleStrengthFileName, "FBS Schedule Strength (Future)", fbsFutureScheduleStrength);
+
+                        WriteRankingsToFile(top25OverallScheduleStrengthFileName, "Top 25 Schedule Strength (Overall)", top25OverallScheduleStrength);
+                        WriteRankingsToFile(top25CompletedScheduleStrengthFileName, "Top 25 Schedule Strength (Completed)", top25CompletedScheduleStrength);
+                        WriteRankingsToFile(top25FutureScheduleStrengthFileName, "Top 25 Schedule Strength (Future)", top25FutureScheduleStrength);
+
+                        WriteRankingsToFile(top25FbsOverallScheduleStrengthFileName, "Top 25 FBS Schedule Strength (Overall)", top25FbsOverallScheduleStrength);
+                        WriteRankingsToFile(top25FbsCompletedScheduleStrengthFileName, "Top 25 FBS Schedule Strength (Completed)", top25FbsCompletedScheduleStrength);
+                        WriteRankingsToFile(top25FbsFutureScheduleStrengthFileName, "Top 25 FBS Schedule Strength (Future)", top25FbsFutureScheduleStrength);
+
+                        WriteRankingsToFile(overallGameStrengthFileName, "Game Strength (Overall)", overallGameStrength);
+                        WriteRankingsToFile(fbsGameStrengthFileName, "Game Strength (FBS)", fbsGameStrength);
+
+                        var builder = new StringBuilder();
+                        foreach (var gameWeek in overallGameStrengthByWeek)
+                        {
+                            builder.AppendLine(Ranking.Format(String.Format("Week {0} Game Strength (Overall)", gameWeek.Key), gameWeek.Value));
+                            builder.AppendLine();
+                        }
+                        WriteStringToFile(overallGameStrengthByWeekFileName, builder.ToString());
+
+                        builder = new StringBuilder();
+                        foreach (var gameWeek in fbsGameStrengthByWeek)
+                        {
+                            builder.AppendLine(Ranking.Format(String.Format("Week {0} Game Strength (FBS)", gameWeek.Key), gameWeek.Value));
+                            builder.AppendLine();
+                        }
+                        WriteStringToFile(fbsGameStrengthByWeekFileName, builder.ToString());
+
+                        WriteRankingsToFile(overallConferenceStrengthFileName, "Conference Strength (Overall)", overallConferenceStrength);
+                        WriteRankingsToFile(fbsConferenceStrengthFileName, "Conference Strength (FBS)", fbsConferenceStrength);
+
+                        WriteStringToFile(summaryFileName, FormatRankingSummary(year, week,
+                            fbsPerformanceRankings.Take(25), top25FbsFutureScheduleStrength, fbsGameStrengthByWeek));
+
+                        #endregion
                     }
-                    WriteStringToFile(overallGameStrengthByWeekFileName, builder.ToString());
-
-                    builder = new StringBuilder();
-                    foreach (var gameWeek in fbsGameStrengthByWeek)
-                    {
-                        builder.AppendLine(Ranking.Format(String.Format("Week {0} Game Strength (FBS)", gameWeek.Key), gameWeek.Value));
-                        builder.AppendLine();
-                    }
-                    WriteStringToFile(fbsGameStrengthByWeekFileName, builder.ToString());
-
-                    WriteRankingsToFile(overallConferenceStrengthFileName, "Conference Strength (Overall)", overallConferenceStrength);
-                    WriteRankingsToFile(fbsConferenceStrengthFileName, "Conference Strength (FBS)", fbsConferenceStrength);
-
-                    WriteStringToFile(summaryFileName, FormatRankingSummary(year, week,
-                        fbsPerformanceRankings.Take(25), top25FbsFutureScheduleStrength, fbsGameStrengthByWeek));
-
-                    WriteRankingsToFile(experimentOverallPerformanceFileName, "Performance Rankings (Overall)", experimentOverallPerformanceRankings);
-                    WriteRankingsToFile(experimentFbsPerformanceFileName, "Performance Rankings (FBS)", experimentFbsPerformanceRankings);
-
-                    WriteRankingsToFile(experimentOverallWinStrengthFileName, "Win Strength (Overall)", experimentOverallWinStrength);
-                    WriteRankingsToFile(experimentFbsWinStrengthFileName, "Win Strength (FBS)", experimentFbsWinStrength);
-
-                    WriteRankingsToFile(experimentOverallScheduleStrengthFileName, "Schedule Strength (Overall)", experimentOverallScheduleStrength);
-                    WriteRankingsToFile(experimentCompletedScheduleStrengthFileName, "Schedule Strength (Completed)", experimentCompletedScheduleStrength);
-                    WriteRankingsToFile(experimentFutureScheduleStrengthFileName, "Schedule Strength (Future)", experimentFutureScheduleStrength);
-
-                    WriteRankingsToFile(experimentFbsOverallScheduleStrengthFileName, "FBS Schedule Strength (Overall)", experimentFbsOverallScheduleStrength);
-                    WriteRankingsToFile(experimentFbsCompletedScheduleStrengthFileName, "FBS Schedule Strength (Completed)", experimentFbsCompletedScheduleStrength);
-                    WriteRankingsToFile(experimentFbsFutureScheduleStrengthFileName, "FBS Schedule Strength (Future)", experimentFbsFutureScheduleStrength);
-
-                    WriteRankingsToFile(experimentTop25OverallScheduleStrengthFileName, "Top 25 Schedule Strength (Overall)", experimentTop25OverallScheduleStrength);
-                    WriteRankingsToFile(experimentTop25CompletedScheduleStrengthFileName, "Top 25 Schedule Strength (Completed)", experimentTop25CompletedScheduleStrength);
-                    WriteRankingsToFile(experimentTop25FutureScheduleStrengthFileName, "Top 25 Schedule Strength (Future)", experimentTop25FutureScheduleStrength);
-
-                    WriteRankingsToFile(experimentTop25FbsOverallScheduleStrengthFileName, "Top 25 FBS Schedule Strength (Overall)", experimentTop25FbsOverallScheduleStrength);
-                    WriteRankingsToFile(experimentTop25FbsCompletedScheduleStrengthFileName, "Top 25 FBS Schedule Strength (Completed)", experimentTop25FbsCompletedScheduleStrength);
-                    WriteRankingsToFile(experimentTop25FbsFutureScheduleStrengthFileName, "Top 25 FBS Schedule Strength (Future)", experimentTop25FbsFutureScheduleStrength);
-
-                    WriteRankingsToFile(experimentOverallGameStrengthFileName, "Game Strength (Overall)", experimentOverallGameStrength);
-                    WriteRankingsToFile(experimentFbsGameStrengthFileName, "Game Strength (FBS)", experimentFbsGameStrength);
-
-                    builder = new StringBuilder();
-                    foreach (var gameWeek in experimentOverallGameStrengthByWeek)
-                    {
-                        builder.AppendLine(Ranking.Format(String.Format("Week {0} Game Strength (Overall)", gameWeek.Key), gameWeek.Value));
-                        builder.AppendLine();
-                    }
-                    WriteStringToFile(experimentOverallGameStrengthByWeekFileName, builder.ToString());
-
-                    builder = new StringBuilder();
-                    foreach (var gameWeek in experimentFbsGameStrengthByWeek)
-                    {
-                        builder.AppendLine(Ranking.Format(String.Format("Week {0} Game Strength (FBS)", gameWeek.Key), gameWeek.Value));
-                        builder.AppendLine();
-                    }
-                    WriteStringToFile(experimentFbsGameStrengthByWeekFileName, builder.ToString());
-
-                    WriteRankingsToFile(experimentOverallConferenceStrengthFileName, "Conference Strength (Overall)", experimentOverallConferenceStrength);
-                    WriteRankingsToFile(experimentFbsConferenceStrengthFileName, "Conference Strength (FBS)", experimentFbsConferenceStrength);
-
-                    WriteStringToFile(experimentSummaryFileName, FormatRankingSummary(year, week,
-                        experimentFbsPerformanceRankings.Take(25), experimentTop25FbsFutureScheduleStrength, experimentFbsGameStrengthByWeek));
-
                     #endregion
                 }
 
                 if (games.All(game => game is CompletedGame))
                 {
-                    #region Calculate Rankings
-
-                    var overallData = Ranking.Data.FullSeason(allTeams);
-                    var fbsData = Ranking.Data.Fbs.FullSeason(fbsTeams);
-
-                    var overallPerformanceRankings = Ranking.Performance.Overall(fbsTeams, overallData);
-                    var fbsPerformanceRankings = Ranking.Performance.Overall(fbsTeams, fbsData);
-
-                    var overallWinStrength = Ranking.WinStrength.Overall(fbsTeams, overallData);
-                    var fbsWinStrength = Ranking.WinStrength.Overall(fbsTeams, fbsData);
-
                     var fbsGames = games.RegularSeason().Fbs().ToList();
-
-                    var overallGameStrength = Ranking.GameStrength.Overall(fbsGames, overallData);
-                    var fbsGameStrength = Ranking.GameStrength.Overall(fbsGames, fbsData);
-
-                    var overallGameStrengthByWeek = Ranking.GameStrength.ByWeek(fbsGames, overallData);
-                    var fbsGameStrengthByWeek = Ranking.GameStrength.ByWeek(fbsGames, fbsData);
-
-                    var overallConferenceStrength = Ranking.ConferenceStrength.Overall(fbsConferences, overallData);
-                    var fbsConferenceStrength = Ranking.ConferenceStrength.Overall(fbsConferences, fbsData);
-
-                    var experimentOverallData = Experiment.Data.FullSeason(allTeams);
-                    var experimentFbsData = Experiment.Data.Fbs.FullSeason(fbsTeams);
-
-                    var experimentOverallPerformanceRankings = Experiment.Performance.Overall(fbsTeams, experimentOverallData);
-                    var experimentFbsPerformanceRankings = Experiment.Performance.Overall(fbsTeams, experimentFbsData);
-
-                    var experimentOverallWinStrength = Experiment.WinStrength.Overall(fbsTeams, experimentOverallData);
-                    var experimentFbsWinStrength = Experiment.WinStrength.Overall(fbsTeams, experimentFbsData);
-
-                    var experimentOverallGameStrength = Experiment.GameStrength.Overall(fbsGames, experimentOverallData);
-                    var experimentFbsGameStrength = Experiment.GameStrength.Overall(fbsGames, experimentFbsData);
-
-                    var experimentOverallGameStrengthByWeek = Experiment.GameStrength.ByWeek(fbsGames, experimentOverallData);
-                    var experimentFbsGameStrengthByWeek = Experiment.GameStrength.ByWeek(fbsGames, experimentFbsData);
-
-                    var experimentOverallConferenceStrength = Experiment.ConferenceStrength.Overall(fbsConferences, experimentOverallData);
-                    var experimentFbsConferenceStrength = Experiment.ConferenceStrength.Overall(fbsConferences, experimentFbsData);
-
-                    #endregion
-
-                    Console.WriteLine("National Champion:");
-                    Console.WriteLine("    {0}", overallPerformanceRankings.First().Title);
-                    Console.WriteLine("    {0}", fbsPerformanceRankings.First().Title);
-                    Console.WriteLine("    {0}", experimentOverallPerformanceRankings.First().Title);
-                    Console.WriteLine("    {0}", experimentFbsPerformanceRankings.First().Title);
-                    Console.WriteLine();
-
-                    #region Create Output File Names
 
                     var outputFolder = Path.Combine(ResultsFolder, yearString, "Final");
 
-                    var overallOutputFolder = Path.Combine(outputFolder, "Overall");
-                    var fbsOutputFolder = Path.Combine(outputFolder, "FBS");
+                    Console.WriteLine("National Champion:");
 
-                    var overallPerformanceFileName = Path.Combine(overallOutputFolder, "Performance Rankings.txt");
-                    var fbsPerformanceFileName = Path.Combine(fbsOutputFolder, "Performance Rankings.txt");
+                    #region Single Depth Wins
+                    {
+                        #region Calculate Rankings
 
-                    var overallWinStrengthFileName = Path.Combine(overallOutputFolder, "Win Strength.txt");
-                    var fbsWinStrengthFileName = Path.Combine(fbsOutputFolder, "Win Strength.txt");
+                        var overallData = SingleDepthWins.Data.FullSeason(allTeams);
+                        var fbsData = SingleDepthWins.Data.Fbs.FullSeason(fbsTeams);
 
-                    var overallGameStrengthFileName = Path.Combine(overallOutputFolder, "Game Strength.txt");
-                    var fbsGameStrengthFileName = Path.Combine(fbsOutputFolder, "Game Strength.txt");
+                        var overallPerformanceRankings = SingleDepthWins.Performance.Overall(fbsTeams, overallData);
+                        var fbsPerformanceRankings = SingleDepthWins.Performance.Overall(fbsTeams, fbsData);
 
-                    var overallGameStrengthByWeekFileName = Path.Combine(overallOutputFolder, "Game Strength By Week.txt");
-                    var fbsGameStrengthByWeekFileName = Path.Combine(fbsOutputFolder, "Game Strength By Week.txt");
+                        var overallWinStrength = SingleDepthWins.WinStrength.Overall(fbsTeams, overallData);
+                        var fbsWinStrength = SingleDepthWins.WinStrength.Overall(fbsTeams, fbsData);
 
-                    var overallConferenceStrengthFileName = Path.Combine(overallOutputFolder, "Conference Strength.txt");
-                    var fbsConferenceStrengthFileName = Path.Combine(fbsOutputFolder, "Conference Strength.txt");
+                        var overallGameStrength = SingleDepthWins.GameStrength.Overall(fbsGames, overallData);
+                        var fbsGameStrength = SingleDepthWins.GameStrength.Overall(fbsGames, fbsData);
 
-                    var experimentOutputFolder = Path.Combine(outputFolder, "Experiment");
+                        var overallGameStrengthByWeek = SingleDepthWins.GameStrength.ByWeek(fbsGames, overallData);
+                        var fbsGameStrengthByWeek = SingleDepthWins.GameStrength.ByWeek(fbsGames, fbsData);
 
-                    var experimentOverallOutputFolder = Path.Combine(experimentOutputFolder, "Overall");
-                    var experimentFbsOutputFolder = Path.Combine(experimentOutputFolder, "FBS");
+                        var overallConferenceStrength = SingleDepthWins.ConferenceStrength.Overall(fbsConferences,
+                            overallData);
+                        var fbsConferenceStrength = SingleDepthWins.ConferenceStrength.Overall(fbsConferences, fbsData);
 
-                    var experimentOverallPerformanceFileName = Path.Combine(experimentOverallOutputFolder, "Performance Rankings.txt");
-                    var experimentFbsPerformanceFileName = Path.Combine(experimentFbsOutputFolder, "Performance Rankings.txt");
+                        #endregion
 
-                    var experimentOverallWinStrengthFileName = Path.Combine(experimentOverallOutputFolder, "Win Strength.txt");
-                    var experimentFbsWinStrengthFileName = Path.Combine(experimentFbsOutputFolder, "Win Strength.txt");
+                        #region Create Output File Names
 
-                    var experimentOverallGameStrengthFileName = Path.Combine(experimentOverallOutputFolder, "Game Strength.txt");
-                    var experimentFbsGameStrengthFileName = Path.Combine(experimentFbsOutputFolder, "Game Strength.txt");
+                        var rankingMethodOutputFolder = Path.Combine(outputFolder, "Single Depth Wins");
 
-                    var experimentOverallGameStrengthByWeekFileName = Path.Combine(experimentOverallOutputFolder, "Game Strength By Week.txt");
-                    var experimentFbsGameStrengthByWeekFileName = Path.Combine(experimentFbsOutputFolder, "Game Strength By Week.txt");
+                        var overallOutputFolder = Path.Combine(rankingMethodOutputFolder, "Overall");
+                        var fbsOutputFolder = Path.Combine(rankingMethodOutputFolder, "FBS");
 
-                    var experimentOverallConferenceStrengthFileName = Path.Combine(experimentOverallOutputFolder, "Conference Strength.txt");
-                    var experimentFbsConferenceStrengthFileName = Path.Combine(experimentFbsOutputFolder, "Conference Strength.txt");
+                        var overallPerformanceFileName = Path.Combine(overallOutputFolder, "Performance Rankings.txt");
+                        var fbsPerformanceFileName = Path.Combine(fbsOutputFolder, "Performance Rankings.txt");
 
+                        var overallWinStrengthFileName = Path.Combine(overallOutputFolder, "Win Strength.txt");
+                        var fbsWinStrengthFileName = Path.Combine(fbsOutputFolder, "Win Strength.txt");
+
+                        var overallGameStrengthFileName = Path.Combine(overallOutputFolder, "Game Strength.txt");
+                        var fbsGameStrengthFileName = Path.Combine(fbsOutputFolder, "Game Strength.txt");
+
+                        var overallGameStrengthByWeekFileName = Path.Combine(overallOutputFolder, "Game Strength By Week.txt");
+                        var fbsGameStrengthByWeekFileName = Path.Combine(fbsOutputFolder, "Game Strength By Week.txt");
+
+                        var overallConferenceStrengthFileName = Path.Combine(overallOutputFolder, "Conference Strength.txt");
+                        var fbsConferenceStrengthFileName = Path.Combine(fbsOutputFolder, "Conference Strength.txt");
+
+                        #endregion
+
+                        #region Output Results to Files
+
+                        WriteRankingsToFile(overallPerformanceFileName, "Performance Rankings (Overall)", overallPerformanceRankings);
+                        WriteRankingsToFile(fbsPerformanceFileName, "Performance Rankings (FBS)", fbsPerformanceRankings);
+
+                        WriteRankingsToFile(overallWinStrengthFileName, "Win Strength (Overall)", overallWinStrength);
+                        WriteRankingsToFile(fbsWinStrengthFileName, "Win Strength (FBS)", fbsWinStrength);
+
+                        WriteRankingsToFile(overallGameStrengthFileName, "Game Strength (Overall)", overallGameStrength);
+                        WriteRankingsToFile(fbsGameStrengthFileName, "Game Strength (FBS)", fbsGameStrength);
+
+                        var builder = new StringBuilder();
+                        foreach (var gameWeek in overallGameStrengthByWeek)
+                        {
+                            builder.AppendLine(Ranking.Format(String.Format("Week {0} Game Strength (Overall)", gameWeek.Key), gameWeek.Value));
+                            builder.AppendLine();
+                        }
+                        WriteStringToFile(overallGameStrengthByWeekFileName, builder.ToString());
+
+                        builder = new StringBuilder();
+                        foreach (var gameWeek in fbsGameStrengthByWeek)
+                        {
+                            builder.AppendLine(Ranking.Format(String.Format("Week {0} Game Strength (FBS)", gameWeek.Key), gameWeek.Value));
+                            builder.AppendLine();
+                        }
+                        WriteStringToFile(fbsGameStrengthByWeekFileName, builder.ToString());
+
+                        WriteRankingsToFile(overallConferenceStrengthFileName, "Conference Strength (Overall)", overallConferenceStrength);
+                        WriteRankingsToFile(fbsConferenceStrengthFileName, "Conference Strength (FBS)", fbsConferenceStrength);
+
+                        #endregion
+
+                        Console.WriteLine("    {0}", overallPerformanceRankings.First().Title);
+                        Console.WriteLine("    {0}", fbsPerformanceRankings.First().Title);
+                    }
                     #endregion
 
-                    #region Output Results to Files
-
-                    WriteRankingsToFile(overallPerformanceFileName, "Performance Rankings (Overall)", overallPerformanceRankings);
-                    WriteRankingsToFile(fbsPerformanceFileName, "Performance Rankings (FBS)", fbsPerformanceRankings);
-
-                    WriteRankingsToFile(overallWinStrengthFileName, "Win Strength (Overall)", overallWinStrength);
-                    WriteRankingsToFile(fbsWinStrengthFileName, "Win Strength (FBS)", fbsWinStrength);
-
-                    WriteRankingsToFile(overallGameStrengthFileName, "Game Strength (Overall)", overallGameStrength);
-                    WriteRankingsToFile(fbsGameStrengthFileName, "Game Strength (FBS)", fbsGameStrength);
-
-                    var builder = new StringBuilder();
-                    foreach (var gameWeek in overallGameStrengthByWeek)
+                    #region Simultaneous Wins
                     {
-                        builder.AppendLine(Ranking.Format(String.Format("Week {0} Game Strength (Overall)", gameWeek.Key), gameWeek.Value));
-                        builder.AppendLine();
+                        #region Calculate Rankings
+
+                        var overallData = SimultaneousWins.Data.FullSeason(allTeams);
+                        var fbsData = SimultaneousWins.Data.Fbs.FullSeason(fbsTeams);
+
+                        var overallPerformanceRankings = SimultaneousWins.Performance.Overall(fbsTeams, overallData);
+                        var fbsPerformanceRankings = SimultaneousWins.Performance.Overall(fbsTeams, fbsData);
+
+                        var overallWinStrength = SimultaneousWins.WinStrength.Overall(fbsTeams, overallData);
+                        var fbsWinStrength = SimultaneousWins.WinStrength.Overall(fbsTeams, fbsData);
+
+                        var overallGameStrength = SimultaneousWins.GameStrength.Overall(fbsGames, overallData);
+                        var fbsGameStrength = SimultaneousWins.GameStrength.Overall(fbsGames, fbsData);
+
+                        var overallGameStrengthByWeek = SimultaneousWins.GameStrength.ByWeek(fbsGames, overallData);
+                        var fbsGameStrengthByWeek = SimultaneousWins.GameStrength.ByWeek(fbsGames, fbsData);
+
+                        var overallConferenceStrength = SimultaneousWins.ConferenceStrength.Overall(fbsConferences, overallData);
+                        var fbsConferenceStrength = SimultaneousWins.ConferenceStrength.Overall(fbsConferences, fbsData);
+
+                        #endregion
+
+                        #region Create Output File Names
+
+                        var rankingMethodOutputFolder = Path.Combine(outputFolder, "Simultaneous Wins");
+
+                        var overallOutputFolder = Path.Combine(rankingMethodOutputFolder, "Overall");
+                        var fbsOutputFolder = Path.Combine(rankingMethodOutputFolder, "FBS");
+
+                        var overallPerformanceFileName = Path.Combine(overallOutputFolder, "Performance Rankings.txt");
+                        var fbsPerformanceFileName = Path.Combine(fbsOutputFolder, "Performance Rankings.txt");
+
+                        var overallWinStrengthFileName = Path.Combine(overallOutputFolder, "Win Strength.txt");
+                        var fbsWinStrengthFileName = Path.Combine(fbsOutputFolder, "Win Strength.txt");
+
+                        var overallGameStrengthFileName = Path.Combine(overallOutputFolder, "Game Strength.txt");
+                        var fbsGameStrengthFileName = Path.Combine(fbsOutputFolder, "Game Strength.txt");
+
+                        var overallGameStrengthByWeekFileName = Path.Combine(overallOutputFolder, "Game Strength By Week.txt");
+                        var fbsGameStrengthByWeekFileName = Path.Combine(fbsOutputFolder, "Game Strength By Week.txt");
+
+                        var overallConferenceStrengthFileName = Path.Combine(overallOutputFolder, "Conference Strength.txt");
+                        var fbsConferenceStrengthFileName = Path.Combine(fbsOutputFolder, "Conference Strength.txt");
+
+                        #endregion
+
+                        #region Output Results to Files
+
+                        WriteRankingsToFile(overallPerformanceFileName, "Performance Rankings (Overall)", overallPerformanceRankings);
+                        WriteRankingsToFile(fbsPerformanceFileName, "Performance Rankings (FBS)", fbsPerformanceRankings);
+
+                        WriteRankingsToFile(overallWinStrengthFileName, "Win Strength (Overall)", overallWinStrength);
+                        WriteRankingsToFile(fbsWinStrengthFileName, "Win Strength (FBS)", fbsWinStrength);
+
+                        WriteRankingsToFile(overallGameStrengthFileName, "Game Strength (Overall)", overallGameStrength);
+                        WriteRankingsToFile(fbsGameStrengthFileName, "Game Strength (FBS)", fbsGameStrength);
+
+                        var builder = new StringBuilder();
+                        foreach (var gameWeek in overallGameStrengthByWeek)
+                        {
+                            builder.AppendLine(Ranking.Format(String.Format("Week {0} Game Strength (Overall)", gameWeek.Key), gameWeek.Value));
+                            builder.AppendLine();
+                        }
+                        WriteStringToFile(overallGameStrengthByWeekFileName, builder.ToString());
+
+                        builder = new StringBuilder();
+                        foreach (var gameWeek in fbsGameStrengthByWeek)
+                        {
+                            builder.AppendLine(Ranking.Format(String.Format("Week {0} Game Strength (FBS)", gameWeek.Key), gameWeek.Value));
+                            builder.AppendLine();
+                        }
+                        WriteStringToFile(fbsGameStrengthByWeekFileName, builder.ToString());
+
+                        WriteRankingsToFile(overallConferenceStrengthFileName, "Conference Strength (Overall)", overallConferenceStrength);
+                        WriteRankingsToFile(fbsConferenceStrengthFileName, "Conference Strength (FBS)", fbsConferenceStrength);
+
+                        #endregion
+
+                        Console.WriteLine("    {0}", overallPerformanceRankings.First().Title);
+                        Console.WriteLine("    {0}", fbsPerformanceRankings.First().Title);
                     }
-                    WriteStringToFile(overallGameStrengthByWeekFileName, builder.ToString());
-
-                    builder = new StringBuilder();
-                    foreach (var gameWeek in fbsGameStrengthByWeek)
-                    {
-                        builder.AppendLine(Ranking.Format(String.Format("Week {0} Game Strength (FBS)", gameWeek.Key), gameWeek.Value));
-                        builder.AppendLine();
-                    }
-                    WriteStringToFile(fbsGameStrengthByWeekFileName, builder.ToString());
-
-                    WriteRankingsToFile(overallConferenceStrengthFileName, "Conference Strength (Overall)", overallConferenceStrength);
-                    WriteRankingsToFile(fbsConferenceStrengthFileName, "Conference Strength (FBS)", fbsConferenceStrength);
-
-                    WriteRankingsToFile(experimentOverallPerformanceFileName, "Performance Rankings (Overall)", experimentOverallPerformanceRankings);
-                    WriteRankingsToFile(experimentFbsPerformanceFileName, "Performance Rankings (FBS)", experimentFbsPerformanceRankings);
-
-                    WriteRankingsToFile(experimentOverallWinStrengthFileName, "Win Strength (Overall)", experimentOverallWinStrength);
-                    WriteRankingsToFile(experimentFbsWinStrengthFileName, "Win Strength (FBS)", experimentFbsWinStrength);
-
-                    WriteRankingsToFile(experimentOverallGameStrengthFileName, "Game Strength (Overall)", experimentOverallGameStrength);
-                    WriteRankingsToFile(experimentFbsGameStrengthFileName, "Game Strength (FBS)", experimentFbsGameStrength);
-
-                    builder = new StringBuilder();
-                    foreach (var gameWeek in experimentOverallGameStrengthByWeek)
-                    {
-                        builder.AppendLine(Ranking.Format(String.Format("Week {0} Game Strength (Overall)", gameWeek.Key), gameWeek.Value));
-                        builder.AppendLine();
-                    }
-                    WriteStringToFile(experimentOverallGameStrengthByWeekFileName, builder.ToString());
-
-                    builder = new StringBuilder();
-                    foreach (var gameWeek in experimentFbsGameStrengthByWeek)
-                    {
-                        builder.AppendLine(Ranking.Format(String.Format("Week {0} Game Strength (FBS)", gameWeek.Key), gameWeek.Value));
-                        builder.AppendLine();
-                    }
-                    WriteStringToFile(experimentFbsGameStrengthByWeekFileName, builder.ToString());
-
-                    WriteRankingsToFile(experimentOverallConferenceStrengthFileName, "Conference Strength (Overall)", experimentOverallConferenceStrength);
-                    WriteRankingsToFile(experimentFbsConferenceStrengthFileName, "Conference Strength (FBS)", experimentFbsConferenceStrength);
-
                     #endregion
+
+                    Console.WriteLine();
                 }
             }
         }

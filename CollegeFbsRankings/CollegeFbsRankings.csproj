@@ -46,28 +46,29 @@
   <ItemGroup>
     <Compile Include="Conferences\Conference.cs" />
     <Compile Include="Conferences\Division.cs" />
-    <Compile Include="Experiments\ConferenceStrength.cs" />
-    <Compile Include="Experiments\Experiment.cs" />
-    <Compile Include="Experiments\GameStrength.cs" />
-    <Compile Include="Experiments\Performance.cs" />
-    <Compile Include="Experiments\ScheduleStrength.cs" />
-    <Compile Include="Experiments\WinStrength.cs" />
+    <Compile Include="Rankings\SimultaneousWins\ConferenceStrength.cs" />
+    <Compile Include="Rankings\SimultaneousWins\Data.cs" />
+    <Compile Include="Rankings\SimultaneousWins\GameStrength.cs" />
+    <Compile Include="Rankings\SimultaneousWins\Performance.cs" />
+    <Compile Include="Rankings\SimultaneousWins\ScheduleStrength.cs" />
+    <Compile Include="Rankings\SimultaneousWins\WinStrength.cs" />
     <Compile Include="Games\CompletedGame.cs" />
     <Compile Include="Games\FutureGame.cs" />
     <Compile Include="Games\Game.cs" />
     <Compile Include="Games\TeamCompletedGame.cs" />
     <Compile Include="Games\TeamFutureGame.cs" />
     <Compile Include="Games\TeamGame.cs" />
-    <Compile Include="Experiments\Internal\Matrix.cs" />
-    <Compile Include="Experiments\Internal\Vector.cs" />
+    <Compile Include="LinearAlgebra\Matrix.cs" />
+    <Compile Include="LinearAlgebra\Vector.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Rankings\ConferenceStrength.cs" />
-    <Compile Include="Rankings\GameStrength.cs" />
-    <Compile Include="Rankings\Performance.cs" />
+    <Compile Include="Rankings\SingleDepthWins\ConferenceStrength.cs" />
+    <Compile Include="Rankings\SingleDepthWins\Data.cs" />
+    <Compile Include="Rankings\SingleDepthWins\GameStrength.cs" />
+    <Compile Include="Rankings\SingleDepthWins\Performance.cs" />
     <Compile Include="Rankings\Ranking.cs" />
-    <Compile Include="Rankings\ScheduleStrength.cs" />
-    <Compile Include="Rankings\WinStrength.cs" />
+    <Compile Include="Rankings\SingleDepthWins\ScheduleStrength.cs" />
+    <Compile Include="Rankings\SingleDepthWins\WinStrength.cs" />
     <Compile Include="Teams\FbsTeam.cs" />
     <Compile Include="Teams\FcsTeam.cs" />
     <Compile Include="Teams\Team.cs" />
@@ -184,6 +185,9 @@
     <None Include="..\Data\2015\FBS Teams.txt">
       <Link>Data\2015\FBS Teams.txt</Link>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Experiments\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

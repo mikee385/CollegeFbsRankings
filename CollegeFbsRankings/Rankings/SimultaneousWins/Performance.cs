@@ -4,12 +4,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-using CollegeFbsRankings.Rankings;
 using CollegeFbsRankings.Teams;
 
-namespace CollegeFbsRankings.Experiments
+namespace CollegeFbsRankings.Rankings
 {
-    public static partial class Experiment
+    public static partial class SimultaneousWins
     {
         public static class Performance
         {

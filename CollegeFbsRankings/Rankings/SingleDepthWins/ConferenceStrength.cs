@@ -9,11 +9,11 @@ using CollegeFbsRankings.Teams;
 
 namespace CollegeFbsRankings.Rankings
 {
-    public static partial class Ranking
+    public static partial class SingleDepthWins
     {
         public static class ConferenceStrength
         {
-            public static IReadOnlyList<ConferenceValue<TTeam>> Overall<TTeam>(IEnumerable<Conference<TTeam>> conferences, Dictionary<Team, Data> performanceData) where TTeam : Team
+            public static IReadOnlyList<Ranking.ConferenceValue<TTeam>> Overall<TTeam>(IEnumerable<Conference<TTeam>> conferences, Dictionary<Team, Data> performanceData) where TTeam : Team
             {
                 return conferences.Select(conference =>
                 {
@@ -51,7 +51,7 @@ namespace CollegeFbsRankings.Rankings
                     writer.WriteLine("Opponent Wins: {0} / {1} ({2})", opponentWinTotal, opponentGameTotal, opponentWinPercentage);
                     writer.WriteLine("Performance  : {0}", performance);
 
-                    return new ConferenceValue<TTeam>(conference,
+                    return new Ranking.ConferenceValue<TTeam>(conference,
                         new[]
                         {
                             performance,
