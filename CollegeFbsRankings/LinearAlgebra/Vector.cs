@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-
-namespace CollegeFbsRankings.LinearAlgebra
+﻿namespace CollegeFbsRankings.LinearAlgebra
 {
     public class Vector
     {

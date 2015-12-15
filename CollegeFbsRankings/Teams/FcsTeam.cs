@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace CollegeFbsRankings.Teams
+﻿namespace CollegeFbsRankings.Teams
 {
     public class FcsTeam : Team
     {

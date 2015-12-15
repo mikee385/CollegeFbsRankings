@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -89,7 +88,6 @@ namespace CollegeFbsRankings.Rankings
 
                 foreach (var pair in basicData)
                 {
-                    var team = pair.Key;
                     var teamData = pair.Value;
 
                     a.Set(teamData.Index, teamData.Index, 1.0);

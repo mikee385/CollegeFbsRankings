@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -199,7 +198,6 @@ namespace CollegeFbsRankings
                         string weekString;
                         string dateString;
                         string timeString;
-                        string weekDayString;
                         string firstTeamNameString;
                         string firstTeamScoreString;
                         string homeVsAwaySymbolString;
@@ -214,7 +212,6 @@ namespace CollegeFbsRankings
                             weekString = lineSplit[1];
                             dateString = lineSplit[2];
                             timeString = lineSplit[3];
-                            weekDayString = lineSplit[4];
                             firstTeamNameString = lineSplit[5];
                             firstTeamScoreString = lineSplit[6];
                             homeVsAwaySymbolString = lineSplit[7];
@@ -229,7 +226,6 @@ namespace CollegeFbsRankings
                             weekString = lineSplit[1];
                             dateString = lineSplit[2];
                             timeString = lineSplit[3];
-                            weekDayString = lineSplit[4];
                             firstTeamNameString = lineSplit[5];
                             firstTeamScoreString = lineSplit[6];
                             homeVsAwaySymbolString = lineSplit[7];
@@ -244,7 +240,6 @@ namespace CollegeFbsRankings
                             weekString = lineSplit[1];
                             dateString = lineSplit[2];
                             timeString = String.Empty;
-                            weekDayString = lineSplit[3];
                             firstTeamNameString = lineSplit[4];
                             firstTeamScoreString = lineSplit[5];
                             homeVsAwaySymbolString = lineSplit[6];
