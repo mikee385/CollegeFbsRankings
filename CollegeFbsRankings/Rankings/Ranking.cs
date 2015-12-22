@@ -11,14 +11,14 @@ namespace CollegeFbsRankings.Rankings
 {
     public static class Ranking
     {
-        public class Value
+        public abstract class Value
         {
             private readonly string _title;
             private readonly IEnumerable<double> _values;
             private readonly IEnumerable<IComparable> _tieBreakers;
             private readonly string _summary;
 
-            public Value(string title, IEnumerable<double> values, IEnumerable<IComparable> tieBreakers, string summary)
+            protected Value(string title, IEnumerable<double> values, IEnumerable<IComparable> tieBreakers, string summary)
             {
                 _title = title;
                 _values = values;

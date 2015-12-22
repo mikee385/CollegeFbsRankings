@@ -36,38 +36,51 @@ namespace CollegeFbsRankings.Rankings
                 {
                     var writer = new StringWriter();
                     writer.WriteLine(team.Name + " Games:");
+                
+                    var teamGames = teamGameFilter(team.Games).ToList();
 
-                    var teamData = performanceData[team];
-                    var teamGames = teamGameFilter(team.Games);
-
-                    var opponentGameTotal = 0;
-                    var opponentWinTotal = 0;
-                    foreach (var game in teamGames)
+                    var scheduleData = new Data(0, 0, 0, 0, String.Empty);
+                    if (teamGames.Count > 0)
                     {
-                        Data opponentData;
-                        if (performanceData.TryGetValue(game.Opponent, out opponentData))
-                        {
-                            opponentGameTotal += opponentData.GameTotal;
-                            opponentWinTotal += opponentData.WinTotal;
+                        var maxOpponentLength = teamGames.Max(game => game.Opponent.Name.Length);
+                        var maxTeamTitleLength = team.Name.Length + maxOpponentLength + 5;
 
-                            writer.WriteLine("    Week {0,-2} {1} vs. {2} ({3} / {4})",
-                                game.Week,
-                                game.HomeTeam.Name,
-                                game.AwayTeam.Name,
-                                opponentData.WinTotal,
-                                opponentData.GameTotal);
+                        foreach (var game in teamGames)
+                        {
+                            Data opponentData;
+                            if (performanceData.TryGetValue(game.Opponent, out opponentData))
+                            {
+                                var teamTitle = String.Format("{0} vs. {1}",
+                                    game.HomeTeam.Name,
+                                    game.AwayTeam.Name);
+
+                                writer.WriteLine("    Week {0,-2} {1,-" + maxTeamTitleLength + "} ({2,2} / {3,2}) ({4:F8})",
+                                    game.Week,
+                                    teamTitle,
+                                    opponentData.WinTotal,
+                                    opponentData.GameTotal,
+                                    opponentData.PerformanceValue);
+
+                                scheduleData = Data.Combine(scheduleData, opponentData);
+                            }
                         }
                     }
+                    else
+                    {
+                        writer.WriteLine("    [None]");
+                    }
                     writer.WriteLine();
-
-                    var opponentWinPercentage = (double)opponentWinTotal / opponentGameTotal;
-
-                    writer.WriteLine("Opponent Wins: {0} / {1} ({2})", opponentWinTotal, opponentGameTotal, opponentWinPercentage);
+                    
+                    var opponentGameTotal = scheduleData.GameTotal;
+                    var opponentWinTotal = scheduleData.WinTotal;
+                    var opponentValue = scheduleData.TeamValue;
+                    
+                    writer.WriteLine("Opponent Wins: {0,2} / {1,2} ({2:F8})", opponentWinTotal, opponentGameTotal, opponentValue);
 
                     return new Ranking.TeamValue(team,
                         new[]
                         {
-                            opponentWinPercentage
+                            opponentValue
                         },
                         new IComparable[]
                         {

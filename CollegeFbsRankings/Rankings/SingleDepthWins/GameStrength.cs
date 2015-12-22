@@ -33,9 +33,11 @@ namespace CollegeFbsRankings.Rankings
                         game.AwayTeam.Name,
                         game.Date);
 
+                    var maxTeamLength = Math.Max(game.HomeTeam.Name.Length, game.AwayTeam.Name.Length);
+
                     var homeTeamData = performanceData[game.HomeTeam];
 
-                    writer.WriteLine("    {0}: Team = {1} / {2}, Opponent = {3} / {4}",
+                    writer.WriteLine("    {0,-" + maxTeamLength + "}: Team = {1,2} / {2,2}, Opponent = {3,2} / {4,2}",
                         game.HomeTeam.Name,
                         homeTeamData.WinTotal,
                         homeTeamData.GameTotal,
@@ -44,34 +46,34 @@ namespace CollegeFbsRankings.Rankings
 
                     var awayTeamData = performanceData[game.AwayTeam];
 
-                    writer.WriteLine("    {0}: Team = {1} / {2}, Opponent = {3} / {4}",
+                    writer.WriteLine("    {0,-" + maxTeamLength + "}: Team = {1,2} / {2,2}, Opponent = {3,2} / {4,2}",
                         game.AwayTeam.Name,
                         awayTeamData.WinTotal,
                         awayTeamData.GameTotal,
                         awayTeamData.OpponentWinTotal,
                         awayTeamData.OpponentGameTotal);
 
-                    var teamGameTotal = homeTeamData.GameTotal + awayTeamData.GameTotal;
-                    var teamWinTotal = homeTeamData.WinTotal + awayTeamData.WinTotal;
-                    var teamWinPercentage = (double)teamWinTotal / teamGameTotal;
+                    var gameData = Data.Combine(homeTeamData, awayTeamData);
 
-                    var opponentGameTotal = homeTeamData.OpponentGameTotal + awayTeamData.OpponentGameTotal;
-                    var opponentWinTotal = homeTeamData.OpponentWinTotal + awayTeamData.OpponentWinTotal;
-                    var opponentWinPercentage = (double)opponentWinTotal / opponentGameTotal;
-
-                    var performance = teamWinPercentage * opponentWinPercentage;
+                    var teamGameTotal = gameData.GameTotal;
+                    var teamWinTotal = gameData.WinTotal;
+                    var teamValue = gameData.TeamValue;
+                    var opponentGameTotal = gameData.OpponentGameTotal;
+                    var opponentWinTotal = gameData.OpponentWinTotal;
+                    var opponentValue = gameData.OpponentValue;
+                    var performanceValue = gameData.PerformanceValue;
 
                     writer.WriteLine();
-                    writer.WriteLine("Team Wins    : {0} / {1} ({2})", teamWinTotal, teamGameTotal, teamWinPercentage);
-                    writer.WriteLine("Opponent Wins: {0} / {1} ({2})", opponentWinTotal, opponentGameTotal, opponentWinPercentage);
-                    writer.WriteLine("Performance  : {0}", performance);
+                    writer.WriteLine("Team Wins    : {0,2} / {1,2} ({2:F8})", teamWinTotal, teamGameTotal, teamValue);
+                    writer.WriteLine("Opponent Wins: {0,2} / {1,2} ({2:F8})", opponentWinTotal, opponentGameTotal, opponentValue);
+                    writer.WriteLine("Performance  : {0:F8}", performanceValue);
 
                     return new Ranking.GameValue(game,
                         new[]
                         {
-                            performance,
-                            teamWinPercentage,
-                            opponentWinPercentage
+                            performanceValue,
+                            teamValue,
+                            opponentValue
                         },
                         new IComparable[]
                         {

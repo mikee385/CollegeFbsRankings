@@ -17,18 +17,21 @@ namespace CollegeFbsRankings.Rankings
                 {
                     var teamData = performanceData[team];
 
+                    var teamValue = teamData.TeamValue;
+
                     var opponentGameTotal = teamData.OpponentGameTotal;
                     var opponentWinTotal = teamData.OpponentWinTotal;
-                    var opponentWinPercentage = (double)opponentWinTotal / opponentGameTotal;
+                    var opponentValue = teamData.OpponentValue;
 
                     var writer = new StringWriter();
                     writer.WriteLine(teamData.Summary);
-                    writer.WriteLine("Opponent Wins: {0} / {1} ({2})", opponentWinTotal, opponentGameTotal, opponentWinPercentage);
+                    writer.WriteLine("Opponent Wins: {0,2} / {1,2} ({2:F8})", opponentWinTotal, opponentGameTotal, opponentValue);
 
                     return new Ranking.TeamValue(team,
                         new[]
                         {
-                            opponentWinPercentage
+                            opponentValue,
+                            teamValue
                         },
                         new IComparable[]
                         {

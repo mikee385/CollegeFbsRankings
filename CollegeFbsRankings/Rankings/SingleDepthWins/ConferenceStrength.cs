@@ -19,43 +19,42 @@ namespace CollegeFbsRankings.Rankings
                     var writer = new StringWriter();
                     writer.WriteLine(conference.Name + " Teams:");
 
-                    var teamGameTotal = 0;
-                    var teamWinTotal = 0;
-                    var opponentGameTotal = 0;
-                    var opponentWinTotal = 0;
+                    var maxTeamLength = conference.Teams.Max(team => team.Name.Length);
 
+                    var conferenceData = new Data(0, 0, 0, 0, String.Empty);
                     foreach (var team in conference.Teams.OrderBy(t => t.Name))
                     {
                         var teamData = performanceData[team];
 
-                        teamGameTotal += teamData.GameTotal;
-                        teamWinTotal += teamData.WinTotal;
-                        opponentGameTotal += teamData.OpponentGameTotal;
-                        opponentWinTotal += teamData.OpponentWinTotal;
-
-                        writer.WriteLine("    {0}: Team = {1} / {2}, Opponent = {3} / {4}",
+                        writer.WriteLine("    {0,-" + maxTeamLength + "}: Team = {1,2} / {2,2}, Opponent = {3,2} / {4,2}",
                             team.Name,
                             teamData.WinTotal,
                             teamData.GameTotal,
                             teamData.OpponentWinTotal,
                             teamData.OpponentGameTotal);
+
+                        conferenceData = Data.Combine(conferenceData, teamData);
                     }
-                    
-                    var teamWinPercentage = (double)teamWinTotal / teamGameTotal;
-                    var opponentWinPercentage = (double)opponentWinTotal / opponentGameTotal;
-                    var performance = teamWinPercentage * opponentWinPercentage;
+
+                    var teamGameTotal = conferenceData.GameTotal;
+                    var teamWinTotal = conferenceData.WinTotal;
+                    var teamValue = conferenceData.TeamValue;
+                    var opponentGameTotal = conferenceData.OpponentGameTotal;
+                    var opponentWinTotal = conferenceData.OpponentWinTotal;
+                    var opponentValue = conferenceData.OpponentValue;
+                    var performanceValue = conferenceData.PerformanceValue;
 
                     writer.WriteLine();
-                    writer.WriteLine("Team Wins    : {0} / {1} ({2})", teamWinTotal, teamGameTotal, teamWinPercentage);
-                    writer.WriteLine("Opponent Wins: {0} / {1} ({2})", opponentWinTotal, opponentGameTotal, opponentWinPercentage);
-                    writer.WriteLine("Performance  : {0}", performance);
+                    writer.WriteLine("Team Wins    : {0,2} / {1,2} ({2:F8})", teamWinTotal, teamGameTotal, teamValue);
+                    writer.WriteLine("Opponent Wins: {0,2} / {1,2} ({2:F8})", opponentWinTotal, opponentGameTotal, opponentValue);
+                    writer.WriteLine("Performance  : {0:F8}", performanceValue);
 
                     return new Ranking.ConferenceValue<TTeam>(conference,
                         new[]
                         {
-                            performance,
-                            teamWinPercentage,
-                            opponentWinPercentage
+                            performanceValue,
+                            teamValue,
+                            opponentValue
                         },
                         new IComparable[]
                         {
