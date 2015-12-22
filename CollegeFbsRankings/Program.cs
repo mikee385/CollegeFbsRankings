@@ -9,6 +9,7 @@ using CollegeFbsRankings.Conferences;
 using CollegeFbsRankings.Games;
 using CollegeFbsRankings.Rankings;
 using CollegeFbsRankings.Teams;
+using CollegeFbsRankings.Validations;
 
 namespace CollegeFbsRankings
 {
@@ -554,7 +555,7 @@ namespace CollegeFbsRankings
 
                     #region Single Depth Wins
                     {
-                        #region Calculate Rankings
+                        #region Calculate Data
 
                         var overallData = SingleDepthWins.Data.RegularSeason(allTeams, week);
                         var fbsData = SingleDepthWins.Data.Fbs.RegularSeason(fbsTeams, week);
@@ -592,6 +593,9 @@ namespace CollegeFbsRankings
                         var overallConferenceStrength = SingleDepthWins.ConferenceStrength.Overall(fbsConferences, overallData);
                         var fbsConferenceStrength = SingleDepthWins.ConferenceStrength.Overall(fbsConferences, fbsData);
 
+                        var overallGameValidation = Validation.RegularSeason(fbsGames, week, overallData);
+                        var fbsGameValidation = Validation.RegularSeason(fbsGames, week, fbsData);
+
                         #endregion
 
                         #region Create Output File Names
@@ -634,6 +638,9 @@ namespace CollegeFbsRankings
 
                         var overallConferenceStrengthFileName = Path.Combine(overallOutputFolder, "Conference Strength.txt");
                         var fbsConferenceStrengthFileName = Path.Combine(fbsOutputFolder, "Conference Strength.txt");
+
+                        var overallGameValidationFileName = Path.Combine(overallOutputFolder, "Validation.txt");
+                        var fbsGameValidationFileName = Path.Combine(fbsOutputFolder, "Validation.txt");
 
                         var summaryFileName = Path.Combine(rankingMethodOutputFolder, "Summary.txt");
 
@@ -685,6 +692,9 @@ namespace CollegeFbsRankings
                         WriteRankingsToFile(overallConferenceStrengthFileName, "Conference Strength (Overall)", overallConferenceStrength);
                         WriteRankingsToFile(fbsConferenceStrengthFileName, "Conference Strength (FBS)", fbsConferenceStrength);
 
+                        WriteStringToFile(overallGameValidationFileName, Validation.Format("Game Validation (Overall)", overallGameValidation));
+                        WriteStringToFile(fbsGameValidationFileName, Validation.Format("Game Validation (FBS)", fbsGameValidation));
+
                         WriteStringToFile(summaryFileName, FormatRankingSummary(year, week,
                             fbsPerformanceRankings.Take(25), top25FbsFutureScheduleStrength, fbsGameStrengthByWeek));
 
@@ -694,7 +704,7 @@ namespace CollegeFbsRankings
 
                     #region Simultaneous Wins
                     {
-                        #region Calculate Rankings
+                        #region Calculate Data
 
                         var overallData = SimultaneousWins.Data.RegularSeason(allTeams, week);
                         var fbsData = SimultaneousWins.Data.Fbs.RegularSeason(fbsTeams, week);
@@ -732,6 +742,9 @@ namespace CollegeFbsRankings
                         var overallConferenceStrength = SimultaneousWins.ConferenceStrength.Overall(fbsConferences, overallData);
                         var fbsConferenceStrength = SimultaneousWins.ConferenceStrength.Overall(fbsConferences, fbsData);
 
+                        var overallGameValidation = Validation.RegularSeason(fbsGames, week, overallData);
+                        var fbsGameValidation = Validation.RegularSeason(fbsGames, week, fbsData);
+
                         #endregion
 
                         #region Create Output File Names
@@ -774,6 +787,9 @@ namespace CollegeFbsRankings
 
                         var overallConferenceStrengthFileName = Path.Combine(overallOutputFolder, "Conference Strength.txt");
                         var fbsConferenceStrengthFileName = Path.Combine(fbsOutputFolder, "Conference Strength.txt");
+
+                        var overallGameValidationFileName = Path.Combine(overallOutputFolder, "Validation.txt");
+                        var fbsGameValidationFileName = Path.Combine(fbsOutputFolder, "Validation.txt");
 
                         var summaryFileName = Path.Combine(rankingMethodOutputFolder, "Summary.txt");
 
@@ -825,6 +841,9 @@ namespace CollegeFbsRankings
                         WriteRankingsToFile(overallConferenceStrengthFileName, "Conference Strength (Overall)", overallConferenceStrength);
                         WriteRankingsToFile(fbsConferenceStrengthFileName, "Conference Strength (FBS)", fbsConferenceStrength);
 
+                        WriteStringToFile(overallGameValidationFileName, Validation.Format("Game Validation (Overall)", overallGameValidation));
+                        WriteStringToFile(fbsGameValidationFileName, Validation.Format("Game Validation (FBS)", fbsGameValidation));
+
                         WriteStringToFile(summaryFileName, FormatRankingSummary(year, week,
                             fbsPerformanceRankings.Take(25), top25FbsFutureScheduleStrength, fbsGameStrengthByWeek));
 
@@ -843,7 +862,7 @@ namespace CollegeFbsRankings
 
                     #region Single Depth Wins
                     {
-                        #region Calculate Rankings
+                        #region Calculate Data
 
                         var overallData = SingleDepthWins.Data.FullSeason(allTeams);
                         var fbsData = SingleDepthWins.Data.Fbs.FullSeason(fbsTeams);
@@ -860,9 +879,11 @@ namespace CollegeFbsRankings
                         var overallGameStrengthByWeek = SingleDepthWins.GameStrength.ByWeek(fbsGames, overallData);
                         var fbsGameStrengthByWeek = SingleDepthWins.GameStrength.ByWeek(fbsGames, fbsData);
 
-                        var overallConferenceStrength = SingleDepthWins.ConferenceStrength.Overall(fbsConferences,
-                            overallData);
+                        var overallConferenceStrength = SingleDepthWins.ConferenceStrength.Overall(fbsConferences, overallData);
                         var fbsConferenceStrength = SingleDepthWins.ConferenceStrength.Overall(fbsConferences, fbsData);
+
+                        var overallGameValidation = Validation.FullSeason(fbsGames, overallData);
+                        var fbsGameValidation = Validation.FullSeason(fbsGames, fbsData);
 
                         #endregion
 
@@ -888,6 +909,9 @@ namespace CollegeFbsRankings
                         var overallConferenceStrengthFileName = Path.Combine(overallOutputFolder, "Conference Strength.txt");
                         var fbsConferenceStrengthFileName = Path.Combine(fbsOutputFolder, "Conference Strength.txt");
 
+                        var overallGameValidationFileName = Path.Combine(overallOutputFolder, "Validation.txt");
+                        var fbsGameValidationFileName = Path.Combine(fbsOutputFolder, "Validation.txt");
+
                         #endregion
 
                         #region Output Results to Files
@@ -920,6 +944,9 @@ namespace CollegeFbsRankings
                         WriteRankingsToFile(overallConferenceStrengthFileName, "Conference Strength (Overall)", overallConferenceStrength);
                         WriteRankingsToFile(fbsConferenceStrengthFileName, "Conference Strength (FBS)", fbsConferenceStrength);
 
+                        WriteStringToFile(overallGameValidationFileName, Validation.Format("Game Validation (Overall)", overallGameValidation));
+                        WriteStringToFile(fbsGameValidationFileName, Validation.Format("Game Validation (FBS)", fbsGameValidation));
+
                         #endregion
 
                         Console.WriteLine("    {0}", overallPerformanceRankings.First().Title);
@@ -929,7 +956,7 @@ namespace CollegeFbsRankings
 
                     #region Simultaneous Wins
                     {
-                        #region Calculate Rankings
+                        #region Calculate Data
 
                         var overallData = SimultaneousWins.Data.FullSeason(allTeams);
                         var fbsData = SimultaneousWins.Data.Fbs.FullSeason(fbsTeams);
@@ -948,6 +975,9 @@ namespace CollegeFbsRankings
 
                         var overallConferenceStrength = SimultaneousWins.ConferenceStrength.Overall(fbsConferences, overallData);
                         var fbsConferenceStrength = SimultaneousWins.ConferenceStrength.Overall(fbsConferences, fbsData);
+
+                        var overallGameValidation = Validation.FullSeason(fbsGames, overallData);
+                        var fbsGameValidation = Validation.FullSeason(fbsGames, fbsData);
 
                         #endregion
 
@@ -973,6 +1003,9 @@ namespace CollegeFbsRankings
                         var overallConferenceStrengthFileName = Path.Combine(overallOutputFolder, "Conference Strength.txt");
                         var fbsConferenceStrengthFileName = Path.Combine(fbsOutputFolder, "Conference Strength.txt");
 
+                        var overallGameValidationFileName = Path.Combine(overallOutputFolder, "Validation.txt");
+                        var fbsGameValidationFileName = Path.Combine(fbsOutputFolder, "Validation.txt");
+
                         #endregion
 
                         #region Output Results to Files
@@ -1005,6 +1038,9 @@ namespace CollegeFbsRankings
                         WriteRankingsToFile(overallConferenceStrengthFileName, "Conference Strength (Overall)", overallConferenceStrength);
                         WriteRankingsToFile(fbsConferenceStrengthFileName, "Conference Strength (FBS)", fbsConferenceStrength);
 
+                        WriteStringToFile(overallGameValidationFileName, Validation.Format("Game Validation (Overall)", overallGameValidation));
+                        WriteStringToFile(fbsGameValidationFileName, Validation.Format("Game Validation (FBS)", fbsGameValidation));
+
                         #endregion
 
                         Console.WriteLine("    {0}", overallPerformanceRankings.First().Title);
@@ -1014,6 +1050,8 @@ namespace CollegeFbsRankings
 
                     Console.WriteLine();
                 }
+
+                return;
             }
         }
 

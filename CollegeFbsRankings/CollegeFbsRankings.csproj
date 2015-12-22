@@ -72,6 +72,7 @@
     <Compile Include="Teams\FbsTeam.cs" />
     <Compile Include="Teams\FcsTeam.cs" />
     <Compile Include="Teams\Team.cs" />
+    <Compile Include="Validations\Validation.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -186,9 +187,7 @@
       <Link>Data\2015\FBS Teams.txt</Link>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Experiments\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
