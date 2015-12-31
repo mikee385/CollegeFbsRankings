@@ -56,7 +56,6 @@ namespace CollegeFbsRankings
                 var regularSeasonWeeks = pair.Value;
 
                 Console.WriteLine("Calculating results for {0}...", year);
-                Console.WriteLine();
 
                 #region Create Input File Names
 
@@ -515,43 +514,22 @@ namespace CollegeFbsRankings
 
                 #endregion
 
-                #region Output Results to Console
+                #region Prepare Summary Results
 
-                Console.WriteLine("Number of FBS Teams = {0}", fbsTeams.Count);
-                Console.WriteLine("Number of FCS Teams = {0}", fcsTeams.Count);
-                Console.WriteLine();
+                var summary = new Summary(fbsTeams, fcsTeams, games, potentiallyCancelledGames);
 
-                Console.WriteLine("Number of Completed Games = {0}", games.Completed().Count());
-                Console.WriteLine("Number of Future Games = {0}", games.Future().Count());
-                Console.WriteLine();
-
-                Console.WriteLine("Number of FBS  Games = {0}", games.Completed().RegularSeason().Fbs().Count());
-                Console.WriteLine("Number of FCS  Games = {0}", games.Completed().RegularSeason().Fcs().Count());
-                Console.WriteLine("Number of Bowl Games = {0}", games.PostSeason().Count());
-                Console.WriteLine();
-
-                if (potentiallyCancelledGames.Any())
-                {
-                    Console.WriteLine("WARNING: Potentially cancelled games were removed:");
-                    foreach (var game in potentiallyCancelledGames)
-                    {
-                        Console.WriteLine("    {0} Week {1,-2} {2} vs. {3} - {4}",
-                            game.Key,
-                            game.Week,
-                            game.HomeTeam.Name,
-                            game.AwayTeam.Name,
-                            game.Notes);
-                    }
-                    Console.WriteLine();
-                }
+                var yearOutputFolder = Path.Combine(ResultsFolder, yearString);
+                var yearSummaryFileName = Path.Combine(yearOutputFolder, "Summary.txt");
 
                 #endregion
 
                 for (int week = 1; week <= currentWeek; ++week)
                 {
+                    Console.WriteLine("    Week {0}", week);
+
                     var fbsGames = games.RegularSeason().Fbs().ToList();
 
-                    var outputFolder = Path.Combine(ResultsFolder, yearString, "Week " + week);
+                    var weekOutputFolder = Path.Combine(yearOutputFolder, "Week " + week);
 
                     #region Single Depth Wins
                     {
@@ -600,7 +578,7 @@ namespace CollegeFbsRankings
 
                         #region Create Output File Names
 
-                        var rankingMethodOutputFolder = Path.Combine(outputFolder, "Single Depth Wins");
+                        var rankingMethodOutputFolder = Path.Combine(weekOutputFolder, "Single Depth Wins");
 
                         var overallOutputFolder = Path.Combine(rankingMethodOutputFolder, "Overall");
                         var overallTop25OutputFolder = Path.Combine(overallOutputFolder, "Top 25");
@@ -642,7 +620,7 @@ namespace CollegeFbsRankings
                         var overallGameValidationFileName = Path.Combine(overallOutputFolder, "Validation.txt");
                         var fbsGameValidationFileName = Path.Combine(fbsOutputFolder, "Validation.txt");
 
-                        var summaryFileName = Path.Combine(rankingMethodOutputFolder, "Summary.txt");
+                        var weeklySummaryFileName = Path.Combine(rankingMethodOutputFolder, "Summary.txt");
 
                         #endregion
 
@@ -695,7 +673,7 @@ namespace CollegeFbsRankings
                         WriteStringToFile(overallGameValidationFileName, Validation.Format("Game Validation (Overall)", overallGameValidation));
                         WriteStringToFile(fbsGameValidationFileName, Validation.Format("Game Validation (FBS)", fbsGameValidation));
 
-                        WriteStringToFile(summaryFileName, FormatRankingSummary(year, week,
+                        WriteStringToFile(weeklySummaryFileName, FormatRankingSummary(year, week,
                             fbsPerformanceRankings.Take(25), top25FbsFutureScheduleStrength, fbsGameStrengthByWeek));
 
                         #endregion
@@ -749,7 +727,7 @@ namespace CollegeFbsRankings
 
                         #region Create Output File Names
 
-                        var rankingMethodOutputFolder = Path.Combine(outputFolder, "Simultaneous Wins");
+                        var rankingMethodOutputFolder = Path.Combine(weekOutputFolder, "Simultaneous Wins");
 
                         var overallOutputFolder = Path.Combine(rankingMethodOutputFolder, "Overall");
                         var overallTop25OutputFolder = Path.Combine(overallOutputFolder, "Top 25");
@@ -791,7 +769,7 @@ namespace CollegeFbsRankings
                         var overallGameValidationFileName = Path.Combine(overallOutputFolder, "Validation.txt");
                         var fbsGameValidationFileName = Path.Combine(fbsOutputFolder, "Validation.txt");
 
-                        var summaryFileName = Path.Combine(rankingMethodOutputFolder, "Summary.txt");
+                        var weeklySummaryFileName = Path.Combine(rankingMethodOutputFolder, "Summary.txt");
 
                         #endregion
 
@@ -844,7 +822,7 @@ namespace CollegeFbsRankings
                         WriteStringToFile(overallGameValidationFileName, Validation.Format("Game Validation (Overall)", overallGameValidation));
                         WriteStringToFile(fbsGameValidationFileName, Validation.Format("Game Validation (FBS)", fbsGameValidation));
 
-                        WriteStringToFile(summaryFileName, FormatRankingSummary(year, week,
+                        WriteStringToFile(weeklySummaryFileName, FormatRankingSummary(year, week,
                             fbsPerformanceRankings.Take(25), top25FbsFutureScheduleStrength, fbsGameStrengthByWeek));
 
                         #endregion
@@ -854,11 +832,11 @@ namespace CollegeFbsRankings
 
                 if (games.All(game => game is CompletedGame))
                 {
+                    Console.WriteLine("    Final");
+
                     var fbsGames = games.RegularSeason().Fbs().ToList();
 
-                    var outputFolder = Path.Combine(ResultsFolder, yearString, "Final");
-
-                    Console.WriteLine("National Champion:");
+                    var weekOutputFolder = Path.Combine(yearOutputFolder, "Final");
 
                     #region Single Depth Wins
                     {
@@ -885,11 +863,14 @@ namespace CollegeFbsRankings
                         var overallGameValidation = Validation.FullSeason(fbsGames, overallData);
                         var fbsGameValidation = Validation.FullSeason(fbsGames, fbsData);
 
+                        summary.AddMethodSummary("Single Depth, Overall", overallPerformanceRankings, overallGameValidation, null);
+                        summary.AddMethodSummary("Single Depth, FBS", fbsPerformanceRankings, fbsGameValidation, null);
+
                         #endregion
 
                         #region Create Output File Names
 
-                        var rankingMethodOutputFolder = Path.Combine(outputFolder, "Single Depth Wins");
+                        var rankingMethodOutputFolder = Path.Combine(weekOutputFolder, "Single Depth Wins");
 
                         var overallOutputFolder = Path.Combine(rankingMethodOutputFolder, "Overall");
                         var fbsOutputFolder = Path.Combine(rankingMethodOutputFolder, "FBS");
@@ -948,9 +929,6 @@ namespace CollegeFbsRankings
                         WriteStringToFile(fbsGameValidationFileName, Validation.Format("Game Validation (FBS)", fbsGameValidation));
 
                         #endregion
-
-                        Console.WriteLine("    {0}", overallPerformanceRankings.First().Title);
-                        Console.WriteLine("    {0}", fbsPerformanceRankings.First().Title);
                     }
                     #endregion
 
@@ -979,11 +957,14 @@ namespace CollegeFbsRankings
                         var overallGameValidation = Validation.FullSeason(fbsGames, overallData);
                         var fbsGameValidation = Validation.FullSeason(fbsGames, fbsData);
 
+                        summary.AddMethodSummary("Simultaneous Wins, Overall", overallPerformanceRankings, overallGameValidation, null);
+                        summary.AddMethodSummary("Simultaneous Wins, FBS", fbsPerformanceRankings, fbsGameValidation, null);
+
                         #endregion
 
                         #region Create Output File Names
 
-                        var rankingMethodOutputFolder = Path.Combine(outputFolder, "Simultaneous Wins");
+                        var rankingMethodOutputFolder = Path.Combine(weekOutputFolder, "Simultaneous Wins");
 
                         var overallOutputFolder = Path.Combine(rankingMethodOutputFolder, "Overall");
                         var fbsOutputFolder = Path.Combine(rankingMethodOutputFolder, "FBS");
@@ -1042,16 +1023,11 @@ namespace CollegeFbsRankings
                         WriteStringToFile(fbsGameValidationFileName, Validation.Format("Game Validation (FBS)", fbsGameValidation));
 
                         #endregion
-
-                        Console.WriteLine("    {0}", overallPerformanceRankings.First().Title);
-                        Console.WriteLine("    {0}", fbsPerformanceRankings.First().Title);
                     }
                     #endregion
-
-                    Console.WriteLine();
                 }
 
-                return;
+                WriteStringToFile(yearSummaryFileName, Summary.Format(year, summary));
             }
         }
 
