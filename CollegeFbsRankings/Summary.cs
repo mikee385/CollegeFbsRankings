@@ -139,7 +139,16 @@ namespace CollegeFbsRankings
                     var validationCorrect = method.Value.Validation.Count(r => r.Result == eValidationResult.Correct);
                     var validationIncorrect = method.Value.Validation.Count(r => r.Result == eValidationResult.Incorrect);
                     var validationPercent = (double)validationCorrect / (validationCorrect + validationIncorrect);
-                    writer.WriteLine("Validation Value for {0,-" + maxTitleLength + "} = {1:F8}", method.Key, validationPercent);
+                    writer.WriteLine("Regular Season Retrodiction for {0,-" + maxTitleLength + "} = {1:F8} %", method.Key, validationPercent);
+                }
+                writer.WriteLine();
+
+                foreach (var method in summary.MethodSummaries)
+                {
+                    var predictionCorrect = method.Value.Prediction.Count(r => r.Result == eValidationResult.Correct);
+                    var predictionIncorrect = method.Value.Prediction.Count(r => r.Result == eValidationResult.Incorrect);
+                    var predictionPercent = (double)predictionCorrect / (predictionCorrect + predictionIncorrect);
+                    writer.WriteLine("Postseason Prediction for {0,-" + maxTitleLength + "} = {1:F8} %", method.Key, predictionPercent);
                 }
                 writer.WriteLine();
 

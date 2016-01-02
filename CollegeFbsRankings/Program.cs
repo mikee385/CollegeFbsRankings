@@ -522,6 +522,12 @@ namespace CollegeFbsRankings
                 var yearSummaryFileName = Path.Combine(yearOutputFolder, "Summary.txt");
 
                 #endregion
+                
+                Dictionary<Team, SingleDepthWins.Data> singleDepthWinsRegularSeasonOverallData = null;
+                Dictionary<Team, SingleDepthWins.Data> singleDepthWinsRegularSeasonFbsData = null;
+
+                Dictionary<Team, SimultaneousWins.Data> simultaneousWinsRegularSeasonOverallData = null;
+                Dictionary<Team, SimultaneousWins.Data> simultaneousWinsRegularSeasonFbsData = null;
 
                 for (int week = 1; week <= currentWeek; ++week)
                 {
@@ -677,6 +683,9 @@ namespace CollegeFbsRankings
                             fbsPerformanceRankings.Take(25), top25FbsFutureScheduleStrength, fbsGameStrengthByWeek));
 
                         #endregion
+
+                        singleDepthWinsRegularSeasonOverallData = overallData;
+                        singleDepthWinsRegularSeasonFbsData = fbsData;
                     }
                     #endregion
 
@@ -826,6 +835,9 @@ namespace CollegeFbsRankings
                             fbsPerformanceRankings.Take(25), top25FbsFutureScheduleStrength, fbsGameStrengthByWeek));
 
                         #endregion
+
+                        simultaneousWinsRegularSeasonOverallData = overallData;
+                        simultaneousWinsRegularSeasonFbsData = fbsData;
                     }
                     #endregion
                 }
@@ -834,7 +846,9 @@ namespace CollegeFbsRankings
                 {
                     Console.WriteLine("    Final");
 
-                    var fbsGames = games.RegularSeason().Fbs().ToList();
+                    var fbsGames = games.Fbs().ToList();
+                    var fbsRegularSeasonGames = fbsGames.RegularSeason().ToList();
+                    var fbsPostseasonGames = fbsGames.PostSeason().ToList();
 
                     var weekOutputFolder = Path.Combine(yearOutputFolder, "Final");
 
@@ -851,20 +865,27 @@ namespace CollegeFbsRankings
                         var overallWinStrength = SingleDepthWins.WinStrength.Overall(fbsTeams, overallData);
                         var fbsWinStrength = SingleDepthWins.WinStrength.Overall(fbsTeams, fbsData);
 
-                        var overallGameStrength = SingleDepthWins.GameStrength.Overall(fbsGames, overallData);
-                        var fbsGameStrength = SingleDepthWins.GameStrength.Overall(fbsGames, fbsData);
+                        var overallGameStrength = SingleDepthWins.GameStrength.Overall(fbsRegularSeasonGames, overallData);
+                        var fbsGameStrength = SingleDepthWins.GameStrength.Overall(fbsRegularSeasonGames, fbsData);
 
-                        var overallGameStrengthByWeek = SingleDepthWins.GameStrength.ByWeek(fbsGames, overallData);
-                        var fbsGameStrengthByWeek = SingleDepthWins.GameStrength.ByWeek(fbsGames, fbsData);
+                        var overallGameStrengthByWeek = SingleDepthWins.GameStrength.ByWeek(fbsRegularSeasonGames, overallData);
+                        var fbsGameStrengthByWeek = SingleDepthWins.GameStrength.ByWeek(fbsRegularSeasonGames, fbsData);
 
                         var overallConferenceStrength = SingleDepthWins.ConferenceStrength.Overall(fbsConferences, overallData);
                         var fbsConferenceStrength = SingleDepthWins.ConferenceStrength.Overall(fbsConferences, fbsData);
 
-                        var overallGameValidation = Validation.FullSeason(fbsGames, overallData);
-                        var fbsGameValidation = Validation.FullSeason(fbsGames, fbsData);
+                        var overallGameValidation = Validation.FullSeason(fbsRegularSeasonGames, overallData);
+                        var fbsGameValidation = Validation.FullSeason(fbsRegularSeasonGames, fbsData);
 
-                        summary.AddMethodSummary("Single Depth, Overall", overallPerformanceRankings, overallGameValidation, null);
-                        summary.AddMethodSummary("Single Depth, FBS", fbsPerformanceRankings, fbsGameValidation, null);
+                        var overallPostseasonPrediction = (singleDepthWinsRegularSeasonOverallData != null)
+                            ? Validation.FullSeason(fbsPostseasonGames, singleDepthWinsRegularSeasonOverallData)
+                            : null;
+                        var fbsPostseasonPrediction = (singleDepthWinsRegularSeasonFbsData != null)
+                            ? Validation.FullSeason(fbsPostseasonGames, singleDepthWinsRegularSeasonFbsData)
+                            : null;
+
+                        summary.AddMethodSummary("Single Depth, Overall", overallPerformanceRankings, overallGameValidation, overallPostseasonPrediction);
+                        summary.AddMethodSummary("Single Depth, FBS", fbsPerformanceRankings, fbsGameValidation, fbsPostseasonPrediction);
 
                         #endregion
 
@@ -893,6 +914,9 @@ namespace CollegeFbsRankings
                         var overallGameValidationFileName = Path.Combine(overallOutputFolder, "Validation.txt");
                         var fbsGameValidationFileName = Path.Combine(fbsOutputFolder, "Validation.txt");
 
+                        var overallPostseasonPredictionFileName = Path.Combine(overallOutputFolder, "Prediction.txt");
+                        var fbsPostseasonPredictionFileName = Path.Combine(fbsOutputFolder, "Prediction.txt");
+
                         #endregion
 
                         #region Output Results to Files
@@ -928,6 +952,9 @@ namespace CollegeFbsRankings
                         WriteStringToFile(overallGameValidationFileName, Validation.Format("Game Validation (Overall)", overallGameValidation));
                         WriteStringToFile(fbsGameValidationFileName, Validation.Format("Game Validation (FBS)", fbsGameValidation));
 
+                        WriteStringToFile(overallPostseasonPredictionFileName, Validation.Format("Postseason Prediction (Overall)", overallPostseasonPrediction));
+                        WriteStringToFile(fbsPostseasonPredictionFileName, Validation.Format("Postseason Prediction (FBS)", fbsPostseasonPrediction));
+
                         #endregion
                     }
                     #endregion
@@ -945,20 +972,27 @@ namespace CollegeFbsRankings
                         var overallWinStrength = SimultaneousWins.WinStrength.Overall(fbsTeams, overallData);
                         var fbsWinStrength = SimultaneousWins.WinStrength.Overall(fbsTeams, fbsData);
 
-                        var overallGameStrength = SimultaneousWins.GameStrength.Overall(fbsGames, overallData);
-                        var fbsGameStrength = SimultaneousWins.GameStrength.Overall(fbsGames, fbsData);
+                        var overallGameStrength = SimultaneousWins.GameStrength.Overall(fbsRegularSeasonGames, overallData);
+                        var fbsGameStrength = SimultaneousWins.GameStrength.Overall(fbsRegularSeasonGames, fbsData);
 
-                        var overallGameStrengthByWeek = SimultaneousWins.GameStrength.ByWeek(fbsGames, overallData);
-                        var fbsGameStrengthByWeek = SimultaneousWins.GameStrength.ByWeek(fbsGames, fbsData);
+                        var overallGameStrengthByWeek = SimultaneousWins.GameStrength.ByWeek(fbsRegularSeasonGames, overallData);
+                        var fbsGameStrengthByWeek = SimultaneousWins.GameStrength.ByWeek(fbsRegularSeasonGames, fbsData);
 
                         var overallConferenceStrength = SimultaneousWins.ConferenceStrength.Overall(fbsConferences, overallData);
                         var fbsConferenceStrength = SimultaneousWins.ConferenceStrength.Overall(fbsConferences, fbsData);
 
-                        var overallGameValidation = Validation.FullSeason(fbsGames, overallData);
-                        var fbsGameValidation = Validation.FullSeason(fbsGames, fbsData);
+                        var overallGameValidation = Validation.FullSeason(fbsRegularSeasonGames, overallData);
+                        var fbsGameValidation = Validation.FullSeason(fbsRegularSeasonGames, fbsData);
 
-                        summary.AddMethodSummary("Simultaneous Wins, Overall", overallPerformanceRankings, overallGameValidation, null);
-                        summary.AddMethodSummary("Simultaneous Wins, FBS", fbsPerformanceRankings, fbsGameValidation, null);
+                        var overallPostseasonPrediction = (simultaneousWinsRegularSeasonOverallData != null)
+                            ? Validation.FullSeason(fbsPostseasonGames, simultaneousWinsRegularSeasonOverallData)
+                            : null;
+                        var fbsPostseasonPrediction = (simultaneousWinsRegularSeasonFbsData != null)
+                            ? Validation.FullSeason(fbsPostseasonGames, simultaneousWinsRegularSeasonFbsData)
+                            : null;
+
+                        summary.AddMethodSummary("Simultaneous Wins, Overall", overallPerformanceRankings, overallGameValidation, overallPostseasonPrediction);
+                        summary.AddMethodSummary("Simultaneous Wins, FBS", fbsPerformanceRankings, fbsGameValidation, fbsPostseasonPrediction);
 
                         #endregion
 
@@ -987,6 +1021,9 @@ namespace CollegeFbsRankings
                         var overallGameValidationFileName = Path.Combine(overallOutputFolder, "Validation.txt");
                         var fbsGameValidationFileName = Path.Combine(fbsOutputFolder, "Validation.txt");
 
+                        var overallPostseasonPredictionFileName = Path.Combine(overallOutputFolder, "Prediction.txt");
+                        var fbsPostseasonPredictionFileName = Path.Combine(fbsOutputFolder, "Prediction.txt");
+
                         #endregion
 
                         #region Output Results to Files
@@ -1021,6 +1058,9 @@ namespace CollegeFbsRankings
 
                         WriteStringToFile(overallGameValidationFileName, Validation.Format("Game Validation (Overall)", overallGameValidation));
                         WriteStringToFile(fbsGameValidationFileName, Validation.Format("Game Validation (FBS)", fbsGameValidation));
+
+                        WriteStringToFile(overallPostseasonPredictionFileName, Validation.Format("Postseason Prediction (Overall)", overallPostseasonPrediction));
+                        WriteStringToFile(fbsPostseasonPredictionFileName, Validation.Format("Postseason Prediction (FBS)", fbsPostseasonPrediction));
 
                         #endregion
                     }
