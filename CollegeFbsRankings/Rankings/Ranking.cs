@@ -100,22 +100,22 @@ namespace CollegeFbsRankings.Rankings
             }
         }
 
-        public class ConferenceValue<TTeam> : Value where TTeam : Team
+        public class FbsConferenceValue : Value
         {
-            private readonly Conference<TTeam> _conference;
+            private readonly FbsConference _conference;
 
-            public ConferenceValue(Conference<TTeam> conference, IEnumerable<double> values, IEnumerable<IComparable> tieBreakers, string summary)
+            public FbsConferenceValue(FbsConference conference, IEnumerable<double> values, IEnumerable<IComparable> tieBreakers, string summary)
                 : base(GetTitle(conference), values, tieBreakers, summary)
             {
                 _conference = conference;
             }
 
-            public Conference<TTeam> Conference
+            public FbsConference Conference
             {
                 get { return _conference; }
             }
 
-            private static string GetTitle(Conference<TTeam> conference)
+            private static string GetTitle(FbsConference conference)
             {
                 return conference.Name;
             }

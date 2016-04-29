@@ -69,7 +69,7 @@ namespace CollegeFbsRankings
 
                 var fbsTeamFile = new StreamReader(fbsTeamFileName);
                 var fbsTeams = new List<FbsTeam>();
-                var fbsConferences = new List<Conference<FbsTeam>>();
+                var fbsConferences = new List<FbsConference>();
                 var skippedFbsTeamLines = new List<string>();
 
                 var conferenceDivisionRegex = new Regex(ConferenceDivisionPattern);
@@ -100,32 +100,25 @@ namespace CollegeFbsRankings
                         var conference = fbsConferences.SingleOrDefault(c => c.Name == conferenceName);
                         if (conference == null)
                         {
-                            conference = new Conference<FbsTeam>(conferenceName);
+                            conference = FbsConference.Create(conferenceName);
                             fbsConferences.Add(conference);
                         }
 
-                        Division<FbsTeam> division;
+                        FbsTeam team;
                         if (divisionName != null)
                         {
-                            division = conference.Divisions.SingleOrDefault(d => d.Name == divisionName);
+                            var division = conference.Divisions.SingleOrDefault(d => d.Name == divisionName);
                             if (division == null)
                             {
-                                division = new Division<FbsTeam>(divisionName);
-                                conference.AddDivision(division);
+                                division = FbsDivision.Create(conference, divisionName);
                             }
+                            team = FbsTeam.Create(name, division);
                         }
                         else
                         {
-                            division = null;
+                            team = FbsTeam.Create(name, conference);
                         }
-
-                        var team = new FbsTeam(name, conference, division);
                         fbsTeams.Add(team);
-
-                        if (division != null)
-                            division.AddTeam(team);
-                        else
-                            conference.AddTeam(team);
                     }
                     else
                     {
@@ -459,7 +452,7 @@ namespace CollegeFbsRankings
                                     lineCount, line, firstTeamScoreString, secondTeamScoreString));
                             }
 
-                            game = CompletedGame.New(key, date, week, homeTeam, homeTeamScore, awayTeam, awayTeamScore, tvString, notesString, seasonType);
+                            game = CompletedGame.Create(key, date, week, homeTeam, homeTeamScore, awayTeam, awayTeamScore, tvString, notesString, seasonType);
                         }
                         else if (hasFirstTeamScore && !hasSecondTeamScore)
                         {
@@ -475,12 +468,10 @@ namespace CollegeFbsRankings
                         }
                         else
                         {
-                            game = FutureGame.New(key, date, week, homeTeam, awayTeam, tvString, notesString, seasonType);
+                            game = FutureGame.Create(key, date, week, homeTeam, awayTeam, tvString, notesString, seasonType);
                         }
 
                         games.Add(game);
-                        homeTeam.AddGame(game);
-                        awayTeam.AddGame(game);
                     }
                     else
                     {

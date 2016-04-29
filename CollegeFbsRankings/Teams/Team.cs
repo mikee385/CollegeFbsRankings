@@ -28,25 +28,35 @@ namespace CollegeFbsRankings.Teams
 
         public void AddGame(IGame game)
         {
-            var completedGame = game as ICompletedGame;
-            if (completedGame != null)
+            if (game.HomeTeam == this || game.AwayTeam == this)
             {
-                _games.Add(TeamCompletedGame.New(this, completedGame));
-            }
-            else
-            {
-                var futureGame = game as IFutureGame;
-                if (futureGame != null)
+                var completedGame = game as ICompletedGame;
+                if (completedGame != null)
                 {
-                    _games.Add(TeamFutureGame.New(this, futureGame));
+                    _games.Add(TeamCompletedGame.Create(this, completedGame));
                 }
                 else
                 {
-                    throw new Exception(String.Format(
-                        "Game {0} for {1} does not appear to be Completed or Future: {2} vs. {3}",
-                        game.Key, Name, game.HomeTeam, game.AwayTeam));
+                    var futureGame = game as IFutureGame;
+                    if (futureGame != null)
+                    {
+                        _games.Add(TeamFutureGame.Create(this, futureGame));
+                    }
+                    else
+                    {
+                        throw new Exception(String.Format(
+                            "Game {0} for {1} does not appear to be Completed or Future: {2} vs. {3}",
+                            game.Key, Name, game.HomeTeam, game.AwayTeam));
+                    }
                 }
             }
+            else
+            {
+                throw new Exception(String.Format(
+                    "Cannot add game {0} to team {1} since game is already assigned to {2} and {3}.",
+                    game.Key, Name, game.HomeTeam.Name, game.AwayTeam.Name));
+            }
+
         }
 
         public void RemoveGame(IGame game)

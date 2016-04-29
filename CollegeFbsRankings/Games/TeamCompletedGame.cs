@@ -16,11 +16,6 @@ namespace CollegeFbsRankings.Games
         private readonly ICompletedGame _game;
         private readonly bool _isWin;
 
-        public static ITeamCompletedGame New(Team team, ICompletedGame game)
-        {
-            return new TeamCompletedGame(team, game);
-        }
-
         protected TeamCompletedGame(Team team, ICompletedGame game)
             : base(team, game)
         {
@@ -36,6 +31,11 @@ namespace CollegeFbsRankings.Games
                     "Team \"{0}\" does not appear to have played in game {1}: {2} vs. {3}",
                     team.Name, game.Key, game.HomeTeam, game.AwayTeam));
             }
+        }
+
+        public static ITeamCompletedGame Create(Team team, ICompletedGame game)
+        {
+            return new TeamCompletedGame(team, game);
         }
 
         public int HomeTeamScore

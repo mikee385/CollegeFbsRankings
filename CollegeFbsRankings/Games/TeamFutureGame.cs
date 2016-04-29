@@ -10,14 +10,14 @@ namespace CollegeFbsRankings.Games
 
     public class TeamFutureGame : TeamGame, ITeamFutureGame
     {
-        public static ITeamFutureGame New(Team team, IFutureGame game)
+        protected TeamFutureGame(Team team, IFutureGame game)
+            : base(team, game)
+        { }
+
+        public static ITeamFutureGame Create(Team team, IFutureGame game)
         {
             return new TeamFutureGame(team, game);
         }
-
-        protected TeamFutureGame(Team team, IFutureGame game)
-            : base(team, game)
-        {}
     }
 
     public static class TeamFutureGameExtensions

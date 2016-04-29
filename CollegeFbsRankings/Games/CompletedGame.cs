@@ -26,16 +26,19 @@ namespace CollegeFbsRankings.Games
         private readonly int _homeTeamScore;
         private readonly int _awayTeamScore;
 
-        public static ICompletedGame New(int key, DateTime date, int week, Team homeTeam, int homeTeamScore, Team awayTeam, int awayTeamScore, string tv, string notes, eSeasonType seasonType)
-        {
-            return new CompletedGame(key, date, week, homeTeam, homeTeamScore, awayTeam, awayTeamScore, tv, notes, seasonType);
-        }
-
         protected CompletedGame(int key, DateTime date, int week, Team homeTeam, int homeTeamScore, Team awayTeam, int awayTeamScore, string tv, string notes, eSeasonType seasonType)
             : base(key, date, week, homeTeam, awayTeam, tv, notes, seasonType)
         {
             _homeTeamScore = homeTeamScore;
             _awayTeamScore = awayTeamScore;
+        }
+
+        public static ICompletedGame Create(int key, DateTime date, int week, Team homeTeam, int homeTeamScore, Team awayTeam, int awayTeamScore, string tv, string notes, eSeasonType seasonType)
+        {
+            var game = new CompletedGame(key, date, week, homeTeam, homeTeamScore, awayTeam, awayTeamScore, tv, notes, seasonType);
+            homeTeam.AddGame(game);
+            awayTeam.AddGame(game);
+            return game;
         }
 
         public int HomeTeamScore

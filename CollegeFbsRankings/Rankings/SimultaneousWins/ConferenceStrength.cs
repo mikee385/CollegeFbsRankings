@@ -12,7 +12,7 @@ namespace CollegeFbsRankings.Rankings
     {
         public static class ConferenceStrength
         {
-            public static IReadOnlyList<Ranking.ConferenceValue<TTeam>> Overall<TTeam>(IEnumerable<Conference<TTeam>> conferences, Dictionary<Team, Data> performanceData) where TTeam : Team
+            public static IReadOnlyList<Ranking.FbsConferenceValue> Overall(IEnumerable<FbsConference> conferences, Dictionary<Team, Data> performanceData)
             {
                 return conferences.Select(conference =>
                 {
@@ -47,7 +47,7 @@ namespace CollegeFbsRankings.Rankings
                     writer.WriteLine("Opponent Value: {0:F8}", opponentValue);
                     writer.WriteLine("Performance   : {0:F8}", performanceValue);
 
-                    return new Ranking.ConferenceValue<TTeam>(conference,
+                    return new Ranking.FbsConferenceValue(conference,
                         new[]
                         {
                             performanceValue,
