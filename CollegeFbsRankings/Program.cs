@@ -13,7 +13,7 @@ using CollegeFbsRankings.Validations;
 
 namespace CollegeFbsRankings
 {
-    class Program
+    public static class Program
     {
         private static readonly Dictionary<int, int> RegularSeasonWeeksPerYear = new Dictionary<int, int>
         {
@@ -305,7 +305,7 @@ namespace CollegeFbsRankings
 
                         if (firstFbsTeams.Count < 1 && firstFcsTeams.Count < 1)
                         {
-                            var fcsTeam = new FcsTeam(firstTeamName);
+                            var fcsTeam = FcsTeam.Create(firstTeamName);
 
                             fcsTeams.Add(fcsTeam);
                             firstFcsTeams.Add(fcsTeam);
@@ -379,7 +379,7 @@ namespace CollegeFbsRankings
 
                         if (secondFbsTeams.Count < 1 && secondFcsTeams.Count < 1)
                         {
-                            var fcsTeam = new FcsTeam(secondTeamName);
+                            var fcsTeam = FcsTeam.Create(secondTeamName);
 
                             fcsTeams.Add(fcsTeam);
                             secondFcsTeams.Add(fcsTeam);
@@ -452,7 +452,7 @@ namespace CollegeFbsRankings
                                     lineCount, line, firstTeamScoreString, secondTeamScoreString));
                             }
 
-                            game = CompletedGame.Create(key, date, week, homeTeam, homeTeamScore, awayTeam, awayTeamScore, tvString, notesString, seasonType);
+                            game = CompletedGame.Create(date, week, homeTeam, homeTeamScore, awayTeam, awayTeamScore, tvString, notesString, seasonType);
                         }
                         else if (hasFirstTeamScore && !hasSecondTeamScore)
                         {
@@ -468,7 +468,7 @@ namespace CollegeFbsRankings
                         }
                         else
                         {
-                            game = FutureGame.Create(key, date, week, homeTeam, awayTeam, tvString, notesString, seasonType);
+                            game = FutureGame.Create(date, week, homeTeam, awayTeam, tvString, notesString, seasonType);
                         }
 
                         games.Add(game);

@@ -7,13 +7,20 @@ namespace CollegeFbsRankings.Teams
 {
     public abstract class Team
     {
+        private readonly TeamID _id;
         private readonly string _name;
         private readonly List<ITeamGame> _games;
 
-        protected Team(string name)
+        protected Team(TeamID id, string name)
         {
+            _id = id;
             _name = name;
             _games = new List<ITeamGame>();
+        }
+
+        public TeamID ID
+        {
+            get { return _id; }
         }
 
         public string Name
@@ -28,7 +35,7 @@ namespace CollegeFbsRankings.Teams
 
         public void AddGame(IGame game)
         {
-            if (game.HomeTeam == this || game.AwayTeam == this)
+            if (game.HomeTeam.ID == ID || game.AwayTeam.ID == ID)
             {
                 var completedGame = game as ICompletedGame;
                 if (completedGame != null)
@@ -45,23 +52,23 @@ namespace CollegeFbsRankings.Teams
                     else
                     {
                         throw new Exception(String.Format(
-                            "Game {0} for {1} does not appear to be Completed or Future: {2} vs. {3}",
-                            game.Key, Name, game.HomeTeam, game.AwayTeam));
+                            "Game for {0} does not appear to be Completed or Future: {1} vs. {2}",
+                            Name, game.HomeTeam.Name, game.AwayTeam.Name));
                     }
                 }
             }
             else
             {
                 throw new Exception(String.Format(
-                    "Cannot add game {0} to team {1} since game is already assigned to {2} and {3}.",
-                    game.Key, Name, game.HomeTeam.Name, game.AwayTeam.Name));
+                    "Cannot add game to team {0} since game is already assigned to {1} and {2}.",
+                    Name, game.HomeTeam.Name, game.AwayTeam.Name));
             }
 
         }
 
         public void RemoveGame(IGame game)
         {
-            _games.RemoveAll(g => g.Key == game.Key);
+            _games.RemoveAll(g => g.ID == game.ID);
         }
     }
 }

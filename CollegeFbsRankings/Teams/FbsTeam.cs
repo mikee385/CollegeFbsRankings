@@ -1,4 +1,6 @@
-﻿using CollegeFbsRankings.Conferences;
+﻿using System;
+
+using CollegeFbsRankings.Conferences;
 
 namespace CollegeFbsRankings.Teams
 {
@@ -7,8 +9,8 @@ namespace CollegeFbsRankings.Teams
         private readonly FbsConference _conference;
         private readonly FbsDivision _division;
 
-        private FbsTeam(string name, FbsConference conference, FbsDivision division)
-            : base(name)
+        private FbsTeam(TeamID id, string name, FbsConference conference, FbsDivision division)
+            : base(id, name)
         {
             _conference = conference;
             _division = division;
@@ -16,14 +18,16 @@ namespace CollegeFbsRankings.Teams
 
         public static FbsTeam Create(string name, FbsConference conference)
         {
-            var team = new FbsTeam(name, conference, null);
+            var id = TeamID.Create();
+            var team = new FbsTeam(id, name, conference, null);
             conference.AddTeam(team);
             return team;
         }
 
         public static FbsTeam Create(string name, FbsDivision division)
         {
-            var team = new FbsTeam(name, division.Conference, division);
+            var id = TeamID.Create();
+            var team = new FbsTeam(id, name, division.Conference, division);
             division.AddTeam(team);
             return team;
         }

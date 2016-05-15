@@ -11,13 +11,14 @@ namespace CollegeFbsRankings.Games
 
     public class FutureGame : Game, IFutureGame
     {
-        protected FutureGame(int key, DateTime date, int week, Team homeTeam, Team awayTeam, string tv, string notes, eSeasonType seasonType)
-            : base(key, date, week, homeTeam, awayTeam, tv, notes, seasonType)
+        protected FutureGame(GameID id, DateTime date, int week, Team homeTeam, Team awayTeam, string tv, string notes, eSeasonType seasonType)
+            : base(id, date, week, homeTeam, awayTeam, tv, notes, seasonType)
         { }
 
-        public static IFutureGame Create(int key, DateTime date, int week, Team homeTeam, Team awayTeam, string tv, string notes, eSeasonType seasonType)
+        public static IFutureGame Create(DateTime date, int week, Team homeTeam, Team awayTeam, string tv, string notes, eSeasonType seasonType)
         {
-            var game = new FutureGame(key, date, week, homeTeam, awayTeam, tv, notes, seasonType);
+            var id = GameID.Create();
+            var game = new FutureGame(id, date, week, homeTeam, awayTeam, tv, notes, seasonType);
             homeTeam.AddGame(game);
             awayTeam.AddGame(game);
             return game;

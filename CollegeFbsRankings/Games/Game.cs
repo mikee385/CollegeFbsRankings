@@ -20,7 +20,7 @@ namespace CollegeFbsRankings.Games
 
     public interface IGame
     {
-        int Key { get; }
+        GameID ID { get; }
 
         DateTime Date { get; }
 
@@ -41,7 +41,7 @@ namespace CollegeFbsRankings.Games
 
     public abstract class Game : IGame
     {
-        private readonly int _key;
+        private readonly GameID _id;
         private readonly DateTime _date;
         private readonly int _week;
         private readonly Team _homeTeam;
@@ -51,9 +51,9 @@ namespace CollegeFbsRankings.Games
         private readonly eTeamType _teamType;
         private readonly eSeasonType _seasonType;
         
-        protected Game(int key, DateTime date, int week, Team homeTeam, Team awayTeam, string tv, string notes, eSeasonType seasonType)
+        protected Game(GameID id, DateTime date, int week, Team homeTeam, Team awayTeam, string tv, string notes, eSeasonType seasonType)
         {
-            _key = key;
+            _id = id;
             _date = date;
             _week = week;
             _homeTeam = homeTeam;
@@ -73,16 +73,16 @@ namespace CollegeFbsRankings.Games
             else
             {
                 throw new Exception(String.Format(
-                    "Game {0} does not contain an FBS team: {1} vs. {2}",
-                    _key, _homeTeam, _awayTeam));
+                    "Game does not contain an FBS team: {0} vs. {1}",
+                    _homeTeam.Name, _awayTeam.Name));
             }
 
             _seasonType = seasonType;
         }
 
-        public int Key
+        public GameID ID
         {
-            get { return _key; }
+            get { return _id; }
         }
 
         public DateTime Date

@@ -21,15 +21,15 @@ namespace CollegeFbsRankings.Games
         {
             _game = game;
 
-            if (game.WinningTeam.Name == team.Name)
+            if (game.WinningTeam.ID == team.ID)
                 _isWin = true;
-            else if (game.LosingTeam.Name == team.Name)
+            else if (game.LosingTeam.ID == team.ID)
                 _isWin = false;
             else
             {
                 throw new Exception(String.Format(
-                    "Team \"{0}\" does not appear to have played in game {1}: {2} vs. {3}",
-                    team.Name, game.Key, game.HomeTeam, game.AwayTeam));
+                    "Team \"{0}\" does not appear to have played in game: {1} vs. {2}",
+                    team.Name, game.HomeTeam.Name, game.AwayTeam.Name));
             }
         }
 
@@ -83,12 +83,12 @@ namespace CollegeFbsRankings.Games
 
         public static IEnumerable<T> Won<T>(this IEnumerable<T> games) where T : ITeamCompletedGame
         {
-            return games.Where(g => g.WinningTeam.Name == g.Team.Name);
+            return games.Where(g => g.WinningTeam.ID == g.Team.ID);
         }
 
         public static IEnumerable<T> Lost<T>(this IEnumerable<T> games) where T : ITeamCompletedGame
         {
-            return games.Where(g => g.LosingTeam.Name == g.Team.Name);
+            return games.Where(g => g.LosingTeam.ID == g.Team.ID);
         }
     }
 }

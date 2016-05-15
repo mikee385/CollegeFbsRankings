@@ -120,8 +120,7 @@ namespace CollegeFbsRankings
                 writer.WriteLine("WARNING: Potentially cancelled games were removed:");
                 foreach (var game in summary.CancelledGames)
                 {
-                    writer.WriteLine("    {0} Week {1,-2} {2} vs. {3} - {4}",
-                        game.Key,
+                    writer.WriteLine("    Week {0,-2} {1} vs. {2} - {3}",
                         game.Week,
                         game.HomeTeam.Name,
                         game.AwayTeam.Name,

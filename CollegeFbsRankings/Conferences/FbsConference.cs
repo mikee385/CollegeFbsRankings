@@ -8,12 +8,14 @@ namespace CollegeFbsRankings.Conferences
 {
     public class FbsConference
     {
+        private readonly ConferenceID _id;
         private readonly string _name;
         private readonly List<FbsTeam> _teams;
         private readonly List<FbsDivision> _divisions;
 
-        private FbsConference(string name)
+        private FbsConference(ConferenceID id, string name)
         {
+            _id = id;
             _name = name;
             _teams = new List<FbsTeam>();
             _divisions = new List<FbsDivision>();
@@ -21,8 +23,14 @@ namespace CollegeFbsRankings.Conferences
 
         public static FbsConference Create(string name)
         {
-            var conference = new FbsConference(name);
+            var id = ConferenceID.Create();
+            var conference = new FbsConference(id, name);
             return conference;
+        }
+
+        public ConferenceID ID
+        {
+            get { return _id; }
         }
 
         public string Name
@@ -45,7 +53,7 @@ namespace CollegeFbsRankings.Conferences
         {
             if (!_divisions.Any())
             {
-                if (team.Conference == this)
+                if (team.Conference.ID == ID)
                     _teams.Add(team);
                 else
                 {
@@ -65,7 +73,7 @@ namespace CollegeFbsRankings.Conferences
         public void RemoveTeam(FbsTeam team)
         {
             if (!_divisions.Any())
-                _teams.RemoveAll(t => t.Name == team.Name);
+                _teams.RemoveAll(t => t.ID == team.ID);
             else
             {
                 foreach (var division in _divisions)
@@ -82,7 +90,7 @@ namespace CollegeFbsRankings.Conferences
         {
             if (!_teams.Any())
             {
-                if (division.Conference == this)
+                if (division.Conference.ID == ID)
                     _divisions.Add(division);
                 else
                 {

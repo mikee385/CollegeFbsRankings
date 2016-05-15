@@ -70,7 +70,7 @@ namespace CollegeFbsRankings.Validations
 
         public static IReadOnlyList<GameValue> FullSeason(IEnumerable<IGame> games, IReadOnlyDictionary<Team, SingleDepthWins.Data> performanceData)
         {
-            return Calculate(games.Completed().OrderBy(game => game.Key), performanceData);
+            return Calculate(games.Completed().OrderBy(game => game.Date.Date), performanceData);
         }
 
         private static IReadOnlyList<GameValue> Calculate(IEnumerable<ICompletedGame> games, IReadOnlyDictionary<Team, SingleDepthWins.Data> performanceData)
@@ -109,7 +109,7 @@ namespace CollegeFbsRankings.Validations
 
         public static IReadOnlyList<GameValue> FullSeason(IEnumerable<IGame> games, IReadOnlyDictionary<Team, SimultaneousWins.Data> performanceData)
         {
-            return Calculate(games.Completed().OrderBy(game => game.Key), performanceData);
+            return Calculate(games.Completed().OrderBy(game => game.Date.Date), performanceData);
         }
 
         private static IReadOnlyList<GameValue> Calculate(IEnumerable<ICompletedGame> games, IReadOnlyDictionary<Team, SimultaneousWins.Data> performanceData)

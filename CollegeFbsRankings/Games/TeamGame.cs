@@ -24,21 +24,21 @@ namespace CollegeFbsRankings.Games
             _team = team;
             _game = game;
 
-            if (game.HomeTeam.Name == team.Name)
+            if (game.HomeTeam.ID == team.ID)
                 _opponent = game.AwayTeam;
-            else if (game.AwayTeam.Name == team.Name)
+            else if (game.AwayTeam.ID == team.ID)
                 _opponent = game.HomeTeam;
             else
             {
                 throw new Exception(String.Format(
-                    "Team \"{0}\" does not appear to have played in game {1}: {2} vs. {3}",
-                    team.Name, game.Key, game.HomeTeam, game.AwayTeam));
+                    "Team \"{0}\" does not appear to have played in game: {1} vs. {2}",
+                    team.Name, game.HomeTeam.Name, game.AwayTeam.Name));
             }
         }
 
-        public int Key
+        public GameID ID
         {
-            get { return _game.Key; }
+            get { return _game.ID; }
         }
 
         public DateTime Date
@@ -96,12 +96,12 @@ namespace CollegeFbsRankings.Games
     {
         public static IEnumerable<T> Home<T>(this IEnumerable<T> games) where T : ITeamGame
         {
-            return games.Where(g => g.HomeTeam.Name == g.Team.Name);
+            return games.Where(g => g.HomeTeam.ID == g.Team.ID);
         }
 
         public static IEnumerable<T> Away<T>(this IEnumerable<T> games) where T : ITeamGame
         {
-            return games.Where(g => g.AwayTeam.Name == g.Team.Name);
+            return games.Where(g => g.AwayTeam.ID == g.Team.ID);
         }
     }
 }

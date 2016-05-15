@@ -44,8 +44,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Conferences\ConferenceID.cs" />
+    <Compile Include="Conferences\DivisionID.cs" />
     <Compile Include="Conferences\FbsConference.cs" />
     <Compile Include="Conferences\FbsDivision.cs" />
+    <Compile Include="Games\GameID.cs" />
     <Compile Include="Rankings\SimultaneousWins\ConferenceStrength.cs" />
     <Compile Include="Rankings\SimultaneousWins\Data.cs" />
     <Compile Include="Rankings\SimultaneousWins\GameStrength.cs" />
@@ -73,6 +76,7 @@
     <Compile Include="Teams\FbsTeam.cs" />
     <Compile Include="Teams\FcsTeam.cs" />
     <Compile Include="Teams\Team.cs" />
+    <Compile Include="Teams\TeamID.cs" />
     <Compile Include="Validations\Validation.cs" />
   </ItemGroup>
   <ItemGroup>

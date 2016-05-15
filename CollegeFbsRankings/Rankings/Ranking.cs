@@ -157,8 +157,8 @@ namespace CollegeFbsRankings.Rankings
 
         public static IEnumerable<GameValue> ForGames(this IEnumerable<GameValue> ranking, IReadOnlyList<Game> games)
         {
-            var gameKeys = games.Select(game => game.Key).ToList();
-            return ranking.Where(rank => gameKeys.Contains(rank.Game.Key));
+            var gameIDs = games.Select(game => game.ID).ToList();
+            return ranking.Where(rank => gameIDs.Contains(rank.Game.ID));
         }
 
         public static string Format(string title, IReadOnlyList<Value> ranking)
