@@ -12,27 +12,27 @@ namespace CollegeFbsRankings.Rankings
     {
         public static class ScheduleStrength
         {
-            public static IReadOnlyList<Ranking.TeamValue> Overall(IEnumerable<Team> teams, Dictionary<Team, Data> performanceData)
+            public static Ranking<TeamRankingValue> Overall(IEnumerable<Team> teams, Dictionary<Team, Data> performanceData)
             {
                 return Calculate(teams, performanceData, games => games.RegularSeason());
             }
 
-            public static IReadOnlyList<Ranking.TeamValue> Completed(IEnumerable<Team> teams, int week, Dictionary<Team, Data> performanceData)
+            public static Ranking<TeamRankingValue> Completed(IEnumerable<Team> teams, int week, Dictionary<Team, Data> performanceData)
             {
                 return Calculate(teams, performanceData, games => games.Where(g => g.Week <= week).Completed().RegularSeason());
             }
 
-            public static IReadOnlyList<Ranking.TeamValue> Future(IEnumerable<Team> teams, int week, Dictionary<Team, Data> performanceData)
+            public static Ranking<TeamRankingValue> Future(IEnumerable<Team> teams, int week, Dictionary<Team, Data> performanceData)
             {
                 return Calculate(teams, performanceData, games => games.Where(g => g.Week > week).RegularSeason());
             }
 
-            private static IReadOnlyList<Ranking.TeamValue> Calculate(
+            private static Ranking<TeamRankingValue> Calculate(
                 IEnumerable<Team> teams, 
                 Dictionary<Team, Data> performanceData,
                 Func<IEnumerable<ITeamGame>, IEnumerable<ITeamGame>> teamGameFilter)
             {
-                return teams.Select(team =>
+                return Ranking.Create(teams.Select(team =>
                 {
                     var writer = new StringWriter();
                     writer.WriteLine(team.Name + " Games:");
@@ -77,7 +77,7 @@ namespace CollegeFbsRankings.Rankings
                     
                     writer.WriteLine("Opponent Wins: {0,2} / {1,2} ({2:F8})", opponentWinTotal, opponentGameTotal, opponentValue);
 
-                    return new Ranking.TeamValue(team,
+                    return new TeamRankingValue(team,
                         new[]
                         {
                             opponentValue
@@ -87,7 +87,7 @@ namespace CollegeFbsRankings.Rankings
                             team.Name
                         },
                         writer.ToString());
-                }).Sorted();
+                }));
             }
         }
     }

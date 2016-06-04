@@ -20,18 +20,18 @@ namespace CollegeFbsRankings
 
         public class Method
         {
-            private readonly IReadOnlyList<Ranking.TeamValue> _ranking;
+            private readonly Ranking<TeamRankingValue> _ranking;
             private readonly IReadOnlyList<Validation.GameValue> _validation;
             private readonly IReadOnlyList<Validation.GameValue> _prediction;
 
-            public Method(IReadOnlyList<Ranking.TeamValue> ranking, IReadOnlyList<Validation.GameValue> validation, IReadOnlyList<Validation.GameValue> prediction)
+            public Method(Ranking<TeamRankingValue> ranking, IReadOnlyList<Validation.GameValue> validation, IReadOnlyList<Validation.GameValue> prediction)
             {
                 _ranking = ranking;
                 _validation = validation;
                 _prediction = prediction;
             }
 
-            public IReadOnlyList<Ranking.TeamValue> Ranking
+            public Ranking<TeamRankingValue> Ranking
             {
                 get { return _ranking; }
             }
@@ -82,7 +82,7 @@ namespace CollegeFbsRankings
             get { return _methodSummaries; }
         }
 
-        public void AddMethodSummary(string name, IReadOnlyList<Ranking.TeamValue> ranking, 
+        public void AddMethodSummary(string name, Ranking<TeamRankingValue> ranking, 
             IReadOnlyList<Validation.GameValue> validation, IReadOnlyList<Validation.GameValue> prediction)
         {
             _methodSummaries.Add(name, new Method(ranking, validation, prediction));
@@ -154,9 +154,9 @@ namespace CollegeFbsRankings
                 foreach (var method in summary.MethodSummaries)
                 {
                     var title = String.Format("Top 5 for {0}:", method.Key);
-                    var top5 = method.Value.Ranking.Take(5).ToList();
+                    var top5 = method.Value.Ranking.Top(5);
 
-                    writer.WriteLine(Ranking.Format(title, top5));
+                    writer.WriteLine(top5.Format(title));
                     writer.WriteLine();
                 }
                 writer.WriteLine();

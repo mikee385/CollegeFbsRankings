@@ -11,9 +11,9 @@ namespace CollegeFbsRankings.Rankings
     {
         public static class WinStrength
         {
-            public static IReadOnlyList<Ranking.TeamValue> Overall(IEnumerable<Team> teams, Dictionary<Team, Data> performanceData)
+            public static Ranking<TeamRankingValue> Overall(IEnumerable<Team> teams, Dictionary<Team, Data> performanceData)
             {
-                return teams.Select(team =>
+                return Ranking.Create(teams.Select(team =>
                 {
                     var teamData = performanceData[team];
 
@@ -24,7 +24,7 @@ namespace CollegeFbsRankings.Rankings
                     writer.WriteLine(teamData.Summary);
                     writer.WriteLine("Opponent Value: {0:F8}", opponentValue);
 
-                    return new Ranking.TeamValue(team,
+                    return new TeamRankingValue(team,
                         new[]
                         {
                             opponentValue,
@@ -35,7 +35,7 @@ namespace CollegeFbsRankings.Rankings
                             team.Name
                         },
                         writer.ToString());
-                }).Sorted();
+                }));
             }
         }
     }

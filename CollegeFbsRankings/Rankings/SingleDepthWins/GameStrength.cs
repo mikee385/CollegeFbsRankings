@@ -12,19 +12,19 @@ namespace CollegeFbsRankings.Rankings
     {
         public static class GameStrength
         {
-            public static IReadOnlyList<Ranking.GameValue> Overall(IEnumerable<IGame> games, Dictionary<Team, Data> performanceData)
+            public static Ranking<GameRankingValue> Overall(IEnumerable<IGame> games, Dictionary<Team, Data> performanceData)
             {
                 return Calculate(games, performanceData);
             }
 
-            public static Dictionary<int, IReadOnlyList<Ranking.GameValue>> ByWeek(IEnumerable<IGame> games, Dictionary<Team, Data> performanceData)
+            public static Dictionary<int, Ranking<GameRankingValue>> ByWeek(IEnumerable<IGame> games, Dictionary<Team, Data> performanceData)
             {
                 return games.GroupBy(g => g.Week).ToDictionary(group => group.Key, group => Calculate(group, performanceData));
             }
 
-            private static IReadOnlyList<Ranking.GameValue> Calculate(IEnumerable<IGame> games, Dictionary<Team, Data> performanceData)
+            private static Ranking<GameRankingValue> Calculate(IEnumerable<IGame> games, Dictionary<Team, Data> performanceData)
             {
-                return games.Select(game =>
+                return Ranking.Create(games.Select(game =>
                 {
                     var writer = new StringWriter();
                     writer.WriteLine("Week {0} {1} vs. {2} ({3}):",
@@ -68,7 +68,7 @@ namespace CollegeFbsRankings.Rankings
                     writer.WriteLine("Opponent Wins: {0,2} / {1,2} ({2:F8})", opponentWinTotal, opponentGameTotal, opponentValue);
                     writer.WriteLine("Performance  : {0:F8}", performanceValue);
 
-                    return new Ranking.GameValue(game,
+                    return new GameRankingValue(game,
                         new[]
                         {
                             performanceValue,
@@ -83,7 +83,7 @@ namespace CollegeFbsRankings.Rankings
                             game.Date
                         },
                         writer.ToString());
-                }).Sorted();
+                }));
             }
         }
     }

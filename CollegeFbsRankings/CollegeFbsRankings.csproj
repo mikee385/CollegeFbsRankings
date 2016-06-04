@@ -49,6 +49,9 @@
     <Compile Include="Conferences\FbsConference.cs" />
     <Compile Include="Conferences\FbsDivision.cs" />
     <Compile Include="Games\GameID.cs" />
+    <Compile Include="Rankings\FbsConferenceRankingValue.cs" />
+    <Compile Include="Rankings\GameRankingValue.cs" />
+    <Compile Include="Rankings\RankingValue.cs" />
     <Compile Include="Rankings\SimultaneousWins\ConferenceStrength.cs" />
     <Compile Include="Rankings\SimultaneousWins\Data.cs" />
     <Compile Include="Rankings\SimultaneousWins\GameStrength.cs" />
@@ -72,6 +75,7 @@
     <Compile Include="Rankings\Ranking.cs" />
     <Compile Include="Rankings\SingleDepthWins\ScheduleStrength.cs" />
     <Compile Include="Rankings\SingleDepthWins\WinStrength.cs" />
+    <Compile Include="Rankings\TeamRankingValue.cs" />
     <Compile Include="Summary.cs" />
     <Compile Include="Teams\FbsTeam.cs" />
     <Compile Include="Teams\FcsTeam.cs" />

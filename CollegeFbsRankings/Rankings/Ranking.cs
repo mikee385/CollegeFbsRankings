@@ -1,127 +1,89 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-using CollegeFbsRankings.Conferences;
 using CollegeFbsRankings.Games;
 using CollegeFbsRankings.Teams;
 
 namespace CollegeFbsRankings.Rankings
 {
-    public static class Ranking
+    public class Ranking
     {
-        public abstract class Value
+        public static Ranking<T> Create<T>(IEnumerable<T> values) where T : RankingValue
         {
-            private readonly string _title;
-            private readonly IEnumerable<double> _values;
-            private readonly IEnumerable<IComparable> _tieBreakers;
-            private readonly string _summary;
+            return new Ranking<T>(values);
+        }
+    }
 
-            protected Value(string title, IEnumerable<double> values, IEnumerable<IComparable> tieBreakers, string summary)
-            {
-                _title = title;
-                _values = values;
-                _tieBreakers = tieBreakers;
-                _summary = summary;
-            }
+    public class Ranking<T> : IEnumerable<T> where T : RankingValue
+    {
+        private readonly IReadOnlyList<T> _values;
 
-            public string Title
-            {
-                get { return _title; }
-            }
-
-            public IEnumerable<double> Values
-            {
-                get { return _values; }
-            }
-
-            public IEnumerable<IComparable> TieBreakers
-            {
-                get { return _tieBreakers; }
-            }
-
-            public string Summary
-            {
-                get { return _summary; }
-            }
+        private Ranking(IEnumerable<T> values, bool sort)
+        {
+            if (sort)
+                _values = Sort(values);
+            else
+                _values = values.ToList();
         }
 
-        public class TeamValue : Value
+        public Ranking(IEnumerable<T> values)
+            : this(values, true)
+        {}
+
+        public IEnumerator<T> GetEnumerator()
         {
-            private readonly Team _team;
-
-            public TeamValue(Team team, IEnumerable<double> values, IEnumerable<IComparable> tieBreakers, string summary)
-                : base (GetTitle(team), values, tieBreakers, summary)
-            {
-                _team = team;
-            }
-
-            public Team Team
-            {
-                get { return _team; }
-            }
-
-            private static string GetTitle(Team team)
-            {
-                return team.Name;
-            }
+            return _values.GetEnumerator();
         }
 
-        public class GameValue : Value
+        IEnumerator IEnumerable.GetEnumerator()
         {
-            private readonly IGame _game;
-            private readonly string _shortTitle;
-
-            public GameValue(IGame game, IEnumerable<double> values, IEnumerable<IComparable> tieBreakers, string summary)
-                : base(GetTitle(game), values, tieBreakers, summary)
-            {
-                _game = game;
-                _shortTitle = String.Format("{0} vs. {1}", game.HomeTeam.Name, game.AwayTeam.Name);
-            }
-
-            public IGame Game
-            {
-                get { return _game; }
-            }
-
-            public string ShortTitle
-            {
-                get { return _shortTitle; }
-            }
-
-            private static string GetTitle(IGame game)
-            {
-                return String.Format("Week {0,-2} {1} vs. {2} ({3})", 
-                    game.Week, 
-                    game.HomeTeam.Name, 
-                    game.AwayTeam.Name, 
-                    game.Date);
-            }
+            return GetEnumerator();
         }
 
-        public class FbsConferenceValue : Value
+        public Ranking<T> Top(int number)
         {
-            private readonly FbsConference _conference;
-
-            public FbsConferenceValue(FbsConference conference, IEnumerable<double> values, IEnumerable<IComparable> tieBreakers, string summary)
-                : base(GetTitle(conference), values, tieBreakers, summary)
-            {
-                _conference = conference;
-            }
-
-            public FbsConference Conference
-            {
-                get { return _conference; }
-            }
-
-            private static string GetTitle(FbsConference conference)
-            {
-                return conference.Name;
-            }
+            return new Ranking<T>(_values.Take(number), false);
         }
 
-        public static IReadOnlyList<T> Sorted<T>(this IEnumerable<T> ranking) where T : Value
+        public string Format(string title)
+        {
+            var writer = new StringWriter();
+
+            writer.WriteLine(title);
+            writer.WriteLine("--------------------");
+
+            // Calculate the formatting information for the titles.
+            var maxTitleLength = _values.Max(rank => rank.Title.Length);
+
+            // Output the rankings.
+            int index = 1, outputIndex = 1;
+            List<double> previousValues = null;
+
+            foreach (var rank in _values)
+            {
+                var currentValues = rank.Values.ToList();
+                if (index != 1)
+                {
+                    if (!currentValues.SequenceEqual(previousValues))
+                        outputIndex = index;
+                }
+
+                var titleInfo = String.Format("{0,-4} {1,-" + (maxTitleLength + 3) + "}", outputIndex, rank.Title);
+                var rankingInfo = String.Join("   ", currentValues.Select(value => String.Format("{0:F8}", value)));
+
+                writer.WriteLine(String.Join(" ", titleInfo, rankingInfo));
+
+                ++index;
+                previousValues = currentValues;
+            }
+
+            return writer.ToString();
+        }
+
+        private static IReadOnlyList<T> Sort(IEnumerable<T> ranking)
         {
             var rankingList = ranking.ToList();
 
@@ -148,52 +110,20 @@ namespace CollegeFbsRankings.Rankings
 
             return rankingList;
         }
+    }
 
-        public static IEnumerable<TeamValue> ForTeams(this IEnumerable<TeamValue> ranking, IReadOnlyList<Team> teams)
+    public static class RankingExtensions
+    {
+        public static Ranking<TeamRankingValue> ForTeams(this Ranking<TeamRankingValue> ranking, IReadOnlyList<Team> teams)
         {
             var teamNames = teams.Select(team => team.Name).ToList();
-            return ranking.Where(rank => teamNames.Contains(rank.Team.Name));
+            return Ranking.Create(ranking.Where(rank => teamNames.Contains(rank.Team.Name)));
         }
 
-        public static IEnumerable<GameValue> ForGames(this IEnumerable<GameValue> ranking, IReadOnlyList<Game> games)
+        public static Ranking<GameRankingValue> ForGames(this Ranking<GameRankingValue> ranking, IReadOnlyList<Game> games)
         {
             var gameIDs = games.Select(game => game.ID).ToList();
-            return ranking.Where(rank => gameIDs.Contains(rank.Game.ID));
-        }
-
-        public static string Format(string title, IReadOnlyList<Value> ranking)
-        {
-            var writer = new StringWriter();
-
-            writer.WriteLine(title);
-            writer.WriteLine("--------------------");
-
-            // Calculate the formatting information for the titles.
-            var maxTitleLength = ranking.Max(rank => rank.Title.Length);
-
-            // Output the rankings.
-            int index = 1, outputIndex = 1;
-            List<double> previousValues = null;
-
-            foreach (var rank in ranking)
-            {
-                var currentValues = rank.Values.ToList();
-                if (index != 1)
-                {
-                    if (!currentValues.SequenceEqual(previousValues))
-                        outputIndex = index;
-                }
-
-                var titleInfo = String.Format("{0,-4} {1,-" + (maxTitleLength + 3) + "}", outputIndex, rank.Title);
-                var rankingInfo = String.Join("   ", currentValues.Select(value => String.Format("{0:F8}", value)));
-
-                writer.WriteLine(String.Join(" ", titleInfo, rankingInfo));
-
-                ++index;
-                previousValues = currentValues;
-            }
-
-            return writer.ToString();
+            return Ranking.Create(ranking.Where(rank => gameIDs.Contains(rank.Game.ID)));
         }
     }
 }

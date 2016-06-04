@@ -549,15 +549,16 @@ namespace CollegeFbsRankings
                         var fbsCompletedScheduleStrength = SingleDepthWins.ScheduleStrength.Completed(fbsTeams, week, fbsData);
                         var fbsFutureScheduleStrength = SingleDepthWins.ScheduleStrength.Future(fbsTeams, week, fbsData);
 
-                        var top25Teams = fbsPerformanceRankings.Take(25).Select(rank => rank.Team).ToList();
+                        var top25FbsPerformanceRankings = fbsPerformanceRankings.Top(25);
+                        var top25Teams = top25FbsPerformanceRankings.Select(rank => rank.Team).ToList();
 
-                        var top25OverallScheduleStrength = overallScheduleStrength.ForTeams(top25Teams).ToList();
-                        var top25CompletedScheduleStrength = completedScheduleStrength.ForTeams(top25Teams).ToList();
-                        var top25FutureScheduleStrength = futureScheduleStrength.ForTeams(top25Teams).ToList();
+                        var top25OverallScheduleStrength = overallScheduleStrength.ForTeams(top25Teams);
+                        var top25CompletedScheduleStrength = completedScheduleStrength.ForTeams(top25Teams);
+                        var top25FutureScheduleStrength = futureScheduleStrength.ForTeams(top25Teams);
 
-                        var top25FbsOverallScheduleStrength = fbsOverallScheduleStrength.ForTeams(top25Teams).ToList();
-                        var top25FbsCompletedScheduleStrength = fbsCompletedScheduleStrength.ForTeams(top25Teams).ToList();
-                        var top25FbsFutureScheduleStrength = fbsFutureScheduleStrength.ForTeams(top25Teams).ToList();
+                        var top25FbsOverallScheduleStrength = fbsOverallScheduleStrength.ForTeams(top25Teams);
+                        var top25FbsCompletedScheduleStrength = fbsCompletedScheduleStrength.ForTeams(top25Teams);
+                        var top25FbsFutureScheduleStrength = fbsFutureScheduleStrength.ForTeams(top25Teams);
 
                         var overallGameStrength = SingleDepthWins.GameStrength.Overall(fbsGames, overallData);
                         var fbsGameStrength = SingleDepthWins.GameStrength.Overall(fbsGames, fbsData);
@@ -651,7 +652,7 @@ namespace CollegeFbsRankings
                         var builder = new StringBuilder();
                         foreach (var gameWeek in overallGameStrengthByWeek)
                         {
-                            builder.AppendLine(Ranking.Format(String.Format("Week {0} Game Strength (Overall)", gameWeek.Key), gameWeek.Value));
+                            builder.AppendLine(gameWeek.Value.Format(String.Format("Week {0} Game Strength (Overall)", gameWeek.Key)));
                             builder.AppendLine();
                         }
                         WriteStringToFile(overallGameStrengthByWeekFileName, builder.ToString());
@@ -659,7 +660,7 @@ namespace CollegeFbsRankings
                         builder = new StringBuilder();
                         foreach (var gameWeek in fbsGameStrengthByWeek)
                         {
-                            builder.AppendLine(Ranking.Format(String.Format("Week {0} Game Strength (FBS)", gameWeek.Key), gameWeek.Value));
+                            builder.AppendLine(gameWeek.Value.Format(String.Format("Week {0} Game Strength (FBS)", gameWeek.Key)));
                             builder.AppendLine();
                         }
                         WriteStringToFile(fbsGameStrengthByWeekFileName, builder.ToString());
@@ -671,7 +672,7 @@ namespace CollegeFbsRankings
                         WriteStringToFile(fbsGameValidationFileName, Validation.Format("Game Validation (FBS)", fbsGameValidation));
 
                         WriteStringToFile(weeklySummaryFileName, FormatRankingSummary(year, week,
-                            fbsPerformanceRankings.Take(25), top25FbsFutureScheduleStrength, fbsGameStrengthByWeek));
+                            top25FbsPerformanceRankings, top25FbsFutureScheduleStrength, fbsGameStrengthByWeek));
 
                         #endregion
 
@@ -700,16 +701,17 @@ namespace CollegeFbsRankings
                         var fbsOverallScheduleStrength = SimultaneousWins.ScheduleStrength.Overall(fbsTeams, fbsData);
                         var fbsCompletedScheduleStrength = SimultaneousWins.ScheduleStrength.Completed(fbsTeams, week, fbsData);
                         var fbsFutureScheduleStrength = SimultaneousWins.ScheduleStrength.Future(fbsTeams, week, fbsData);
+                        
+                        var top25FbsPerformanceRankings = fbsPerformanceRankings.Top(25);
+                        var top25Teams = top25FbsPerformanceRankings.Select(rank => rank.Team).ToList();
 
-                        var top25Teams = fbsPerformanceRankings.Take(25).Select(rank => rank.Team).ToList();
+                        var top25OverallScheduleStrength = overallScheduleStrength.ForTeams(top25Teams);
+                        var top25CompletedScheduleStrength = completedScheduleStrength.ForTeams(top25Teams);
+                        var top25FutureScheduleStrength = futureScheduleStrength.ForTeams(top25Teams);
 
-                        var top25OverallScheduleStrength = overallScheduleStrength.ForTeams(top25Teams).ToList();
-                        var top25CompletedScheduleStrength = completedScheduleStrength.ForTeams(top25Teams).ToList();
-                        var top25FutureScheduleStrength = futureScheduleStrength.ForTeams(top25Teams).ToList();
-
-                        var top25FbsOverallScheduleStrength = fbsOverallScheduleStrength.ForTeams(top25Teams).ToList();
-                        var top25FbsCompletedScheduleStrength = fbsCompletedScheduleStrength.ForTeams(top25Teams).ToList();
-                        var top25FbsFutureScheduleStrength = fbsFutureScheduleStrength.ForTeams(top25Teams).ToList();
+                        var top25FbsOverallScheduleStrength = fbsOverallScheduleStrength.ForTeams(top25Teams);
+                        var top25FbsCompletedScheduleStrength = fbsCompletedScheduleStrength.ForTeams(top25Teams);
+                        var top25FbsFutureScheduleStrength = fbsFutureScheduleStrength.ForTeams(top25Teams);
 
                         var overallGameStrength = SimultaneousWins.GameStrength.Overall(fbsGames, overallData);
                         var fbsGameStrength = SimultaneousWins.GameStrength.Overall(fbsGames, fbsData);
@@ -803,7 +805,7 @@ namespace CollegeFbsRankings
                         var builder = new StringBuilder();
                         foreach (var gameWeek in overallGameStrengthByWeek)
                         {
-                            builder.AppendLine(Ranking.Format(String.Format("Week {0} Game Strength (Overall)", gameWeek.Key), gameWeek.Value));
+                            builder.AppendLine(gameWeek.Value.Format(String.Format("Week {0} Game Strength (Overall)", gameWeek.Key)));
                             builder.AppendLine();
                         }
                         WriteStringToFile(overallGameStrengthByWeekFileName, builder.ToString());
@@ -811,7 +813,7 @@ namespace CollegeFbsRankings
                         builder = new StringBuilder();
                         foreach (var gameWeek in fbsGameStrengthByWeek)
                         {
-                            builder.AppendLine(Ranking.Format(String.Format("Week {0} Game Strength (FBS)", gameWeek.Key), gameWeek.Value));
+                            builder.AppendLine(gameWeek.Value.Format(String.Format("Week {0} Game Strength (FBS)", gameWeek.Key)));
                             builder.AppendLine();
                         }
                         WriteStringToFile(fbsGameStrengthByWeekFileName, builder.ToString());
@@ -823,7 +825,7 @@ namespace CollegeFbsRankings
                         WriteStringToFile(fbsGameValidationFileName, Validation.Format("Game Validation (FBS)", fbsGameValidation));
 
                         WriteStringToFile(weeklySummaryFileName, FormatRankingSummary(year, week,
-                            fbsPerformanceRankings.Take(25), top25FbsFutureScheduleStrength, fbsGameStrengthByWeek));
+                            top25FbsPerformanceRankings, top25FbsFutureScheduleStrength, fbsGameStrengthByWeek));
 
                         #endregion
 
@@ -924,7 +926,7 @@ namespace CollegeFbsRankings
                         var builder = new StringBuilder();
                         foreach (var gameWeek in overallGameStrengthByWeek)
                         {
-                            builder.AppendLine(Ranking.Format(String.Format("Week {0} Game Strength (Overall)", gameWeek.Key), gameWeek.Value));
+                            builder.AppendLine(gameWeek.Value.Format(String.Format("Week {0} Game Strength (Overall)", gameWeek.Key)));
                             builder.AppendLine();
                         }
                         WriteStringToFile(overallGameStrengthByWeekFileName, builder.ToString());
@@ -932,7 +934,7 @@ namespace CollegeFbsRankings
                         builder = new StringBuilder();
                         foreach (var gameWeek in fbsGameStrengthByWeek)
                         {
-                            builder.AppendLine(Ranking.Format(String.Format("Week {0} Game Strength (FBS)", gameWeek.Key), gameWeek.Value));
+                            builder.AppendLine(gameWeek.Value.Format(String.Format("Week {0} Game Strength (FBS)", gameWeek.Key)));
                             builder.AppendLine();
                         }
                         WriteStringToFile(fbsGameStrengthByWeekFileName, builder.ToString());
@@ -1031,7 +1033,7 @@ namespace CollegeFbsRankings
                         var builder = new StringBuilder();
                         foreach (var gameWeek in overallGameStrengthByWeek)
                         {
-                            builder.AppendLine(Ranking.Format(String.Format("Week {0} Game Strength (Overall)", gameWeek.Key), gameWeek.Value));
+                            builder.AppendLine(gameWeek.Value.Format(String.Format("Week {0} Game Strength (Overall)", gameWeek.Key)));
                             builder.AppendLine();
                         }
                         WriteStringToFile(overallGameStrengthByWeekFileName, builder.ToString());
@@ -1039,7 +1041,7 @@ namespace CollegeFbsRankings
                         builder = new StringBuilder();
                         foreach (var gameWeek in fbsGameStrengthByWeek)
                         {
-                            builder.AppendLine(Ranking.Format(String.Format("Week {0} Game Strength (FBS)", gameWeek.Key), gameWeek.Value));
+                            builder.AppendLine(gameWeek.Value.Format(String.Format("Week {0} Game Strength (FBS)", gameWeek.Key)));
                             builder.AppendLine();
                         }
                         WriteStringToFile(fbsGameStrengthByWeekFileName, builder.ToString());
@@ -1065,9 +1067,9 @@ namespace CollegeFbsRankings
         #region Output Methods
 
         private static string FormatRankingSummary(int year, int week,
-            IEnumerable<Ranking.TeamValue> performanceRanking,
-            IEnumerable<Ranking.TeamValue> futureScheduleStrengthRanking,
-            Dictionary<int, IReadOnlyList<Ranking.GameValue>> gameStrengthRanking)
+            Ranking<TeamRankingValue> performanceRanking,
+            Ranking<TeamRankingValue> futureScheduleStrengthRanking,
+            Dictionary<int, Ranking<GameRankingValue>> gameStrengthRanking)
         {
             var writer = new StringWriter();
 
@@ -1120,7 +1122,7 @@ namespace CollegeFbsRankings
             }
 
             // Output the schedule strength rankings.
-            IReadOnlyList<Ranking.GameValue> nextWeekGameStrengthRankings;
+            Ranking<GameRankingValue> nextWeekGameStrengthRankings;
             if (gameStrengthRanking.TryGetValue(week + 1, out nextWeekGameStrengthRankings))
             {
                 writer.WriteLine();
@@ -1131,7 +1133,7 @@ namespace CollegeFbsRankings
                 outputIndex = 1;
                 previousValues = null;
 
-                foreach (var rank in nextWeekGameStrengthRankings.Take(5))
+                foreach (var rank in nextWeekGameStrengthRankings.Top(5))
                 {
                     var currentValues = rank.Values.ToList();
 
@@ -1151,7 +1153,7 @@ namespace CollegeFbsRankings
             return writer.ToString();
         }
 
-        private static void WriteRankingsToFile(string fileName, string title, IReadOnlyList<Ranking.Value> ranking)
+        private static void WriteRankingsToFile<T>(string fileName, string title, Ranking<T> ranking) where T : RankingValue
         {
             var directory = Path.GetDirectoryName(fileName);
             if (!String.IsNullOrEmpty(directory) && !Directory.Exists(directory))
@@ -1159,7 +1161,7 @@ namespace CollegeFbsRankings
 
             using (var file = new StreamWriter(fileName))
             {
-                file.WriteLine(Ranking.Format(title, ranking));
+                file.WriteLine(ranking.Format(title));
                 file.WriteLine();
 
                 foreach (var rank in ranking)

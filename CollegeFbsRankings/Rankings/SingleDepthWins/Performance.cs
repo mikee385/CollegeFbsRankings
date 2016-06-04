@@ -11,9 +11,9 @@ namespace CollegeFbsRankings.Rankings
     {
         public static class Performance
         {
-            public static IReadOnlyList<Ranking.TeamValue> Overall(IEnumerable<Team> teams, Dictionary<Team, Data> performanceData)
+            public static Ranking<TeamRankingValue> Overall(IEnumerable<Team> teams, Dictionary<Team, Data> performanceData)
             {
-                return teams.Select(team =>
+                return Ranking.Create(teams.Select(team =>
                 {
                     var teamData = performanceData[team];
 
@@ -31,7 +31,7 @@ namespace CollegeFbsRankings.Rankings
                     writer.WriteLine("Opponent Wins: {0,2} / {1,2} ({2:F8})", opponentWinTotal, opponentGameTotal, opponentValue);
                     writer.WriteLine("Performance  : {0:F8}", performanceValue);
 
-                    return new Ranking.TeamValue(team,
+                    return new TeamRankingValue(team,
                         new[]
                         {
                             performanceValue,
@@ -43,7 +43,7 @@ namespace CollegeFbsRankings.Rankings
                             team.Name
                         },
                         writer.ToString());
-                }).Sorted();
+                }));
             }
         }
     }

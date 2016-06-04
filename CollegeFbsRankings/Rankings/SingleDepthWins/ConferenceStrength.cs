@@ -12,9 +12,9 @@ namespace CollegeFbsRankings.Rankings
     {
         public static class ConferenceStrength
         {
-            public static IReadOnlyList<Ranking.FbsConferenceValue> Overall(IEnumerable<FbsConference> conferences, Dictionary<Team, Data> performanceData)
+            public static Ranking<FbsConferenceRankingValue> Overall(IEnumerable<FbsConference> conferences, Dictionary<Team, Data> performanceData)
             {
-                return conferences.Select(conference =>
+                return Ranking.Create(conferences.Select(conference =>
                 {
                     var writer = new StringWriter();
                     writer.WriteLine(conference.Name + " Teams:");
@@ -49,7 +49,7 @@ namespace CollegeFbsRankings.Rankings
                     writer.WriteLine("Opponent Wins: {0,2} / {1,2} ({2:F8})", opponentWinTotal, opponentGameTotal, opponentValue);
                     writer.WriteLine("Performance  : {0:F8}", performanceValue);
 
-                    return new Ranking.FbsConferenceValue(conference,
+                    return new FbsConferenceRankingValue(conference,
                         new[]
                         {
                             performanceValue,
@@ -61,7 +61,7 @@ namespace CollegeFbsRankings.Rankings
                             conference.Name
                         },
                         writer.ToString());
-                }).Sorted();
+                }));
             }
         }
     }
