@@ -6,17 +6,14 @@ using CollegeFbsRankings.Teams;
 
 namespace CollegeFbsRankings.Conferences
 {
-    public class FbsConference
+    public class FbsConference : Conference
     {
-        private readonly ConferenceID _id;
-        private readonly string _name;
         private readonly List<FbsTeam> _teams;
         private readonly List<FbsDivision> _divisions;
 
         private FbsConference(ConferenceID id, string name)
+            : base(id, name)
         {
-            _id = id;
-            _name = name;
             _teams = new List<FbsTeam>();
             _divisions = new List<FbsDivision>();
         }
@@ -26,16 +23,6 @@ namespace CollegeFbsRankings.Conferences
             var id = ConferenceID.Create();
             var conference = new FbsConference(id, name);
             return conference;
-        }
-
-        public ConferenceID ID
-        {
-            get { return _id; }
-        }
-
-        public string Name
-        {
-            get { return _name; }
         }
 
         public IEnumerable<FbsTeam> Teams
