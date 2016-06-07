@@ -116,8 +116,8 @@ namespace CollegeFbsRankings.Rankings
     {
         public static Ranking<TeamRankingValue> ForTeams(this Ranking<TeamRankingValue> ranking, IReadOnlyList<Team> teams)
         {
-            var teamNames = teams.Select(team => team.Name).ToList();
-            return Ranking.Create(ranking.Where(rank => teamNames.Contains(rank.Team.Name)));
+            var teamIDs = teams.Select(team => team.ID).ToList();
+            return Ranking.Create(ranking.Where(rank => teamIDs.Contains(rank.Team.ID)));
         }
 
         public static Ranking<GameRankingValue> ForGames(this Ranking<GameRankingValue> ranking, IReadOnlyList<Game> games)
