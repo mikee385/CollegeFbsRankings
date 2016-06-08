@@ -10,7 +10,7 @@ using CollegeFbsRankings.Teams;
 
 namespace CollegeFbsRankings.Repositories
 {
-    interface ICollegeFbsRepository
+    public interface ICollegeFbsRepository
     {
         ISeasonQuery Seasons { get; }
 

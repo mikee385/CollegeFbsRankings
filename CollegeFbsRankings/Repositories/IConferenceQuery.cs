@@ -5,7 +5,7 @@ using CollegeFbsRankings.Seasons;
 
 namespace CollegeFbsRankings.Repositories
 {
-    interface IConferenceQuery<out T> : IQuery<IEnumerable<T>> where T : Conference
+    public interface IConferenceQuery<out T> : IQuery<IEnumerable<T>> where T : Conference
     {
         IConferenceQuery<T> ByID(ConferenceID id);
 

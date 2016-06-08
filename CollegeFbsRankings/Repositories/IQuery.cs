@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CollegeFbsRankings.Repositories
 {
-    interface IQuery<out T>
+    public interface IQuery<out T>
     {
         T Execute();
     }

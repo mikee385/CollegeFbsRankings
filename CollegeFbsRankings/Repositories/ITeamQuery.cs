@@ -6,7 +6,7 @@ using CollegeFbsRankings.Teams;
 
 namespace CollegeFbsRankings.Repositories
 {
-    interface ITeamQuery<out T> : IQuery<IEnumerable<T>> where T : Team
+    public interface ITeamQuery<out T> : IQuery<IEnumerable<T>> where T : Team
     {
         ITeamQuery<T> ByID(TeamID id);
 
