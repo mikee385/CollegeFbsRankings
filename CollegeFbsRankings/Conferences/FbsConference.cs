@@ -38,4 +38,12 @@ namespace CollegeFbsRankings.Conferences
             base.AddTeam(team);
         }
     }
+
+    public static class FbsConferenceExtensions
+    {
+        public static IEnumerable<FbsConference> Fbs(this IEnumerable<Conference> conferences)
+        {
+            return conferences.OfType<FbsConference>();
+        }
+    }
 }

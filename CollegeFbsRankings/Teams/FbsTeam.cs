@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 using CollegeFbsRankings.Conferences;
 
@@ -34,6 +35,14 @@ namespace CollegeFbsRankings.Teams
         public new FbsDivision Division
         {
             get { return (FbsDivision)base.Division; }
+        }
+    }
+
+    public static class FbsTeamExtensions
+    {
+        public static IEnumerable<FbsTeam> Fbs(this IEnumerable<Team> teams)
+        {
+            return teams.OfType<FbsTeam>();
         }
     }
 }

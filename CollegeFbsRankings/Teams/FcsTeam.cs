@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace CollegeFbsRankings.Teams
 {
@@ -13,6 +14,14 @@ namespace CollegeFbsRankings.Teams
             var id = TeamID.Create();
             var team = new FcsTeam(id, name);
             return team;
+        }
+    }
+
+    public static class FcsTeamExtensions
+    {
+        public static IEnumerable<FcsTeam> Fcs(this IEnumerable<Team> teams)
+        {
+            return teams.OfType<FcsTeam>();
         }
     }
 }
