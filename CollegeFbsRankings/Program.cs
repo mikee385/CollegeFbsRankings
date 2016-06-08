@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using CollegeFbsRankings.Conferences;
 using CollegeFbsRankings.Games;
 using CollegeFbsRankings.Rankings;
+using CollegeFbsRankings.Seasons;
 using CollegeFbsRankings.Teams;
 using CollegeFbsRankings.Validations;
 
@@ -15,28 +16,27 @@ namespace CollegeFbsRankings
 {
     public static class Program
     {
-        private static readonly Dictionary<int, int> RegularSeasonWeeksPerYear = new Dictionary<int, int>
+        private static readonly List<Season> Seasons = new List<Season>
         {
-            {2015, 15},
-            {2014, 16},
-            {2013, 16},
-            {2012, 15},
-            {2011, 15},
-            {2010, 15},
-            {2009, 15},
-            {2008, 15},
-            {2007, 14},
-            {2006, 14},
-            {2005, 14},
-            {2004, 15},
-            {2003, 16},
-            {2002, 16},
-            {2001, 15},
-            {2000, 15},
-            {1999, 15},
-            {1998, 15}
+            Season.Create(2015, 15),
+            Season.Create(2014, 16),
+            Season.Create(2013, 16),
+            Season.Create(2012, 15),
+            Season.Create(2011, 15),
+            Season.Create(2010, 15),
+            Season.Create(2009, 15),
+            Season.Create(2008, 15),
+            Season.Create(2007, 14),
+            Season.Create(2006, 14),
+            Season.Create(2005, 14),
+            Season.Create(2004, 15),
+            Season.Create(2003, 16),
+            Season.Create(2002, 16),
+            Season.Create(2001, 15),
+            Season.Create(2000, 15),
+            Season.Create(1999, 15),
+            Season.Create(1998, 15)
         };
-
 
         #region Directories and File Names
 
@@ -50,10 +50,10 @@ namespace CollegeFbsRankings
 
         public static void Main()
         {
-            foreach (var pair in RegularSeasonWeeksPerYear)
+            foreach (var season in Seasons)
             {
-                var year = pair.Key;
-                var regularSeasonWeeks = pair.Value;
+                var year = season.Year;
+                var regularSeasonWeeks = season.WeeksInRegularSeason;
 
                 Console.WriteLine("Calculating results for {0}...", year);
 
@@ -452,7 +452,7 @@ namespace CollegeFbsRankings
                                     lineCount, line, firstTeamScoreString, secondTeamScoreString));
                             }
 
-                            game = CompletedGame.Create(date, week, homeTeam, homeTeamScore, awayTeam, awayTeamScore, tvString, notesString, seasonType);
+                            game = CompletedGame.Create(season, week, date, homeTeam, homeTeamScore, awayTeam, awayTeamScore, tvString, notesString, seasonType);
                         }
                         else if (hasFirstTeamScore && !hasSecondTeamScore)
                         {
@@ -468,7 +468,7 @@ namespace CollegeFbsRankings
                         }
                         else
                         {
-                            game = FutureGame.Create(date, week, homeTeam, awayTeam, tvString, notesString, seasonType);
+                            game = FutureGame.Create(season, week, date, homeTeam, awayTeam, tvString, notesString, seasonType);
                         }
 
                         games.Add(game);

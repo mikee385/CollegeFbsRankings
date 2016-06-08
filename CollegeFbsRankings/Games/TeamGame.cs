@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using CollegeFbsRankings.Seasons;
 using CollegeFbsRankings.Teams;
 
 namespace CollegeFbsRankings.Games
@@ -41,14 +42,19 @@ namespace CollegeFbsRankings.Games
             get { return _game.ID; }
         }
 
-        public DateTime Date
+        public Season Season
         {
-            get { return _game.Date; }
+            get { return _game.Season; }
         }
 
         public int Week
         {
             get { return _game.Week; }
+        }
+
+        public DateTime Date
+        {
+            get { return _game.Date; }
         }
 
         public Team HomeTeam

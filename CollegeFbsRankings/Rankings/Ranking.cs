@@ -31,7 +31,7 @@ namespace CollegeFbsRankings.Rankings
 
         public Ranking(IEnumerable<T> values)
             : this(values, true)
-        {}
+        { }
 
         public IEnumerator<T> GetEnumerator()
         {

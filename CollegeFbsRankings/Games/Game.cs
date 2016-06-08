@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using CollegeFbsRankings.Seasons;
 using CollegeFbsRankings.Teams;
 
 namespace CollegeFbsRankings.Games
@@ -22,9 +23,11 @@ namespace CollegeFbsRankings.Games
     {
         GameID ID { get; }
 
-        DateTime Date { get; }
+        Season Season { get; }
 
         int Week { get; }
+
+        DateTime Date { get; }
 
         Team HomeTeam { get; }
 
@@ -42,20 +45,22 @@ namespace CollegeFbsRankings.Games
     public abstract class Game : IGame
     {
         private readonly GameID _id;
-        private readonly DateTime _date;
+        private readonly Season _season;
         private readonly int _week;
+        private readonly DateTime _date;
         private readonly Team _homeTeam;
         private readonly Team _awayTeam;
         private readonly string _tv;
         private readonly string _notes;
         private readonly eTeamType _teamType;
         private readonly eSeasonType _seasonType;
-        
-        protected Game(GameID id, DateTime date, int week, Team homeTeam, Team awayTeam, string tv, string notes, eSeasonType seasonType)
+
+        protected Game(GameID id, Season season, int week, DateTime date, Team homeTeam, Team awayTeam, string tv, string notes, eSeasonType seasonType)
         {
             _id = id;
-            _date = date;
+            _season = season;
             _week = week;
+            _date = date;
             _homeTeam = homeTeam;
             _awayTeam = awayTeam;
             _tv = tv;
@@ -85,14 +90,19 @@ namespace CollegeFbsRankings.Games
             get { return _id; }
         }
 
-        public DateTime Date
+        public Season Season
         {
-            get { return _date; }
+            get { return _season; }
         }
 
         public int Week
         {
             get { return _week; }
+        }
+
+        public DateTime Date
+        {
+            get { return _date; }
         }
 
         public Team HomeTeam

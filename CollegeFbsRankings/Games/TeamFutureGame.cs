@@ -6,7 +6,7 @@ using CollegeFbsRankings.Teams;
 namespace CollegeFbsRankings.Games
 {
     public interface ITeamFutureGame : ITeamGame, IFutureGame
-    {}
+    { }
 
     public class TeamFutureGame : TeamGame, ITeamFutureGame
     {

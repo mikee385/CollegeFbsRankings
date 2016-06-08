@@ -78,6 +78,8 @@
     <Compile Include="Rankings\SingleDepthWins\ScheduleStrength.cs" />
     <Compile Include="Rankings\SingleDepthWins\WinStrength.cs" />
     <Compile Include="Rankings\TeamRankingValue.cs" />
+    <Compile Include="Seasons\Season.cs" />
+    <Compile Include="Seasons\SeasonID.cs" />
     <Compile Include="Summary.cs" />
     <Compile Include="Teams\FbsTeam.cs" />
     <Compile Include="Teams\FcsTeam.cs" />

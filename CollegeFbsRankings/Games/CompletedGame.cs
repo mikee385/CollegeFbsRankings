@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using CollegeFbsRankings.Seasons;
 using CollegeFbsRankings.Teams;
 
 namespace CollegeFbsRankings.Games
@@ -26,17 +27,17 @@ namespace CollegeFbsRankings.Games
         private readonly int _homeTeamScore;
         private readonly int _awayTeamScore;
 
-        protected CompletedGame(GameID id, DateTime date, int week, Team homeTeam, int homeTeamScore, Team awayTeam, int awayTeamScore, string tv, string notes, eSeasonType seasonType)
-            : base(id, date, week, homeTeam, awayTeam, tv, notes, seasonType)
+        protected CompletedGame(GameID id, Season season, int week, DateTime date, Team homeTeam, int homeTeamScore, Team awayTeam, int awayTeamScore, string tv, string notes, eSeasonType seasonType)
+            : base(id, season, week, date, homeTeam, awayTeam, tv, notes, seasonType)
         {
             _homeTeamScore = homeTeamScore;
             _awayTeamScore = awayTeamScore;
         }
 
-        public static ICompletedGame Create(DateTime date, int week, Team homeTeam, int homeTeamScore, Team awayTeam, int awayTeamScore, string tv, string notes, eSeasonType seasonType)
+        public static ICompletedGame Create(Season season, int week, DateTime date, Team homeTeam, int homeTeamScore, Team awayTeam, int awayTeamScore, string tv, string notes, eSeasonType seasonType)
         {
             var id = GameID.Create();
-            var game = new CompletedGame(id, date, week, homeTeam, homeTeamScore, awayTeam, awayTeamScore, tv, notes, seasonType);
+            var game = new CompletedGame(id, season, week, date, homeTeam, homeTeamScore, awayTeam, awayTeamScore, tv, notes, seasonType);
             homeTeam.AddGame(game);
             awayTeam.AddGame(game);
             return game;
