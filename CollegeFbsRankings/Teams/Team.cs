@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using CollegeFbsRankings.Conferences;
 using CollegeFbsRankings.Games;
 
 namespace CollegeFbsRankings.Teams
@@ -9,12 +10,16 @@ namespace CollegeFbsRankings.Teams
     {
         private readonly TeamID _id;
         private readonly string _name;
+        private readonly Conference _conference;
+        private readonly Division _division;
         private readonly List<ITeamGame> _games;
 
-        protected Team(TeamID id, string name)
+        protected Team(TeamID id, string name, Conference conference, Division division)
         {
             _id = id;
             _name = name;
+            _conference = conference;
+            _division = division;
             _games = new List<ITeamGame>();
         }
 
@@ -26,6 +31,16 @@ namespace CollegeFbsRankings.Teams
         public string Name
         {
             get { return _name; }
+        }
+
+        public Conference Conference
+        {
+            get { return _conference; }
+        }
+
+        public Division Division
+        {
+            get { return _division; }
         }
 
         public IEnumerable<ITeamGame> Games

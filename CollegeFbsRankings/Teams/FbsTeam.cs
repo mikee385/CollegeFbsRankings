@@ -6,15 +6,9 @@ namespace CollegeFbsRankings.Teams
 {
     public class FbsTeam : Team
     {
-        private readonly FbsConference _conference;
-        private readonly FbsDivision _division;
-
         private FbsTeam(TeamID id, string name, FbsConference conference, FbsDivision division)
-            : base(id, name)
-        {
-            _conference = conference;
-            _division = division;
-        }
+            : base(id, name, conference, division)
+        { }
 
         public static FbsTeam Create(string name, FbsConference conference)
         {
@@ -32,14 +26,14 @@ namespace CollegeFbsRankings.Teams
             return team;
         }
 
-        public FbsConference Conference
+        public new FbsConference Conference
         {
-            get { return _conference; }
+            get { return (FbsConference)base.Conference; }
         }
 
-        public FbsDivision Division
+        public new FbsDivision Division
         {
-            get { return _division; }
+            get { return (FbsDivision)base.Division; }
         }
     }
 }

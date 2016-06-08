@@ -5,7 +5,7 @@ namespace CollegeFbsRankings.Teams
     public class FcsTeam : Team
     {
         private FcsTeam(TeamID id, string name)
-            : base(id, name)
+            : base(id, name, null, null)
         { }
 
         public static FcsTeam Create(string name)

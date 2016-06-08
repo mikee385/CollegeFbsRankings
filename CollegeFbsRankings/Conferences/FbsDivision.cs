@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 using CollegeFbsRankings.Teams;
 
@@ -7,15 +7,9 @@ namespace CollegeFbsRankings.Conferences
 {
     public class FbsDivision : Division
     {
-        private readonly FbsConference _conference;
-        private readonly List<FbsTeam> _teams;
-
         private FbsDivision(DivisionID id, FbsConference conference, string name)
-            : base(id, name)
-        {
-            _conference = conference;
-            _teams = new List<FbsTeam>();
-        }
+            : base(id, conference, name)
+        { }
 
         public static FbsDivision Create(FbsConference conference, string name)
         {
@@ -25,31 +19,19 @@ namespace CollegeFbsRankings.Conferences
             return division;
         }
 
-        public FbsConference Conference
+        public new FbsConference Conference
         {
-            get { return _conference; }
+            get { return (FbsConference)base.Conference; }
         }
 
-        public IEnumerable<FbsTeam> Teams
+        public new IEnumerable<FbsTeam> Teams
         {
-            get { return _teams; }
+            get { return base.Teams.Cast<FbsTeam>(); }
         }
 
         public void AddTeam(FbsTeam team)
         {
-            if (team.Division.ID == ID)
-                _teams.Add(team);
-            else
-            {
-                throw new Exception(String.Format(
-                    "Cannot add team {0} to division {1} since team is already assigned to division {2}.",
-                    team.Name, Name, team.Division.Name));
-            }
-        }
-
-        public void RemoveTeam(FbsTeam team)
-        {
-            _teams.RemoveAll(t => t.ID == team.ID);
+            base.AddTeam(team);
         }
     }
 }
