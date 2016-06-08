@@ -152,7 +152,7 @@ namespace CollegeFbsRankings.Games
             return games.Where(g => g.SeasonType == eSeasonType.RegularSeason);
         }
 
-        public static IEnumerable<T> PostSeason<T>(this IEnumerable<T> games) where T : IGame
+        public static IEnumerable<T> Postseason<T>(this IEnumerable<T> games) where T : IGame
         {
             return games.Where(g => g.SeasonType == eSeasonType.PostSeason);
         }

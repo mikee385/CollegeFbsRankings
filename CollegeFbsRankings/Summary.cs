@@ -108,7 +108,7 @@ namespace CollegeFbsRankings
             writer.WriteLine();
 
             var regularSeasonGames = completedGames.RegularSeason().ToList();
-            var postseasonGames = summary.Games.PostSeason().ToList();
+            var postseasonGames = summary.Games.Postseason().ToList();
 
             writer.WriteLine("Number of FBS  Games = {0}", regularSeasonGames.Fbs().Count());
             writer.WriteLine("Number of FCS  Games = {0}", regularSeasonGames.Fcs().Count());

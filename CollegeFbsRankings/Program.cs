@@ -841,7 +841,7 @@ namespace CollegeFbsRankings
 
                     var fbsGames = games.Fbs().ToList();
                     var fbsRegularSeasonGames = fbsGames.RegularSeason().ToList();
-                    var fbsPostseasonGames = fbsGames.PostSeason().ToList();
+                    var fbsPostseasonGames = fbsGames.Postseason().ToList();
 
                     var weekOutputFolder = Path.Combine(yearOutputFolder, "Final");
 
