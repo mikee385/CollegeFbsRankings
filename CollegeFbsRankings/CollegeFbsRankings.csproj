@@ -99,6 +99,13 @@
     <Compile Include="Repositories\ITeamQuery.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Repositories\Memory\MemoryConferenceQuery.cs" />
+    <Compile Include="Repositories\Memory\MemoryDivisionQuery.cs" />
+    <Compile Include="Repositories\Memory\MemoryGameQuery.cs" />
+    <Compile Include="Repositories\Memory\MemorySeasonQuery.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Repositories\Memory\MemoryTeamQuery.cs" />
     <Compile Include="Seasons\Season.cs" />
     <Compile Include="Seasons\SeasonID.cs" />
     <Compile Include="Summary.cs" />
