@@ -78,6 +78,27 @@
     <Compile Include="Rankings\SingleDepthWins\ScheduleStrength.cs" />
     <Compile Include="Rankings\SingleDepthWins\WinStrength.cs" />
     <Compile Include="Rankings\TeamRankingValue.cs" />
+    <Compile Include="Repositories\ICollegeFbsRepository.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Repositories\IConferenceQuery.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Repositories\IDivisionQuery.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Repositories\IGameQuery.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Repositories\IQuery.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Repositories\ISeasonQuery.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Repositories\ITeamQuery.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Seasons\Season.cs" />
     <Compile Include="Seasons\SeasonID.cs" />
     <Compile Include="Summary.cs" />
