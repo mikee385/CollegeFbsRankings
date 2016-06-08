@@ -36,8 +36,8 @@ namespace CollegeFbsRankings.Repositories
 
         IGameQuery<T> WithAwayTeam(TeamID team);
 
-        IGameQuery<T> WonBy(TeamID team);
+        IGameQuery<ICompletedGame> WonBy(TeamID team);
 
-        IGameQuery<T> LostBy(TeamID team);
+        IGameQuery<ICompletedGame> LostBy(TeamID team);
     }
 }
