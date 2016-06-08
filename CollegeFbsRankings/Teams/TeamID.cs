@@ -35,7 +35,7 @@ namespace CollegeFbsRankings.Teams
         public override bool Equals(object obj)
         {
             var id = obj as TeamID;
-            if (id == null)
+            if (ReferenceEquals(id, null))
                 return false;
 
             return Equals(id);
@@ -49,6 +49,29 @@ namespace CollegeFbsRankings.Teams
         public override string ToString()
         {
             return _value.ToString();
+        }
+
+        public static bool operator ==(TeamID id1, TeamID id2)
+        {
+            // If both are null, or both are same instance, return true.
+            if (ReferenceEquals(id1, id2))
+            {
+                return true;
+            }
+
+            // If one is null, but not both, return false.
+            if (ReferenceEquals(id1, null) || ReferenceEquals(id2, null))
+            {
+                return false;
+            }
+
+            // Return true if the fields match.
+            return id1.Equals(id2);
+        }
+
+        public static bool operator !=(TeamID id1, TeamID id2)
+        {
+            return !(id1 == id2);
         }
     }
 }
