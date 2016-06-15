@@ -8,22 +8,22 @@ using CollegeFbsRankings.Conferences;
 
 namespace CollegeFbsRankings.Rankings
 {
-    public class FbsConferenceRankingValue : RankingValue
+    public class ConferenceRankingValue : RankingValue
     {
-        private readonly FbsConference _conference;
+        private readonly Conference _conference;
 
-        public FbsConferenceRankingValue(FbsConference conference, IEnumerable<double> values, IEnumerable<IComparable> tieBreakers, string summary)
+        public ConferenceRankingValue(Conference conference, IEnumerable<double> values, IEnumerable<IComparable> tieBreakers, string summary)
             : base(GetTitle(conference), values, tieBreakers, summary)
         {
             _conference = conference;
         }
 
-        public FbsConference Conference
+        public Conference Conference
         {
             get { return _conference; }
         }
 
-        private static string GetTitle(FbsConference conference)
+        private static string GetTitle(Conference conference)
         {
             return conference.Name;
         }

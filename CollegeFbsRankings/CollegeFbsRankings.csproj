@@ -51,7 +51,7 @@
     <Compile Include="Conferences\FbsConference.cs" />
     <Compile Include="Conferences\FbsDivision.cs" />
     <Compile Include="Games\GameID.cs" />
-    <Compile Include="Rankings\FbsConferenceRankingValue.cs" />
+    <Compile Include="Rankings\ConferenceRankingValue.cs" />
     <Compile Include="Rankings\GameRankingValue.cs" />
     <Compile Include="Rankings\RankingValue.cs" />
     <Compile Include="Rankings\SimultaneousWins\ConferenceStrength.cs" />
