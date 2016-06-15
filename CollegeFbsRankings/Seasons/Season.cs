@@ -10,19 +10,19 @@ namespace CollegeFbsRankings.Seasons
     {
         private readonly SeasonID _id;
         private readonly int _year;
-        private readonly int _weeksInRegularSeason;
+        private readonly int _numWeeksInRegularSeason;
 
-        private Season(SeasonID id, int year, int weeksInRegularSeason)
+        private Season(SeasonID id, int year, int numWeeksInRegularSeason)
         {
             _id = id;
             _year = year;
-            _weeksInRegularSeason = weeksInRegularSeason;
+            _numWeeksInRegularSeason = numWeeksInRegularSeason;
         }
 
-        public static Season Create(int year, int weeksInRegularSeason)
+        public static Season Create(int year, int numWeeksInRegularSeason)
         {
             var id = SeasonID.Create();
-            var conference = new Season(id, year, weeksInRegularSeason);
+            var conference = new Season(id, year, numWeeksInRegularSeason);
             return conference;
         }
 
@@ -36,9 +36,9 @@ namespace CollegeFbsRankings.Seasons
             get { return _year; }
         }
 
-        public int WeeksInRegularSeason
+        public int NumWeeksInRegularSeason
         {
-            get { return _weeksInRegularSeason; }
+            get { return _numWeeksInRegularSeason; }
         }
     }
 }

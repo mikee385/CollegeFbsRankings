@@ -53,7 +53,7 @@ namespace CollegeFbsRankings
             foreach (var season in Seasons)
             {
                 var year = season.Year;
-                var regularSeasonWeeks = season.WeeksInRegularSeason;
+                var regularSeasonWeeks = season.NumWeeksInRegularSeason;
 
                 Console.WriteLine("Calculating results for {0}...", year);
 
