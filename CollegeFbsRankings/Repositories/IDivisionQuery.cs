@@ -17,4 +17,17 @@ namespace CollegeFbsRankings.Repositories
 
         IDivisionQuery<FbsDivision> Fbs();
     }
+
+    public static class DivisionQueryExtensions
+    {
+        public static IDivisionQuery<T> ForSeason<T>(this IDivisionQuery<T> query, Season season) where T : Division
+        {
+            return query.ForSeason(season.ID);
+        }
+
+        public static IDivisionQuery<T> ForConference<T>(this IDivisionQuery<T> query, Conference conference) where T : Division
+        {
+            return query.ForConference(conference.ID);
+        }
+    }
 }

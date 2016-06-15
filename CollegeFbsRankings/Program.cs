@@ -6,6 +6,7 @@ using System.Text;
 
 using CollegeFbsRankings.Games;
 using CollegeFbsRankings.Rankings;
+using CollegeFbsRankings.Repositories;
 using CollegeFbsRankings.Repositories.CsvData;
 using CollegeFbsRankings.Teams;
 using CollegeFbsRankings.Validations;
@@ -69,16 +70,16 @@ namespace CollegeFbsRankings
                 repository.AddCsvData(year, numWeeksInRegularSeason, fbsTeamFile, gameFile);
 
                 var season = repository.Seasons.ForYear(year).Execute().Single();
-                var fbsConferences = repository.Conferences.ForSeason(season.ID).Fbs().Execute().ToList();
+                var fbsConferences = repository.Conferences.ForSeason(season).Fbs().Execute().ToList();
                 
-                var allTeams = repository.Teams.ForSeason(season.ID).Execute().ToList();
+                var allTeams = repository.Teams.ForSeason(season).Execute().ToList();
                 var fbsTeams = allTeams.Fbs().ToList();
                 var fcsTeams = allTeams.Fcs().ToList();
 
-                var games = repository.Games.ForSeason(season.ID).Execute().ToList();
-                var cancelledGames = repository.CancelledGames.ForSeason(season.ID).Execute().ToList();
+                var games = repository.Games.ForSeason(season).Execute().ToList();
+                var cancelledGames = repository.CancelledGames.ForSeason(season).Execute().ToList();
 
-                var currentWeek = repository.NumCompletedWeeksInSeason(season.ID);
+                var currentWeek = repository.NumCompletedWeeksInSeason(season);
 
                 #endregion
 

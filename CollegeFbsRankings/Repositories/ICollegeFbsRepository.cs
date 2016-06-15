@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using CollegeFbsRankings.Conferences;
 using CollegeFbsRankings.Games;
+using CollegeFbsRankings.Seasons;
 using CollegeFbsRankings.Teams;
 
 namespace CollegeFbsRankings.Repositories
@@ -21,5 +22,15 @@ namespace CollegeFbsRankings.Repositories
         ITeamQuery<Team> Teams { get; }
 
         IGameQuery<IGame> Games { get; }
+
+        int NumCompletedWeeksInSeason(SeasonID season);
+    }
+
+    public static class CollegeFbsRepositoryExtensions
+    {
+        public static int NumCompletedWeeksInSeason(this ICollegeFbsRepository repository, Season season)
+        {
+            return repository.NumCompletedWeeksInSeason(season.ID);
+        }
     }
 }

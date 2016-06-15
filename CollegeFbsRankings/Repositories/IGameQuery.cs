@@ -40,4 +40,38 @@ namespace CollegeFbsRankings.Repositories
 
         IGameQuery<ICompletedGame> LostBy(TeamID team);
     }
+
+    public static class GameQueryExtensions
+    {
+
+        public static IGameQuery<T> ForSeason<T>(this IGameQuery<T> query, Season season) where T : IGame
+        {
+            return query.ForSeason(season.ID);
+        }
+
+        public static IGameQuery<T> ForTeam<T>(this IGameQuery<T> query, Team team) where T : IGame
+        {
+            return query.ForTeam(team.ID);
+        }
+
+        public static IGameQuery<T> WithHomeTeam<T>(this IGameQuery<T> query, Team team) where T : IGame
+        {
+            return query.WithHomeTeam(team.ID);
+        }
+
+        public static IGameQuery<T> WithAwayTeam<T>(this IGameQuery<T> query, Team team) where T : IGame
+        {
+            return query.WithAwayTeam(team.ID);
+        }
+
+        public static IGameQuery<ICompletedGame> WonBy<T>(this IGameQuery<T> query, Team team) where T : IGame
+        {
+            return query.WonBy(team.ID);
+        }
+
+        public static IGameQuery<ICompletedGame> LostBy<T>(this IGameQuery<T> query, Team team) where T : IGame
+        {
+            return query.LostBy(team.ID);
+        }
+    }
 }

@@ -22,4 +22,22 @@ namespace CollegeFbsRankings.Repositories
 
         ITeamQuery<FcsTeam> Fcs();
     }
+
+    public static class TeamQueryExtensions
+    {
+        public static ITeamQuery<T> ForSeason<T>(this ITeamQuery<T> query, Season season) where T : Team
+        {
+            return query.ForSeason(season.ID);
+        }
+
+        public static ITeamQuery<T> ForConference<T>(this ITeamQuery<T> query, Conference conference) where T : Team
+        {
+            return query.ForConference(conference.ID);
+        }
+
+        public static ITeamQuery<T> ForDivision<T>(this ITeamQuery<T> query, Division division) where T: Team
+        {
+            return query.ForDivision(division.ID);
+        }
+    }
 }
