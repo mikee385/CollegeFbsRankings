@@ -78,6 +78,7 @@
     <Compile Include="Rankings\SingleDepthWins\ScheduleStrength.cs" />
     <Compile Include="Rankings\SingleDepthWins\WinStrength.cs" />
     <Compile Include="Rankings\TeamRankingValue.cs" />
+    <Compile Include="Repositories\CsvData\CsvDataRepository.cs" />
     <Compile Include="Repositories\ICollegeFbsRepository.cs">
       <SubType>Code</SubType>
     </Compile>

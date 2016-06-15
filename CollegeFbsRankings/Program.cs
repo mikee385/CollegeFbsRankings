@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 
-using CollegeFbsRankings.Conferences;
 using CollegeFbsRankings.Games;
 using CollegeFbsRankings.Rankings;
-using CollegeFbsRankings.Seasons;
+using CollegeFbsRankings.Repositories.CsvData;
 using CollegeFbsRankings.Teams;
 using CollegeFbsRankings.Validations;
 
@@ -16,26 +14,26 @@ namespace CollegeFbsRankings
 {
     public static class Program
     {
-        private static readonly List<Season> Seasons = new List<Season>
+        private static readonly Dictionary<int, int> Seasons = new Dictionary<int, int>
         {
-            Season.Create(2015, 15),
-            Season.Create(2014, 16),
-            Season.Create(2013, 16),
-            Season.Create(2012, 15),
-            Season.Create(2011, 15),
-            Season.Create(2010, 15),
-            Season.Create(2009, 15),
-            Season.Create(2008, 15),
-            Season.Create(2007, 14),
-            Season.Create(2006, 14),
-            Season.Create(2005, 14),
-            Season.Create(2004, 15),
-            Season.Create(2003, 16),
-            Season.Create(2002, 16),
-            Season.Create(2001, 15),
-            Season.Create(2000, 15),
-            Season.Create(1999, 15),
-            Season.Create(1998, 15)
+            {2015, 15},
+            {2014, 16},
+            {2013, 16},
+            {2012, 15},
+            {2011, 15},
+            {2010, 15},
+            {2009, 15},
+            {2008, 15},
+            {2007, 14},
+            {2006, 14},
+            {2005, 14},
+            {2004, 15},
+            {2003, 16},
+            {2002, 16},
+            {2001, 15},
+            {2000, 15},
+            {1999, 15},
+            {1998, 15}
         };
 
         #region Directories and File Names
@@ -45,15 +43,12 @@ namespace CollegeFbsRankings
 
         #endregion
 
-        private const string ConferenceDivisionPattern = @"^(.*) \((.*)\)$";
-        private const string RankedTeamPattern = @"^\(([0-9+]+)\) (.*)$";
-
         public static void Main()
         {
-            foreach (var season in Seasons)
+            foreach (var seasonData in Seasons)
             {
-                var year = season.Year;
-                var regularSeasonWeeks = season.NumWeeksInRegularSeason;
+                var year = seasonData.Key;
+                var numWeeksInRegularSeason = seasonData.Value;
 
                 Console.WriteLine("Calculating results for {0}...", year);
 
@@ -65,449 +60,31 @@ namespace CollegeFbsRankings
 
                 #endregion
 
-                #region Read FBS Teams
+                #region Get Team and Game Data
 
                 var fbsTeamFile = new StreamReader(fbsTeamFileName);
-                var fbsTeams = new List<FbsTeam>();
-                var fbsConferences = new List<FbsConference>();
-                var skippedFbsTeamLines = new List<string>();
-
-                var conferenceDivisionRegex = new Regex(ConferenceDivisionPattern);
-
-                string line;
-                while ((line = fbsTeamFile.ReadLine()) != null)
-                {
-                    if (Char.IsDigit(line[0]))
-                    {
-                        var lineSplit = line.Split(',');
-
-                        var name = lineSplit[1];
-                        var conferenceNameString = lineSplit[2];
-
-                        string conferenceName, divisionName;
-                        var conferenceMatch = conferenceDivisionRegex.Match(conferenceNameString);
-                        if (conferenceMatch.Success)
-                        {
-                            conferenceName = conferenceMatch.Groups[1].Captures[0].Value;
-                            divisionName = conferenceMatch.Groups[2].Captures[0].Value;
-                        }
-                        else
-                        {
-                            conferenceName = conferenceNameString;
-                            divisionName = null;
-                        }
-
-                        var conference = fbsConferences.SingleOrDefault(c => c.Name == conferenceName);
-                        if (conference == null)
-                        {
-                            conference = FbsConference.Create(conferenceName);
-                            fbsConferences.Add(conference);
-                        }
-
-                        FbsTeam team;
-                        if (divisionName != null)
-                        {
-                            var division = conference.Divisions.SingleOrDefault(d => d.Name == divisionName);
-                            if (division == null)
-                            {
-                                division = FbsDivision.Create(conference, divisionName);
-                            }
-                            team = FbsTeam.Create(name, division);
-                        }
-                        else
-                        {
-                            team = FbsTeam.Create(name, conference);
-                        }
-                        fbsTeams.Add(team);
-                    }
-                    else
-                    {
-                        skippedFbsTeamLines.Add(line);
-                    }
-                }
-
-                //Console.WriteLine("Number of FBS Conferences = {0}", fbsConferences.Count);
-                //foreach (var conference in fbsConferences)
-                //{
-                //    Console.WriteLine(String.Join(",",
-                //        conference.Key,
-                //        conference.Name));
-
-                //    foreach (var division in conference.Divisions)
-                //    {
-                //        Console.WriteLine("    " + String.Join(",",
-                //            division.Key,
-                //            division.Name));
-                //    }
-                //}
-                //Console.WriteLine();
-
-                //Console.WriteLine("Number of FBS Teams = {0}", fbsTeams.Count);
-                //foreach (var team in fbsTeams)
-                //{
-                //    Console.Write(String.Join(",",
-                //        team.Key,
-                //        team.Name,
-                //        team.Conference.Name));
-
-                //    if (team.Division != null)
-                //    {
-                //        Console.Write(("," + team.Division.Name));
-                //    }
-
-                //    Console.WriteLine();
-                //}
-                //Console.WriteLine();
-
-                //Console.WriteLine("Number of skipped lines in FBS Teams = {0}", skippedFbsTeamLines.Count);
-                //foreach (var skippedLine in skippedFbsTeamLines)
-                //{
-                //    Console.WriteLine(skippedLine);
-                //}
-                //Console.WriteLine();
-
-                #endregion
-
-                #region Read Games
-
                 var gameFile = new StreamReader(gameFileName);
-                var games = new List<IGame>();
-                var skippedGameLines = new List<string>();
 
-                var fcsTeams = new List<FcsTeam>();
+                var repository = new CsvDataRepository();
+                repository.AddCsvData(year, numWeeksInRegularSeason, fbsTeamFile, gameFile);
 
-                var rankedTeamRegex = new Regex(RankedTeamPattern);
+                var season = repository.Seasons.ForYear(year).Execute().Single();
+                var fbsConferences = repository.Conferences.ForSeason(season.ID).Fbs().Execute().ToList();
+                
+                var allTeams = repository.Teams.ForSeason(season.ID).Execute().ToList();
+                var fbsTeams = allTeams.Fbs().ToList();
+                var fcsTeams = allTeams.Fcs().ToList();
 
-                var lineCount = 0;
-                while ((line = gameFile.ReadLine()) != null)
-                {
-                    ++lineCount;
+                var games = repository.Games.ForSeason(season.ID).Execute().ToList();
+                var cancelledGames = repository.CancelledGames.ForSeason(season.ID).Execute().ToList();
 
-                    if (Char.IsDigit(line[0]))
-                    {
-                        var lineSplit = line.Split(',');
-
-                        string keyString;
-                        string weekString;
-                        string dateString;
-                        string timeString;
-                        string firstTeamNameString;
-                        string firstTeamScoreString;
-                        string homeVsAwaySymbolString;
-                        string secondTeamNameString;
-                        string secondTeamScoreString;
-                        string tvString;
-                        string notesString;
-
-                        if (lineSplit.Length == 12)
-                        {
-                            keyString = lineSplit[0];
-                            weekString = lineSplit[1];
-                            dateString = lineSplit[2];
-                            timeString = lineSplit[3];
-                            firstTeamNameString = lineSplit[5];
-                            firstTeamScoreString = lineSplit[6];
-                            homeVsAwaySymbolString = lineSplit[7];
-                            secondTeamNameString = lineSplit[8];
-                            secondTeamScoreString = lineSplit[9];
-                            tvString = lineSplit[10];
-                            notesString = lineSplit[11];
-                        }
-                        else if (lineSplit.Length == 11)
-                        {
-                            keyString = lineSplit[0];
-                            weekString = lineSplit[1];
-                            dateString = lineSplit[2];
-                            timeString = lineSplit[3];
-                            firstTeamNameString = lineSplit[5];
-                            firstTeamScoreString = lineSplit[6];
-                            homeVsAwaySymbolString = lineSplit[7];
-                            secondTeamNameString = lineSplit[8];
-                            secondTeamScoreString = lineSplit[9];
-                            tvString = String.Empty;
-                            notesString = lineSplit[10];
-                        }
-                        else if (lineSplit.Length == 10)
-                        {
-                            keyString = lineSplit[0];
-                            weekString = lineSplit[1];
-                            dateString = lineSplit[2];
-                            timeString = String.Empty;
-                            firstTeamNameString = lineSplit[4];
-                            firstTeamScoreString = lineSplit[5];
-                            homeVsAwaySymbolString = lineSplit[6];
-                            secondTeamNameString = lineSplit[7];
-                            secondTeamScoreString = lineSplit[8];
-                            tvString = String.Empty;
-                            notesString = lineSplit[9];
-                        }
-                        else if (lineSplit.Length > 12)
-                        {
-                            throw new Exception(String.Format(
-                                "Too many items on line {0}\n\t{1}",
-                                lineCount, line));
-                        }
-                        else
-                        {
-                            throw new Exception(String.Format(
-                                "Too few items on line {0}\n\t{1}",
-                                lineCount, line));
-                        }
-
-                        int key;
-                        if (!Int32.TryParse(keyString, out key))
-                        {
-                            throw new Exception(String.Format(
-                                "Unable to convert key \"{2}\" to an Int32 on line {0}\n\t{1}",
-                                lineCount, line, keyString));
-                        }
-
-                        int week;
-                        if (!Int32.TryParse(weekString, out week))
-                        {
-                            throw new Exception(String.Format(
-                                "Unable to convert week \"{2}\" to an Int32 on line {0}\n\t{1}",
-                                lineCount, line, weekString));
-                        }
-
-                        DateTime date;
-                        if (!DateTime.TryParse(dateString + " " + timeString, out date))
-                        {
-                            throw new Exception(String.Format(
-                                "Unable to convert date \"{2}\" and time \"{3}\" to a DateTime on line {0}\n\t{1}",
-                                lineCount, line, dateString, timeString));
-                        }
-
-                        // Weekday is ignored, since the DateTime already holds that information.
-
-                        string firstTeamName;
-                        var firstTeamMatch = rankedTeamRegex.Match(firstTeamNameString);
-                        if (firstTeamMatch.Success)
-                            firstTeamName = firstTeamMatch.Groups[2].Captures[0].Value;
-                        else
-                            firstTeamName = firstTeamNameString;
-
-                        var firstFbsTeams = fbsTeams.Where(team => team.Name == firstTeamName).ToList();
-                        if (firstFbsTeams.Count > 1)
-                        {
-                            throw new Exception(String.Format(
-                                "Multiple FBS teams found with the name \"{2}\" on line {0}\n\t{1}",
-                                lineCount, line, firstTeamName));
-                        }
-
-                        var firstFcsTeams = fcsTeams.Where(team => team.Name == firstTeamName).ToList();
-                        if (firstFcsTeams.Count > 1)
-                        {
-                            throw new Exception(String.Format(
-                                "Multiple FCS teams found with the name \"{2}\" on line {0}\n\t{1}",
-                                lineCount, line, firstTeamName));
-                        }
-
-                        if (firstFbsTeams.Count < 1 && firstFcsTeams.Count < 1)
-                        {
-                            var fcsTeam = FcsTeam.Create(firstTeamName);
-
-                            fcsTeams.Add(fcsTeam);
-                            firstFcsTeams.Add(fcsTeam);
-                        }
-
-                        Team firstTeam;
-                        if (firstFbsTeams.Count == 1 && firstFcsTeams.Count == 0)
-                            firstTeam = firstFbsTeams.Single();
-                        else if (firstFbsTeams.Count == 0 && firstFcsTeams.Count == 1)
-                            firstTeam = firstFcsTeams.Single();
-                        else
-                        {
-                            throw new Exception(String.Format(
-                                "FBS team and FCS team found with the name \"{2}\" on line {0}\n\t{1}",
-                                lineCount, line, firstTeamName));
-                        }
-
-                        bool hasFirstTeamScore;
-                        int firstTeamScore;
-                        if (firstTeamScoreString.Length > 0)
-                        {
-                            hasFirstTeamScore = true;
-
-                            if (!Int32.TryParse(firstTeamScoreString, out firstTeamScore))
-                            {
-                                throw new Exception(String.Format(
-                                    "Unable to convert first team score \"{2}\" to an Int32 on line {0}\n\t{1}",
-                                    lineCount, line, firstTeamScoreString));
-                            }
-                        }
-                        else
-                        {
-                            hasFirstTeamScore = false;
-                            firstTeamScore = 0;
-                        }
-
-                        bool firstTeamIsHome;
-                        if (homeVsAwaySymbolString.Length == 0)
-                            firstTeamIsHome = true;
-                        else if (homeVsAwaySymbolString.Equals("@"))
-                            firstTeamIsHome = false;
-                        else
-                        {
-                            throw new Exception(String.Format(
-                                "Unable to convert symbol \"{2}\" to an \"@\" on line {0}\n\t{1}",
-                                lineCount, line, homeVsAwaySymbolString));
-                        }
-
-                        string secondTeamName;
-                        var secondTeamMatch = rankedTeamRegex.Match(secondTeamNameString);
-                        if (secondTeamMatch.Success)
-                            secondTeamName = secondTeamMatch.Groups[2].Captures[0].Value;
-                        else
-                            secondTeamName = secondTeamNameString;
-
-                        var secondFbsTeams = fbsTeams.Where(team => team.Name == secondTeamName).ToList();
-                        if (secondFbsTeams.Count > 1)
-                        {
-                            throw new Exception(String.Format(
-                                "Multiple FBS teams found with the name \"{2}\" on line {0}\n\t{1}",
-                                lineCount, line, secondTeamName));
-                        }
-
-                        var secondFcsTeams = fcsTeams.Where(team => team.Name == secondTeamName).ToList();
-                        if (secondFcsTeams.Count > 1)
-                        {
-                            throw new Exception(String.Format(
-                                "Multiple FCS teams found with the name \"{2}\" on line {0}\n\t{1}",
-                                lineCount, line, secondTeamName));
-                        }
-
-                        if (secondFbsTeams.Count < 1 && secondFcsTeams.Count < 1)
-                        {
-                            var fcsTeam = FcsTeam.Create(secondTeamName);
-
-                            fcsTeams.Add(fcsTeam);
-                            secondFcsTeams.Add(fcsTeam);
-                        }
-
-                        Team secondTeam;
-                        if (secondFbsTeams.Count == 1 && secondFcsTeams.Count == 0)
-                            secondTeam = secondFbsTeams.Single();
-                        else if (secondFbsTeams.Count == 0 && secondFcsTeams.Count == 1)
-                            secondTeam = secondFcsTeams.Single();
-                        else
-                        {
-                            throw new Exception(String.Format(
-                                "FBS team and FCS team found with the name \"{2}\" on line {0}\n\t{1}",
-                                lineCount, line, secondTeamName));
-                        }
-
-                        bool hasSecondTeamScore;
-                        int secondTeamScore;
-                        if (secondTeamScoreString.Length > 0)
-                        {
-                            hasSecondTeamScore = true;
-
-                            if (!Int32.TryParse(secondTeamScoreString, out secondTeamScore))
-                            {
-                                throw new Exception(String.Format(
-                                    "Unable to convert second team score \"{2}\" to an Int32 on line {0}\n\t{1}",
-                                    lineCount, line, secondTeamScoreString));
-                            }
-                        }
-                        else
-                        {
-                            hasSecondTeamScore = false;
-                            secondTeamScore = 0;
-                        }
-
-                        if (firstTeam.Name == secondTeam.Name)
-                        {
-                            throw new Exception(String.Format(
-                                "First team name \"{2}\" and second team name \"{3}\" are the same on line {0}\n\t{1}",
-                                lineCount, line, firstTeamNameString, secondTeamNameString));
-                        }
-
-                        Team homeTeam, awayTeam;
-                        int homeTeamScore, awayTeamScore;
-                        if (firstTeamIsHome)
-                        {
-                            homeTeam = firstTeam;
-                            homeTeamScore = firstTeamScore;
-                            awayTeam = secondTeam;
-                            awayTeamScore = secondTeamScore;
-                        }
-                        else
-                        {
-                            homeTeam = secondTeam;
-                            homeTeamScore = secondTeamScore;
-                            awayTeam = firstTeam;
-                            awayTeamScore = firstTeamScore;
-                        }
-
-                        var seasonType = (week > regularSeasonWeeks) ? eSeasonType.PostSeason : eSeasonType.RegularSeason;
-
-                        IGame game;
-                        if (hasFirstTeamScore && hasSecondTeamScore)
-                        {
-                            if (firstTeamScore == secondTeamScore)
-                            {
-                                throw new Exception(String.Format(
-                                    "First team score \"{2}\" and second team score \"{3}\" are the same on line {0}\n\t{1}",
-                                    lineCount, line, firstTeamScoreString, secondTeamScoreString));
-                            }
-
-                            game = CompletedGame.Create(season, week, date, homeTeam, homeTeamScore, awayTeam, awayTeamScore, tvString, notesString, seasonType);
-                        }
-                        else if (hasFirstTeamScore && !hasSecondTeamScore)
-                        {
-                            throw new Exception(String.Format(
-                                "Found a first team score \"{2}\" but not a second team score on line {0}\n\t{1}",
-                                lineCount, line, firstTeamScoreString));
-                        }
-                        else if (!hasFirstTeamScore && hasSecondTeamScore)
-                        {
-                            throw new Exception(String.Format(
-                                "Found a second team score \"{2}\" but not a first team score on line {0}\n\t{1}",
-                                lineCount, line, secondTeamScoreString));
-                        }
-                        else
-                        {
-                            game = FutureGame.Create(season, week, date, homeTeam, awayTeam, tvString, notesString, seasonType);
-                        }
-
-                        games.Add(game);
-                    }
-                    else
-                    {
-                        skippedGameLines.Add(line);
-                    }
-                }
-
-                //Console.WriteLine("Number of FCS Teams = {0}", fcsTeams.Count);
-                //foreach (var team in fcsTeams)
-                //{
-                //    Console.WriteLine(String.Join(",",
-                //        team.Key,
-                //        team.Name));
-                //}
-                //Console.WriteLine();
-
-                #endregion
-
-                var allTeams = fbsTeams.Cast<Team>().Concat(fcsTeams).ToList();
-                var currentWeek = games.Completed().RegularSeason().Max(game => game.Week);
-
-                #region Remove Cancelled Games
-
-                var potentiallyCancelledGames = games.Future().Where(game => game.Week <= currentWeek).ToList();
-                foreach (var game in potentiallyCancelledGames)
-                {
-                    games.Remove(game);
-                    game.HomeTeam.RemoveGame(game);
-                    game.AwayTeam.RemoveGame(game);
-                }
+                var currentWeek = repository.NumCompletedWeeksInSeason(season.ID);
 
                 #endregion
 
                 #region Prepare Summary Results
 
-                var summary = new Summary(fbsTeams, fcsTeams, games, potentiallyCancelledGames);
+                var summary = new Summary(fbsTeams, fcsTeams, games, cancelledGames);
 
                 var yearOutputFolder = Path.Combine(ResultsFolder, yearString);
                 var yearSummaryFileName = Path.Combine(yearOutputFolder, "Summary.txt");
