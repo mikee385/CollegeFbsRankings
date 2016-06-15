@@ -35,9 +35,19 @@ namespace CollegeFbsRankings.Repositories
             return query.ForConference(conference.ID);
         }
 
+        public static ITeamQuery<FbsTeam> ForConference<T>(this ITeamQuery<T> query, FbsConference conference) where T : Team
+        {
+            return query.ForConference(conference.ID).Fbs();
+        }
+
         public static ITeamQuery<T> ForDivision<T>(this ITeamQuery<T> query, Division division) where T: Team
         {
             return query.ForDivision(division.ID);
+        }
+
+        public static ITeamQuery<FbsTeam> ForDivision<T>(this ITeamQuery<T> query, FbsDivision division) where T : Team
+        {
+            return query.ForDivision(division.ID).Fbs();
         }
     }
 }
