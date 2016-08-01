@@ -42,12 +42,12 @@ namespace CollegeFbsRankings.Infrastructure.Memory
 
         public ITeamQuery<T> ForConference(ConferenceID conference)
         {
-            return new MemoryTeamQuery<T>(_items.Where(e => e.Conference.ID == conference));
+            return new MemoryTeamQuery<T>(_items.Where(e => e.Conference != null && e.Conference.ID == conference));
         }
 
         public ITeamQuery<T> ForDivision(DivisionID division)
         {
-            return new MemoryTeamQuery<T>(_items.Where(e => e.Division.ID == division));
+            return new MemoryTeamQuery<T>(_items.Where(e => e.Division != null && e.Division.ID == division));
         }
 
         public ITeamQuery<FbsTeam> Fbs()

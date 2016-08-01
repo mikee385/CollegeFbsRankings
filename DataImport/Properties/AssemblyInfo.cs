@@ -5,8 +5,8 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("CollegeFbsRankings.Infrastructure")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("CollegeFbsRankings.Application.DataImport")]
+[assembly: AssemblyDescription("Imports college football data from CSV files exported from www.sports-reference.com into a SQLite database")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("CollegeFbsRankings")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("294a01a1-f3bc-4898-8803-2e4988cdfef2")]
+[assembly: Guid("21c3a65c-3c5d-44eb-862f-51c0c4bfbc0f")]
 
 // Version information for an assembly consists of the following four values:
 //
