@@ -241,15 +241,15 @@ namespace CollegeFbsRankings.Infrastructure.SQL.EntityFramework
                 //}
 
                 // Teams By Season
-                var fbsConferences = seasonRepository.Conferences.Fbs().ForSeason(season.ID).Execute();
+                var fbsConferences = seasonRepository.Conferences.Fbs().Execute();
                 foreach (var conference in fbsConferences)
                 {
-                    var fbsDivisions = seasonRepository.Divisions.ForConference(conference.ID).ForSeason(season.ID).Execute().ToList();
+                    var fbsDivisions = seasonRepository.Divisions.ForConference(conference.ID).Execute().ToList();
                     if (fbsDivisions.Any())
                     {
                         foreach (var division in fbsDivisions)
                         {
-                            var fbsTeams = seasonRepository.Teams.ForDivision(division.ID).ForSeason(season.ID).Execute();
+                            var fbsTeams = seasonRepository.Teams.ForDivision(division.ID).Execute();
                             foreach (var team in fbsTeams)
                             {
                                 var dbConference = dbConferences[conference.ID];
@@ -262,7 +262,7 @@ namespace CollegeFbsRankings.Infrastructure.SQL.EntityFramework
                     }
                     else
                     {
-                        var fbsTeams = seasonRepository.Teams.ForConference(conference.ID).ForSeason(season.ID).Execute();
+                        var fbsTeams = seasonRepository.Teams.ForConference(conference.ID).Execute();
                         foreach (var team in fbsTeams)
                         {
                             var dbConference = dbConferences[conference.ID];
@@ -273,7 +273,7 @@ namespace CollegeFbsRankings.Infrastructure.SQL.EntityFramework
                     }
                 }
 
-                var fcsTeams = seasonRepository.Teams.Fcs().ForSeason(season.ID).Execute();
+                var fcsTeams = seasonRepository.Teams.Fcs().Execute();
                 foreach (var team in fcsTeams)
                 {
                     var dbTeam = dbTeams[team.ID];

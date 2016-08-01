@@ -12,8 +12,6 @@ namespace CollegeFbsRankings.Domain.Repositories
 
         ITeamQuery<T> ByName(string name);
 
-        ITeamQuery<T> ForSeason(SeasonID season);
-
         ITeamQuery<T> ForConference(ConferenceID conference);
 
         ITeamQuery<T> ForDivision(DivisionID division);
@@ -25,11 +23,6 @@ namespace CollegeFbsRankings.Domain.Repositories
 
     public static class TeamQueryExtensions
     {
-        public static ITeamQuery<T> ForSeason<T>(this ITeamQuery<T> query, Season season) where T : Team
-        {
-            return query.ForSeason(season.ID);
-        }
-
         public static ITeamQuery<T> ForConference<T>(this ITeamQuery<T> query, Conference conference) where T : Team
         {
             return query.ForConference(conference.ID);

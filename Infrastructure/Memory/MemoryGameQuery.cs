@@ -30,11 +30,6 @@ namespace CollegeFbsRankings.Infrastructure.Memory
             return new MemoryGameQuery<T>(_items.Where(e => e.ID == id));
         }
 
-        public IGameQuery<T> ForSeason(SeasonID season)
-        {
-            return new MemoryGameQuery<T>(_items.Where(e => e.Season.ID == season));
-        }
-
         public IGameQuery<T> ForWeek(int week)
         {
             return new MemoryGameQuery<T>(_items.Where(e => e.Week == week));

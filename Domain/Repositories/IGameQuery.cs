@@ -10,8 +10,6 @@ namespace CollegeFbsRankings.Domain.Repositories
     {
         IGameQuery<T> ByID(GameID id);
 
-        IGameQuery<T> ForSeason(SeasonID season);
-
         IGameQuery<T> ForWeek(int week);
 
         IGameQuery<T> ForWeeks(int minWeek, int maxWeek);
@@ -43,12 +41,6 @@ namespace CollegeFbsRankings.Domain.Repositories
 
     public static class GameQueryExtensions
     {
-
-        public static IGameQuery<T> ForSeason<T>(this IGameQuery<T> query, Season season) where T : IGame
-        {
-            return query.ForSeason(season.ID);
-        }
-
         public static IGameQuery<T> ForTeam<T>(this IGameQuery<T> query, Team team) where T : IGame
         {
             return query.ForTeam(team.ID);

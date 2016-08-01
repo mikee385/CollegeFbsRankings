@@ -35,11 +35,6 @@ namespace CollegeFbsRankings.Infrastructure.Memory
             return new MemoryTeamQuery<T>(_items.Where(e => e.Name == name));
         }
 
-        public ITeamQuery<T> ForSeason(SeasonID season)
-        {
-            return new MemoryTeamQuery<T>(_items.Where(e => e.Games.Any(g => g.Season.ID == season)));
-        }
-
         public ITeamQuery<T> ForConference(ConferenceID conference)
         {
             return new MemoryTeamQuery<T>(_items.Where(e => e.Conference != null && e.Conference.ID == conference));

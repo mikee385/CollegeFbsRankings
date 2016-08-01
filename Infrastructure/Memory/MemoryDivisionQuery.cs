@@ -34,11 +34,6 @@ namespace CollegeFbsRankings.Infrastructure.Memory
             return new MemoryDivisionQuery<T>(_items.Where(e => e.Name == name));
         }
 
-        public IDivisionQuery<T> ForSeason(SeasonID season)
-        {
-            return new MemoryDivisionQuery<T>(_items.Where(e => e.Teams.Any(t => t.Games.Any(g => g.Season.ID == season))));
-        }
-
         public IDivisionQuery<T> ForConference(ConferenceID conference)
         {
             return new MemoryDivisionQuery<T>(_items.Where(e => e.Conference.ID == conference));
