@@ -19,6 +19,13 @@ namespace CollegeFbsRankings.Domain.Conferences
             return division;
         }
 
+        public static FbsDivision FromExisting(DivisionID id, FbsConference conference, string name)
+        {
+            var division = new FbsDivision(id, conference, name);
+            conference.AddDivision(division);
+            return division;
+        }
+
         public new FbsConference Conference
         {
             get { return (FbsConference)base.Conference; }

@@ -18,6 +18,12 @@ namespace CollegeFbsRankings.Domain.Conferences
             return conference;
         }
 
+        public static FbsConference FromExisting(ConferenceID id, string name)
+        {
+            var conference = new FbsConference(id, name);
+            return conference;
+        }
+
         public new IEnumerable<FbsDivision> Divisions
         {
             get { return base.Divisions.Cast<FbsDivision>(); }

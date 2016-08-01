@@ -43,6 +43,14 @@ namespace CollegeFbsRankings.Domain.Games
             return game;
         }
 
+        public static ICompletedGame FromExisting(GameID id, Season season, int week, DateTime date, Team homeTeam, int homeTeamScore, Team awayTeam, int awayTeamScore, string tv, string notes, eSeasonType seasonType)
+        {
+            var game = new CompletedGame(id, season, week, date, homeTeam, homeTeamScore, awayTeam, awayTeamScore, tv, notes, seasonType);
+            homeTeam.AddGame(game);
+            awayTeam.AddGame(game);
+            return game;
+        }
+
         public int HomeTeamScore
         {
             get { return _homeTeamScore; }

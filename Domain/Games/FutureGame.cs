@@ -24,6 +24,14 @@ namespace CollegeFbsRankings.Domain.Games
             awayTeam.AddGame(game);
             return game;
         }
+
+        public static IFutureGame FromExisting(GameID id, Season season, int week, DateTime date, Team homeTeam, Team awayTeam, string tv, string notes, eSeasonType seasonType)
+        {
+            var game = new FutureGame(id, season, week, date, homeTeam, awayTeam, tv, notes, seasonType);
+            homeTeam.AddGame(game);
+            awayTeam.AddGame(game);
+            return game;
+        }
     }
 
     public static class FutureGameExtensions

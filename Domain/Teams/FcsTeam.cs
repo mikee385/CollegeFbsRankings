@@ -15,6 +15,12 @@ namespace CollegeFbsRankings.Domain.Teams
             var team = new FcsTeam(id, name);
             return team;
         }
+
+        public static FcsTeam FromExisting(TeamID id, string name)
+        {
+            var team = new FcsTeam(id, name);
+            return team;
+        }
     }
 
     public static class FcsTeamExtensions

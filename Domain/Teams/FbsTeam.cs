@@ -27,6 +27,20 @@ namespace CollegeFbsRankings.Domain.Teams
             return team;
         }
 
+        public static FbsTeam FromExisting(TeamID id, string name, FbsConference conference)
+        {
+            var team = new FbsTeam(id, name, conference, null);
+            conference.AddTeam(team);
+            return team;
+        }
+
+        public static FbsTeam FromExisting(TeamID id, string name, FbsDivision division)
+        {
+            var team = new FbsTeam(id, name, division.Conference, division);
+            division.AddTeam(team);
+            return team;
+        }
+
         public new FbsConference Conference
         {
             get { return (FbsConference)base.Conference; }

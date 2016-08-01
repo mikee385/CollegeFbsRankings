@@ -22,8 +22,14 @@ namespace CollegeFbsRankings.Domain.Seasons
         public static Season Create(int year, int numWeeksInRegularSeason)
         {
             var id = SeasonID.Create();
-            var conference = new Season(id, year, numWeeksInRegularSeason);
-            return conference;
+            var season = new Season(id, year, numWeeksInRegularSeason);
+            return season;
+        }
+
+        public static Season FromExisting(SeasonID id, int year, int numWeeksInRegularSeason)
+        {
+            var season = new Season(id, year, numWeeksInRegularSeason);
+            return season;
         }
 
         public SeasonID ID
