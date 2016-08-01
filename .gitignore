@@ -2,7 +2,7 @@
 ## results and comparison files.
 
 # Ranking results 
-/CollegeFbsRankings/Results*
+/CalculateRankings/Results*
 
 # Comparison files
 current.txt

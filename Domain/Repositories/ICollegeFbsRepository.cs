@@ -1,0 +1,36 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+using CollegeFbsRankings.Domain.Conferences;
+using CollegeFbsRankings.Domain.Games;
+using CollegeFbsRankings.Domain.Seasons;
+using CollegeFbsRankings.Domain.Teams;
+
+namespace CollegeFbsRankings.Domain.Repositories
+{
+    public interface ICollegeFbsRepository
+    {
+        ISeasonQuery Seasons { get; }
+
+        IConferenceQuery<Conference> Conferences { get; }
+
+        IDivisionQuery<Division> Divisions { get; }
+
+        ITeamQuery<Team> Teams { get; }
+
+        IGameQuery<IGame> Games { get; }
+
+        int NumCompletedWeeksInSeason(SeasonID season);
+    }
+
+    public static class CollegeFbsRepositoryExtensions
+    {
+        public static int NumCompletedWeeksInSeason(this ICollegeFbsRepository repository, Season season)
+        {
+            return repository.NumCompletedWeeksInSeason(season.ID);
+        }
+    }
+}

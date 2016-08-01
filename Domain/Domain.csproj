@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{8FB28137-7BCD-475C-AC1C-480E759700B6}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>CollegeFbsRankings.Domain</RootNamespace>
+    <AssemblyName>CollegeFbsRankings.Domain</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Conferences\Conference.cs" />
+    <Compile Include="Conferences\ConferenceID.cs" />
+    <Compile Include="Conferences\Division.cs" />
+    <Compile Include="Conferences\DivisionID.cs" />
+    <Compile Include="Conferences\FbsConference.cs" />
+    <Compile Include="Conferences\FbsDivision.cs" />
+    <Compile Include="Games\CompletedGame.cs" />
+    <Compile Include="Games\FutureGame.cs" />
+    <Compile Include="Games\Game.cs" />
+    <Compile Include="Games\GameID.cs" />
+    <Compile Include="Games\TeamCompletedGame.cs" />
+    <Compile Include="Games\TeamFutureGame.cs" />
+    <Compile Include="Games\TeamGame.cs" />
+    <Compile Include="LinearAlgebra\Matrix.cs" />
+    <Compile Include="LinearAlgebra\Vector.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rankings\ConferenceRankingValue.cs" />
+    <Compile Include="Rankings\GameRankingValue.cs" />
+    <Compile Include="Rankings\Ranking.cs" />
+    <Compile Include="Rankings\RankingValue.cs" />
+    <Compile Include="Rankings\SimultaneousWins\ConferenceStrength.cs" />
+    <Compile Include="Rankings\SimultaneousWins\Data.cs" />
+    <Compile Include="Rankings\SimultaneousWins\GameStrength.cs" />
+    <Compile Include="Rankings\SimultaneousWins\Performance.cs" />
+    <Compile Include="Rankings\SimultaneousWins\ScheduleStrength.cs" />
+    <Compile Include="Rankings\SimultaneousWins\WinStrength.cs" />
+    <Compile Include="Rankings\SingleDepthWins\ConferenceStrength.cs" />
+    <Compile Include="Rankings\SingleDepthWins\Data.cs" />
+    <Compile Include="Rankings\SingleDepthWins\GameStrength.cs" />
+    <Compile Include="Rankings\SingleDepthWins\Performance.cs" />
+    <Compile Include="Rankings\SingleDepthWins\ScheduleStrength.cs" />
+    <Compile Include="Rankings\SingleDepthWins\WinStrength.cs" />
+    <Compile Include="Rankings\TeamRankingValue.cs" />
+    <Compile Include="Repositories\ICollegeFbsRepository.cs" />
+    <Compile Include="Repositories\IConferenceQuery.cs" />
+    <Compile Include="Repositories\IDivisionQuery.cs" />
+    <Compile Include="Repositories\IGameQuery.cs" />
+    <Compile Include="Repositories\IQuery.cs" />
+    <Compile Include="Repositories\ISeasonQuery.cs" />
+    <Compile Include="Repositories\ITeamQuery.cs" />
+    <Compile Include="Seasons\Season.cs" />
+    <Compile Include="Seasons\SeasonID.cs" />
+    <Compile Include="Teams\FbsTeam.cs" />
+    <Compile Include="Teams\FcsTeam.cs" />
+    <Compile Include="Teams\Team.cs" />
+    <Compile Include="Teams\TeamID.cs" />
+    <Compile Include="Validations\Validation.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
