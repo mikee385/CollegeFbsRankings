@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -16,59 +17,35 @@ namespace CollegeFbsRankings.Application.CalculateRankings
 {
     public static class Program
     {
-        private static readonly Dictionary<int, int> Seasons = new Dictionary<int, int>
-        {
-            {2015, 15},
-            {2014, 16},
-            {2013, 16},
-            {2012, 15},
-            {2011, 15},
-            {2010, 15},
-            {2009, 15},
-            {2008, 15},
-            {2007, 14},
-            {2006, 14},
-            {2005, 14},
-            {2004, 15},
-            {2003, 16},
-            {2002, 16},
-            {2001, 15},
-            {2000, 15},
-            {1999, 15},
-            {1998, 15}
-        };
-
-        #region Directories and File Names
-
-        private const string DataFolder = @"..\..\..\Data";
-        private const string ResultsFolder = @"..\..\Results";
-
-        #endregion
-
         public static void Main()
         {
-            foreach (var seasonData in Seasons)
+            var inputData = ConfigurationManager.GetSection("input") as CsvRepositoryConfiguration;
+            if (inputData == null)
             {
-                var year = seasonData.Key;
-                var numWeeksInRegularSeason = seasonData.Value;
+                throw new ArgumentException("Unable to find the input information for the CSV data (tried to find a section called 'input' in 'app.config'");
+            }
+
+            var outputData = ConfigurationManager.GetSection("output") as RankingConfiguration;
+            if (outputData == null)
+            {
+                throw new ArgumentException("Unable to find the output directory information (tried to find a section called 'output' in 'app.config'");
+            }
+
+            foreach (var input in inputData.Seasons)
+            {
+                var year = input.Year;
+                var numWeeksInRegularSeason = input.NumWeeksInRegularSeason;
 
                 Console.WriteLine("Calculating results for {0}...", year);
 
-                #region Create Input File Names
-
-                var yearString = Convert.ToString(year);
-                var fbsTeamFileName = Path.Combine(DataFolder, yearString, "FBS Teams.txt");
-                var gameFileName = Path.Combine(DataFolder, yearString, "FBS Scores.txt");
-
-                #endregion
-
                 #region Get Team and Game Data
 
-                var fbsTeamFile = new StreamReader(fbsTeamFileName);
-                var gameFile = new StreamReader(gameFileName);
+                var yearString = Convert.ToString(year);
+                var fbsTeamFile = new StreamReader(input.FbsTeamFile);
+                var fbsGameFile = new StreamReader(input.FbsGameFile);
 
                 var repository = new CsvRepository();
-                repository.AddCsvData(year, numWeeksInRegularSeason, fbsTeamFile, gameFile);
+                repository.AddCsvData(year, numWeeksInRegularSeason, fbsTeamFile, fbsGameFile);
 
                 var season = repository.Seasons.ForYear(year).Execute().Single();
                 var seasonRepository = repository.ForSeason(season);
@@ -90,7 +67,7 @@ namespace CollegeFbsRankings.Application.CalculateRankings
 
                 var summary = new Summary(fbsTeams, fcsTeams, games, cancelledGames);
 
-                var yearOutputFolder = Path.Combine(ResultsFolder, yearString);
+                var yearOutputFolder = Path.Combine(outputData.Directory, yearString);
                 var yearSummaryFileName = Path.Combine(yearOutputFolder, "Summary.txt");
 
                 #endregion

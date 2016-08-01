@@ -44,10 +44,10 @@ namespace CollegeFbsRankings.Application.DataImport
         private static ICollegeFbsRepository ReadDataForYear(int year, int numWeeksInRegularSeason, string fbsTeamFileName, string fbsGameFileName)
         {
             var fbsTeamFile = new StreamReader(fbsTeamFileName);
-            var gameFile = new StreamReader(fbsGameFileName);
+            var fbsGameFile = new StreamReader(fbsGameFileName);
 
             var repository = new CsvRepository();
-            repository.AddCsvData(year, numWeeksInRegularSeason, fbsTeamFile, gameFile);
+            repository.AddCsvData(year, numWeeksInRegularSeason, fbsTeamFile, fbsGameFile);
             return repository;
         }
 
