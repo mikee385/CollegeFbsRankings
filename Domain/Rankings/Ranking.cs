@@ -120,7 +120,7 @@ namespace CollegeFbsRankings.Domain.Rankings
             return Ranking.Create(ranking.Where(rank => teamIDs.Contains(rank.Team.ID)));
         }
 
-        public static Ranking<GameRankingValue> ForGames(this Ranking<GameRankingValue> ranking, IReadOnlyList<Game> games)
+        public static Ranking<GameRankingValue> ForGames(this Ranking<GameRankingValue> ranking, IReadOnlyList<IGame> games)
         {
             var gameIDs = games.Select(game => game.ID).ToList();
             return Ranking.Create(ranking.Where(rank => gameIDs.Contains(rank.Game.ID)));

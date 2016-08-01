@@ -15,22 +15,14 @@ namespace CollegeFbsRankings.Domain.Repositories
     {
         ISeasonQuery Seasons { get; }
 
-        IConferenceQuery<Conference> Conferences { get; }
-
-        IDivisionQuery<Division> Divisions { get; }
-
-        ITeamQuery<Team> Teams { get; }
-
-        IGameQuery<IGame> Games { get; }
-
-        int NumCompletedWeeksInSeason(SeasonID season);
+        ISeasonRepository ForSeason(SeasonID id);
     }
 
     public static class CollegeFbsRepositoryExtensions
     {
-        public static int NumCompletedWeeksInSeason(this ICollegeFbsRepository repository, Season season)
+        public static ISeasonRepository ForSeason(this ICollegeFbsRepository repository, Season season)
         {
-            return repository.NumCompletedWeeksInSeason(season.ID);
+            return repository.ForSeason(season.ID);
         }
     }
 }

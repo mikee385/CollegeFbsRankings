@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Csv\CsvRepository.cs" />
+    <Compile Include="Csv\CsvSeasonRepository.cs" />
     <Compile Include="Memory\MemoryConferenceQuery.cs" />
     <Compile Include="Memory\MemoryDivisionQuery.cs" />
     <Compile Include="Memory\MemoryGameQuery.cs" />

@@ -80,6 +80,7 @@
     <Compile Include="Repositories\IGameQuery.cs" />
     <Compile Include="Repositories\IQuery.cs" />
     <Compile Include="Repositories\ISeasonQuery.cs" />
+    <Compile Include="Repositories\ISeasonRepository.cs" />
     <Compile Include="Repositories\ITeamQuery.cs" />
     <Compile Include="Seasons\Season.cs" />
     <Compile Include="Seasons\SeasonID.cs" />

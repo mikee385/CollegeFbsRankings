@@ -71,16 +71,18 @@ namespace CollegeFbsRankings.Application.CalculateRankings
                 repository.AddCsvData(year, numWeeksInRegularSeason, fbsTeamFile, gameFile);
 
                 var season = repository.Seasons.ForYear(year).Execute().Single();
-                var fbsConferences = repository.Conferences.ForSeason(season).Fbs().Execute().ToList();
-                
-                var allTeams = repository.Teams.ForSeason(season).Execute().ToList();
+                var seasonRepository = repository.ForSeason(season);
+
+                var fbsConferences = seasonRepository.Conferences.Fbs().Execute().ToList();
+
+                var allTeams = seasonRepository.Teams.Execute().ToList();
                 var fbsTeams = allTeams.Fbs().ToList();
                 var fcsTeams = allTeams.Fcs().ToList();
 
-                var games = repository.Games.ForSeason(season).Execute().ToList();
-                var cancelledGames = repository.CancelledGames.ForSeason(season).Execute().ToList();
+                var games = seasonRepository.Games.Execute().ToList();
+                var cancelledGames = seasonRepository.CancelledGames.Execute().ToList();
 
-                var currentWeek = repository.NumCompletedWeeksInSeason(season);
+                var currentWeek = seasonRepository.NumCompletedWeeks();
 
                 #endregion
 
@@ -414,7 +416,7 @@ namespace CollegeFbsRankings.Application.CalculateRankings
                     #endregion
                 }
 
-                if (games.All(game => game is CompletedGame))
+                if (games.All(game => game is ICompletedGame))
                 {
                     Console.WriteLine("    Final");
 
