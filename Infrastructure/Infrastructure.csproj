@@ -43,6 +43,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -52,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Csv\CsvRepository.cs" />
+    <Compile Include="Csv\CsvRepositoryConfiguration.cs" />
     <Compile Include="Csv\CsvSeasonRepository.cs" />
     <Compile Include="Memory\MemoryConferenceQuery.cs" />
     <Compile Include="Memory\MemoryDivisionQuery.cs" />
@@ -68,7 +70,8 @@
     <Compile Include="Models\Team.cs" />
     <Compile Include="Models\TeamBySeason.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SQL\EntityFramework\DataContext.cs" />
+    <Compile Include="Sql\EntityFramework\DataContext.cs" />
+    <Compile Include="Sql\SqlRepositoryConfiguration.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Domain\Domain.csproj">
@@ -188,7 +191,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="SQL\SQLite\Create.sql" />
+    <None Include="Sql\SQLite\Create.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -21,7 +21,7 @@ using Game = CollegeFbsRankings.Infrastructure.Models.Game;
 using Season = CollegeFbsRankings.Infrastructure.Models.Season;
 using Team = CollegeFbsRankings.Infrastructure.Models.Team;
 
-namespace CollegeFbsRankings.Infrastructure.SQL.EntityFramework
+namespace CollegeFbsRankings.Infrastructure.Sql.EntityFramework
 {
     public class DataContext : DbContext
     {
