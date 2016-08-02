@@ -1,20 +1,19 @@
 ﻿using System.Collections.Generic;
 
 using CollegeFbsRankings.Domain.Games;
-using CollegeFbsRankings.Domain.Seasons;
 using CollegeFbsRankings.Domain.Teams;
 
 namespace CollegeFbsRankings.Domain.Repositories
 {
     public interface IGameQuery<out T> : IQuery<IEnumerable<T>> where T : IGame
     {
-        IGameQuery<T> ByID(GameID id);
+        IGameQuery<T> ById(GameId id);
 
         IGameQuery<T> ForWeek(int week);
 
         IGameQuery<T> ForWeeks(int minWeek, int maxWeek);
 
-        IGameQuery<T> ForTeam(TeamID team);
+        IGameQuery<T> ForTeam(TeamId teamId);
 
         IGameQuery<T> Fbs();
 
@@ -30,40 +29,40 @@ namespace CollegeFbsRankings.Domain.Repositories
 
         IGameQuery<T> Postseason();
 
-        IGameQuery<T> WithHomeTeam(TeamID team);
+        IGameQuery<T> WithHomeTeam(TeamId teamId);
 
-        IGameQuery<T> WithAwayTeam(TeamID team);
+        IGameQuery<T> WithAwayTeam(TeamId teamId);
 
-        IGameQuery<ICompletedGame> WonBy(TeamID team);
+        IGameQuery<ICompletedGame> WonBy(TeamId teamId);
 
-        IGameQuery<ICompletedGame> LostBy(TeamID team);
+        IGameQuery<ICompletedGame> LostBy(TeamId teamId);
     }
 
     public static class GameQueryExtensions
     {
         public static IGameQuery<T> ForTeam<T>(this IGameQuery<T> query, Team team) where T : IGame
         {
-            return query.ForTeam(team.ID);
+            return query.ForTeam(team.Id);
         }
 
         public static IGameQuery<T> WithHomeTeam<T>(this IGameQuery<T> query, Team team) where T : IGame
         {
-            return query.WithHomeTeam(team.ID);
+            return query.WithHomeTeam(team.Id);
         }
 
         public static IGameQuery<T> WithAwayTeam<T>(this IGameQuery<T> query, Team team) where T : IGame
         {
-            return query.WithAwayTeam(team.ID);
+            return query.WithAwayTeam(team.Id);
         }
 
         public static IGameQuery<ICompletedGame> WonBy<T>(this IGameQuery<T> query, Team team) where T : IGame
         {
-            return query.WonBy(team.ID);
+            return query.WonBy(team.Id);
         }
 
         public static IGameQuery<ICompletedGame> LostBy<T>(this IGameQuery<T> query, Team team) where T : IGame
         {
-            return query.LostBy(team.ID);
+            return query.LostBy(team.Id);
         }
     }
 }

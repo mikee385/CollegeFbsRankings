@@ -100,10 +100,10 @@ namespace CollegeFbsRankings.Infrastructure.Csv
                     FbsTeam team;
                     if (divisionName != null)
                     {
-                        var division = conference.Divisions.SingleOrDefault(d => d.Name == divisionName);
+                        var division = fbsDivisions.SingleOrDefault(d => d.ConferenceId == conference.Id && d.Name == divisionName);
                         if (division == null)
                         {
-                            division = FbsDivision.Create(conference, divisionName);
+                            division = FbsDivision.Create(conference.Id, divisionName);
                             fbsDivisions.Add(division);
                         }
                         team = FbsTeam.Create(name, division);

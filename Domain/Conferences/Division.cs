@@ -1,55 +1,41 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using CollegeFbsRankings.Domain.Teams;
-
 namespace CollegeFbsRankings.Domain.Conferences
 {
+    public abstract class DivisionId : Identifier<Division>
+    {
+        protected DivisionId(Guid id)
+            : base(id)
+        { }
+    }
+
     public abstract class Division
     {
-        private readonly DivisionID _id;
-        private readonly Conference _conference;
+        private readonly DivisionId _id;
+        private readonly ConferenceId _conferenceId;
         private readonly string _name;
-        private readonly List<Team> _teams;
 
-        protected Division(DivisionID id, Conference conference, string name)
+        protected Division(DivisionId id, ConferenceId conferenceId, string name)
         {
             _id = id;
-            _conference = conference;
+            _conferenceId = conferenceId;
             _name = name;
-            _teams = new List<Team>();
         }
 
-        public DivisionID ID
+        public DivisionId Id
         {
             get { return _id; }
         }
 
-        public Conference Conference
+        public ConferenceId ConferenceId
         {
-            get { return _conference; }
+            get { return _conferenceId; }
         }
 
         public string Name
         {
             get { return _name; }
-        }
-
-        public IEnumerable<Team> Teams
-        {
-            get { return _teams; }
-        }
-
-        protected void AddTeam(Team team)
-        {
-            if (team.Division.ID == ID)
-                _teams.Add(team);
-            else
-            {
-                throw new Exception(String.Format(
-                    "Cannot add team {0} to division {1} since team is already assigned to division {2}.",
-                    team.Name, Name, team.Division.Name));
-            }
         }
     }
 }

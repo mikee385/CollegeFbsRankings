@@ -192,44 +192,44 @@ namespace CollegeFbsRankings.Infrastructure.Sql.EntityFramework
         public void ImportData(ICollegeFbsRepository repository)
         {
             // Seasons
-            var dbSeasons = new Dictionary<SeasonID, Season>();
+            var dbSeasons = new Dictionary<SeasonId, Season>();
             foreach (var season in repository.Seasons.Execute())
             {
                 var dbSeason = AddOrUpdateSeason(season);
-                dbSeasons.Add(season.ID, dbSeason);
+                dbSeasons.Add(season.Id, dbSeason);
 
                 var seasonRepository = repository.ForSeason(season);
 
                 // Conferences
-                var dbConferences = new Dictionary<ConferenceID, Conference>();
+                var dbConferences = new Dictionary<ConferenceId, Conference>();
                 foreach (var conference in seasonRepository.Conferences.Execute())
                 {
                     var dbConference = AddOrUpdateConference(conference);
-                    dbConferences.Add(conference.ID, dbConference);
+                    dbConferences.Add(conference.Id, dbConference);
                 }
 
                 // Divisions
-                var dbDivisions = new Dictionary<DivisionID, Division>();
+                var dbDivisions = new Dictionary<DivisionId, Division>();
                 foreach (var division in seasonRepository.Divisions.Execute())
                 {
-                    var dbConference = dbConferences[division.Conference.ID];
+                    var dbConference = dbConferences[division.ConferenceId];
                     var dbDivision = AddOrUpdateDivision(division, dbConference);
-                    dbDivisions.Add(division.ID, dbDivision);
+                    dbDivisions.Add(division.Id, dbDivision);
                 }
 
                 // Teams
-                var dbTeams = new Dictionary<TeamID, Team>();
+                var dbTeams = new Dictionary<TeamId, Team>();
                 foreach (var team in seasonRepository.Teams.Execute())
                 {
                     var dbTeam = AddOrUpdateTeam(team);
-                    dbTeams.Add(team.ID, dbTeam);
+                    dbTeams.Add(team.Id, dbTeam);
                 }
 
                 // Games
                 foreach (var game in seasonRepository.Games.Execute())
                 {
-                    var dbHomeTeam = dbTeams[game.HomeTeam.ID];
-                    var dbAwayTeam = dbTeams[game.AwayTeam.ID];
+                    var dbHomeTeam = dbTeams[game.HomeTeam.Id];
+                    var dbAwayTeam = dbTeams[game.AwayTeam.Id];
                     AddOrUpdateGame(game, dbSeason, dbHomeTeam, dbAwayTeam);
                 }
 
@@ -244,17 +244,17 @@ namespace CollegeFbsRankings.Infrastructure.Sql.EntityFramework
                 var fbsConferences = seasonRepository.Conferences.Fbs().Execute();
                 foreach (var conference in fbsConferences)
                 {
-                    var fbsDivisions = seasonRepository.Divisions.ForConference(conference.ID).Execute().ToList();
+                    var fbsDivisions = seasonRepository.Divisions.ForConference(conference.Id).Execute().ToList();
                     if (fbsDivisions.Any())
                     {
                         foreach (var division in fbsDivisions)
                         {
-                            var fbsTeams = seasonRepository.Teams.ForDivision(division.ID).Execute();
+                            var fbsTeams = seasonRepository.Teams.ForDivision(division.Id).Execute();
                             foreach (var team in fbsTeams)
                             {
-                                var dbConference = dbConferences[conference.ID];
-                                var dbDivision = dbDivisions[division.ID];
-                                var dbTeam = dbTeams[team.ID];
+                                var dbConference = dbConferences[conference.Id];
+                                var dbDivision = dbDivisions[division.Id];
+                                var dbTeam = dbTeams[team.Id];
 
                                 AddOrUpdateTeamBySeason("FBS", dbSeason, dbConference, dbDivision, dbTeam);
                             }
@@ -262,11 +262,11 @@ namespace CollegeFbsRankings.Infrastructure.Sql.EntityFramework
                     }
                     else
                     {
-                        var fbsTeams = seasonRepository.Teams.ForConference(conference.ID).Execute();
+                        var fbsTeams = seasonRepository.Teams.ForConference(conference.Id).Execute();
                         foreach (var team in fbsTeams)
                         {
-                            var dbConference = dbConferences[conference.ID];
-                            var dbTeam = dbTeams[team.ID];
+                            var dbConference = dbConferences[conference.Id];
+                            var dbTeam = dbTeams[team.Id];
 
                             AddOrUpdateTeamBySeason("FBS", dbSeason, dbConference, null, dbTeam);
                         }
@@ -276,7 +276,7 @@ namespace CollegeFbsRankings.Infrastructure.Sql.EntityFramework
                 var fcsTeams = seasonRepository.Teams.Fcs().Execute();
                 foreach (var team in fcsTeams)
                 {
-                    var dbTeam = dbTeams[team.ID];
+                    var dbTeam = dbTeams[team.Id];
 
                     AddOrUpdateTeamBySeason("FCS", dbSeason, null, null, dbTeam);
                 }
@@ -312,7 +312,7 @@ namespace CollegeFbsRankings.Infrastructure.Sql.EntityFramework
         {
             var dbSeason = new Season
             {
-                GUID = season.ID.ToString(),
+                GUID = season.Id.ToString(),
                 Year = season.Year,
                 NumWeeksInRegularSeason = season.NumWeeksInRegularSeason
             };
@@ -354,7 +354,7 @@ namespace CollegeFbsRankings.Infrastructure.Sql.EntityFramework
         {
             var dbConference = new Conference
             {
-                GUID = conference.ID.ToString(),
+                GUID = conference.Id.ToString(),
                 Name = conference.Name
             };
             Conferences.Add(dbConference);
@@ -395,7 +395,7 @@ namespace CollegeFbsRankings.Infrastructure.Sql.EntityFramework
         {
             var dbDivision = new Division
             {
-                GUID = division.ID.ToString(),
+                GUID = division.Id.ToString(),
                 ConferenceGUID = dbConference.GUID,
                 Name = division.Name
             };
@@ -437,7 +437,7 @@ namespace CollegeFbsRankings.Infrastructure.Sql.EntityFramework
         {
             var dbTeam = new Team
             {
-                GUID = team.ID.ToString(),
+                GUID = team.Id.ToString(),
                 Name = team.Name
             };
             Teams.Add(dbTeam);
@@ -478,7 +478,7 @@ namespace CollegeFbsRankings.Infrastructure.Sql.EntityFramework
         {
             var dbGame = new Game
             {
-                GUID = game.ID.ToString(),
+                GUID = game.Id.ToString(),
                 SeasonGUID = dbSeason.GUID,
                 Week = game.Week,
                 Level = (game.TeamType == eTeamType.Fbs) ? "FBS" : "FCS",

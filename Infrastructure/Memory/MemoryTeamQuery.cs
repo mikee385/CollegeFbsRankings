@@ -25,9 +25,9 @@ namespace CollegeFbsRankings.Infrastructure.Memory
             return _items;
         }
 
-        public ITeamQuery<T> ByID(TeamID id)
+        public ITeamQuery<T> ById(TeamId id)
         {
-            return new MemoryTeamQuery<T>(_items.Where(e => e.ID == id));
+            return new MemoryTeamQuery<T>(_items.Where(e => e.Id == id));
         }
 
         public ITeamQuery<T> ByName(string name)
@@ -35,14 +35,14 @@ namespace CollegeFbsRankings.Infrastructure.Memory
             return new MemoryTeamQuery<T>(_items.Where(e => e.Name == name));
         }
 
-        public ITeamQuery<T> ForConference(ConferenceID conference)
+        public ITeamQuery<T> ForConference(ConferenceId conferenceId)
         {
-            return new MemoryTeamQuery<T>(_items.Where(e => e.Conference != null && e.Conference.ID == conference));
+            return new MemoryTeamQuery<T>(_items.Where(e => e.ConferenceId == conferenceId));
         }
 
-        public ITeamQuery<T> ForDivision(DivisionID division)
+        public ITeamQuery<T> ForDivision(DivisionId divisionId)
         {
-            return new MemoryTeamQuery<T>(_items.Where(e => e.Division != null && e.Division.ID == division));
+            return new MemoryTeamQuery<T>(_items.Where(e => e.DivisionId == divisionId));
         }
 
         public ITeamQuery<FbsTeam> Fbs()

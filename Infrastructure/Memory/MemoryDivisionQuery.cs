@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 using CollegeFbsRankings.Domain.Conferences;
 using CollegeFbsRankings.Domain.Repositories;
-using CollegeFbsRankings.Domain.Seasons;
 
 namespace CollegeFbsRankings.Infrastructure.Memory
 {
@@ -24,9 +23,9 @@ namespace CollegeFbsRankings.Infrastructure.Memory
             return _items;
         }
 
-        public IDivisionQuery<T> ByID(DivisionID id)
+        public IDivisionQuery<T> ById(DivisionId id)
         {
-            return new MemoryDivisionQuery<T>(_items.Where(e => e.ID == id));
+            return new MemoryDivisionQuery<T>(_items.Where(e => e.Id == id));
         }
 
         public IDivisionQuery<T> ByName(string name)
@@ -34,9 +33,9 @@ namespace CollegeFbsRankings.Infrastructure.Memory
             return new MemoryDivisionQuery<T>(_items.Where(e => e.Name == name));
         }
 
-        public IDivisionQuery<T> ForConference(ConferenceID conference)
+        public IDivisionQuery<T> ForConference(ConferenceId conferenceId)
         {
-            return new MemoryDivisionQuery<T>(_items.Where(e => e.Conference.ID == conference));
+            return new MemoryDivisionQuery<T>(_items.Where(e => e.ConferenceId == conferenceId));
         }
 
         public IDivisionQuery<FbsDivision> Fbs()

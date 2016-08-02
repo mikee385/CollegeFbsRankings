@@ -15,14 +15,14 @@ namespace CollegeFbsRankings.Domain.Repositories
     {
         ISeasonQuery Seasons { get; }
 
-        ISeasonRepository ForSeason(SeasonID id);
+        ISeasonRepository ForSeason(SeasonId id);
     }
 
     public static class CollegeFbsRepositoryExtensions
     {
         public static ISeasonRepository ForSeason(this ICollegeFbsRepository repository, Season season)
         {
-            return repository.ForSeason(season.ID);
+            return repository.ForSeason(season.Id);
         }
     }
 }

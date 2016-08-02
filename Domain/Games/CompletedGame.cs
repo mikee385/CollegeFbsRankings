@@ -27,7 +27,7 @@ namespace CollegeFbsRankings.Domain.Games
         private readonly int _homeTeamScore;
         private readonly int _awayTeamScore;
 
-        protected CompletedGame(GameID id, Season season, int week, DateTime date, Team homeTeam, int homeTeamScore, Team awayTeam, int awayTeamScore, string tv, string notes, eSeasonType seasonType)
+        protected CompletedGame(GameId id, Season season, int week, DateTime date, Team homeTeam, int homeTeamScore, Team awayTeam, int awayTeamScore, string tv, string notes, eSeasonType seasonType)
             : base(id, season, week, date, homeTeam, awayTeam, tv, notes, seasonType)
         {
             _homeTeamScore = homeTeamScore;
@@ -36,14 +36,14 @@ namespace CollegeFbsRankings.Domain.Games
 
         public static ICompletedGame Create(Season season, int week, DateTime date, Team homeTeam, int homeTeamScore, Team awayTeam, int awayTeamScore, string tv, string notes, eSeasonType seasonType)
         {
-            var id = GameID.Create();
+            var id = GameId.Create();
             var game = new CompletedGame(id, season, week, date, homeTeam, homeTeamScore, awayTeam, awayTeamScore, tv, notes, seasonType);
             homeTeam.AddGame(game);
             awayTeam.AddGame(game);
             return game;
         }
 
-        public static ICompletedGame FromExisting(GameID id, Season season, int week, DateTime date, Team homeTeam, int homeTeamScore, Team awayTeam, int awayTeamScore, string tv, string notes, eSeasonType seasonType)
+        public static ICompletedGame FromExisting(GameId id, Season season, int week, DateTime date, Team homeTeam, int homeTeamScore, Team awayTeam, int awayTeamScore, string tv, string notes, eSeasonType seasonType)
         {
             var game = new CompletedGame(id, season, week, date, homeTeam, homeTeamScore, awayTeam, awayTeamScore, tv, notes, seasonType);
             homeTeam.AddGame(game);

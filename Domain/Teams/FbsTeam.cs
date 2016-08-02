@@ -1,54 +1,69 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using CollegeFbsRankings.Domain.Conferences;
 
 namespace CollegeFbsRankings.Domain.Teams
 {
+    public class FbsTeamId : TeamId
+    {
+        protected FbsTeamId(Guid id)
+            : base(id)
+        { }
+
+        public static FbsTeamId Create()
+        {
+            var id = Guid.NewGuid();
+            return new FbsTeamId(id);
+        }
+
+        public static FbsTeamId FromExisting(Guid id)
+        {
+            return new FbsTeamId(id);
+        }
+    }
+
     public class FbsTeam : Team
     {
-        private FbsTeam(TeamID id, string name, FbsConference conference, FbsDivision division)
-            : base(id, name, conference, division)
+        private FbsTeam(FbsTeamId id, string name, FbsConferenceId conferenceId, FbsDivisionId divisionId)
+            : base(id, name, conferenceId, divisionId)
         { }
 
         public static FbsTeam Create(string name, FbsConference conference)
         {
-            var id = TeamID.Create();
-            var team = new FbsTeam(id, name, conference, null);
-            conference.AddTeam(team);
+            var id = FbsTeamId.Create();
+            var team = new FbsTeam(id, name, conference.Id, null);
             return team;
         }
 
         public static FbsTeam Create(string name, FbsDivision division)
         {
-            var id = TeamID.Create();
-            var team = new FbsTeam(id, name, division.Conference, division);
-            division.AddTeam(team);
+            var id = FbsTeamId.Create();
+            var team = new FbsTeam(id, name, division.ConferenceId, division.Id);
             return team;
         }
 
-        public static FbsTeam FromExisting(TeamID id, string name, FbsConference conference)
+        public static FbsTeam FromExisting(FbsTeamId id, string name, FbsConference conference)
         {
-            var team = new FbsTeam(id, name, conference, null);
-            conference.AddTeam(team);
+            var team = new FbsTeam(id, name, conference.Id, null);
             return team;
         }
 
-        public static FbsTeam FromExisting(TeamID id, string name, FbsDivision division)
+        public static FbsTeam FromExisting(FbsTeamId id, string name, FbsDivision division)
         {
-            var team = new FbsTeam(id, name, division.Conference, division);
-            division.AddTeam(team);
+            var team = new FbsTeam(id, name, division.ConferenceId, division.Id);
             return team;
         }
 
-        public new FbsConference Conference
+        new public FbsConferenceId ConferenceId
         {
-            get { return (FbsConference)base.Conference; }
+            get { return (FbsConferenceId)base.ConferenceId; }
         }
 
-        public new FbsDivision Division
+        new public FbsDivisionId DivisionId
         {
-            get { return (FbsDivision)base.Division; }
+            get { return (FbsDivisionId)base.DivisionId; }
         }
     }
 

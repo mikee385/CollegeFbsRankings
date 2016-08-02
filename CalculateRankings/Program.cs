@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
+using CollegeFbsRankings.Domain.Conferences;
 using CollegeFbsRankings.Domain.Games;
 using CollegeFbsRankings.Domain.Rankings;
 using CollegeFbsRankings.Domain.Repositories;
@@ -50,7 +51,11 @@ namespace CollegeFbsRankings.Application.CalculateRankings
                 var season = repository.Seasons.ForYear(year).Execute().Single();
                 var seasonRepository = repository.ForSeason(season);
 
-                var fbsConferences = seasonRepository.Conferences.Fbs().Execute().ToList();
+                var fbsTeamsByConference = seasonRepository.Conferences.Fbs().Execute()
+                    .Select(conference => new KeyValuePair<Conference, IReadOnlyList<Team>>(
+                        conference,
+                        seasonRepository.Teams.ForConference(conference).Execute().ToList()))
+                    .ToList();
 
                 var allTeams = seasonRepository.Teams.Execute().ToList();
                 var fbsTeams = allTeams.Fbs().ToList();
@@ -124,8 +129,8 @@ namespace CollegeFbsRankings.Application.CalculateRankings
                         var overallGameStrengthByWeek = SingleDepthWins.GameStrength.ByWeek(fbsGames, overallData);
                         var fbsGameStrengthByWeek = SingleDepthWins.GameStrength.ByWeek(fbsGames, fbsData);
 
-                        var overallConferenceStrength = SingleDepthWins.ConferenceStrength.Overall(fbsConferences, overallData);
-                        var fbsConferenceStrength = SingleDepthWins.ConferenceStrength.Overall(fbsConferences, fbsData);
+                        var overallConferenceStrength = SingleDepthWins.ConferenceStrength.Overall(fbsTeamsByConference, overallData);
+                        var fbsConferenceStrength = SingleDepthWins.ConferenceStrength.Overall(fbsTeamsByConference, fbsData);
 
                         var overallGameValidation = Validation.RegularSeason(fbsGames, week, overallData);
                         var fbsGameValidation = Validation.RegularSeason(fbsGames, week, fbsData);
@@ -277,8 +282,8 @@ namespace CollegeFbsRankings.Application.CalculateRankings
                         var overallGameStrengthByWeek = SimultaneousWins.GameStrength.ByWeek(fbsGames, overallData);
                         var fbsGameStrengthByWeek = SimultaneousWins.GameStrength.ByWeek(fbsGames, fbsData);
 
-                        var overallConferenceStrength = SimultaneousWins.ConferenceStrength.Overall(fbsConferences, overallData);
-                        var fbsConferenceStrength = SimultaneousWins.ConferenceStrength.Overall(fbsConferences, fbsData);
+                        var overallConferenceStrength = SimultaneousWins.ConferenceStrength.Overall(fbsTeamsByConference, overallData);
+                        var fbsConferenceStrength = SimultaneousWins.ConferenceStrength.Overall(fbsTeamsByConference, fbsData);
 
                         var overallGameValidation = Validation.RegularSeason(fbsGames, week, overallData);
                         var fbsGameValidation = Validation.RegularSeason(fbsGames, week, fbsData);
@@ -422,8 +427,8 @@ namespace CollegeFbsRankings.Application.CalculateRankings
                         var overallGameStrengthByWeek = SingleDepthWins.GameStrength.ByWeek(fbsRegularSeasonGames, overallData);
                         var fbsGameStrengthByWeek = SingleDepthWins.GameStrength.ByWeek(fbsRegularSeasonGames, fbsData);
 
-                        var overallConferenceStrength = SingleDepthWins.ConferenceStrength.Overall(fbsConferences, overallData);
-                        var fbsConferenceStrength = SingleDepthWins.ConferenceStrength.Overall(fbsConferences, fbsData);
+                        var overallConferenceStrength = SingleDepthWins.ConferenceStrength.Overall(fbsTeamsByConference, overallData);
+                        var fbsConferenceStrength = SingleDepthWins.ConferenceStrength.Overall(fbsTeamsByConference, fbsData);
 
                         var overallGameValidation = Validation.FullSeason(fbsRegularSeasonGames, overallData);
                         var fbsGameValidation = Validation.FullSeason(fbsRegularSeasonGames, fbsData);
@@ -529,8 +534,8 @@ namespace CollegeFbsRankings.Application.CalculateRankings
                         var overallGameStrengthByWeek = SimultaneousWins.GameStrength.ByWeek(fbsRegularSeasonGames, overallData);
                         var fbsGameStrengthByWeek = SimultaneousWins.GameStrength.ByWeek(fbsRegularSeasonGames, fbsData);
 
-                        var overallConferenceStrength = SimultaneousWins.ConferenceStrength.Overall(fbsConferences, overallData);
-                        var fbsConferenceStrength = SimultaneousWins.ConferenceStrength.Overall(fbsConferences, fbsData);
+                        var overallConferenceStrength = SimultaneousWins.ConferenceStrength.Overall(fbsTeamsByConference, overallData);
+                        var fbsConferenceStrength = SimultaneousWins.ConferenceStrength.Overall(fbsTeamsByConference, fbsData);
 
                         var overallGameValidation = Validation.FullSeason(fbsRegularSeasonGames, overallData);
                         var fbsGameValidation = Validation.FullSeason(fbsRegularSeasonGames, fbsData);

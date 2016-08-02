@@ -1,47 +1,51 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using CollegeFbsRankings.Domain.Teams;
 
 namespace CollegeFbsRankings.Domain.Conferences
 {
+    public class FbsConferenceId : ConferenceId
+    {
+        protected FbsConferenceId(Guid id)
+            : base(id)
+        { }
+
+        public static FbsConferenceId Create()
+        {
+            var id = Guid.NewGuid();
+            return new FbsConferenceId(id);
+        }
+
+        public static FbsConferenceId FromExisting(Guid id)
+        {
+            return new FbsConferenceId(id);
+        }
+    }
+
     public class FbsConference : Conference
     {
-        private FbsConference(ConferenceID id, string name)
+        private FbsConference(FbsConferenceId id, string name)
             : base(id, name)
         { }
 
         public static FbsConference Create(string name)
         {
-            var id = ConferenceID.Create();
+            var id = FbsConferenceId.Create();
             var conference = new FbsConference(id, name);
             return conference;
         }
 
-        public static FbsConference FromExisting(ConferenceID id, string name)
+        public static FbsConference FromExisting(FbsConferenceId id, string name)
         {
             var conference = new FbsConference(id, name);
             return conference;
         }
 
-        public new IEnumerable<FbsDivision> Divisions
+        new public FbsConferenceId Id
         {
-            get { return base.Divisions.Cast<FbsDivision>(); }
-        }
-
-        public void AddDivision(FbsDivision division)
-        {
-            base.AddDivision(division);
-        }
-
-        public new IEnumerable<FbsTeam> Teams
-        {
-            get { return base.Teams.Cast<FbsTeam>(); }
-        }
-
-        public void AddTeam(FbsTeam team)
-        {
-            base.AddTeam(team);
+            get { return (FbsConferenceId)base.Id; }
         }
     }
 

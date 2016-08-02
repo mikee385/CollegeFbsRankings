@@ -6,7 +6,7 @@ namespace CollegeFbsRankings.Domain.Repositories
 {
     public interface ISeasonQuery : IQuery<IEnumerable<Season>>
     {
-        ISeasonQuery ByID(SeasonID id);
+        ISeasonQuery ById(SeasonId id);
 
         ISeasonQuery ForYear(int year);
 

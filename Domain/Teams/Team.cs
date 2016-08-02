@@ -6,24 +6,31 @@ using CollegeFbsRankings.Domain.Games;
 
 namespace CollegeFbsRankings.Domain.Teams
 {
+    public abstract class TeamId : Identifier<Team>
+    {
+        protected TeamId(Guid id)
+            : base(id)
+        { }
+    }
+
     public abstract class Team
     {
-        private readonly TeamID _id;
+        private readonly TeamId _id;
         private readonly string _name;
-        private readonly Conference _conference;
-        private readonly Division _division;
+        private readonly ConferenceId _conferenceId;
+        private readonly DivisionId _divisionId;
         private readonly List<ITeamGame> _games;
 
-        protected Team(TeamID id, string name, Conference conference, Division division)
+        protected Team(TeamId id, string name, ConferenceId conferenceId, DivisionId divisionId)
         {
             _id = id;
             _name = name;
-            _conference = conference;
-            _division = division;
+            _conferenceId = conferenceId;
+            _divisionId = divisionId;
             _games = new List<ITeamGame>();
         }
 
-        public TeamID ID
+        public TeamId Id
         {
             get { return _id; }
         }
@@ -33,14 +40,14 @@ namespace CollegeFbsRankings.Domain.Teams
             get { return _name; }
         }
 
-        public Conference Conference
+        public ConferenceId ConferenceId
         {
-            get { return _conference; }
+            get { return _conferenceId; }
         }
 
-        public Division Division
+        public DivisionId DivisionId
         {
-            get { return _division; }
+            get { return _divisionId; }
         }
 
         public IEnumerable<ITeamGame> Games
@@ -50,7 +57,7 @@ namespace CollegeFbsRankings.Domain.Teams
 
         public void AddGame(IGame game)
         {
-            if (game.HomeTeam.ID == ID || game.AwayTeam.ID == ID)
+            if (game.HomeTeam.Id == Id || game.AwayTeam.Id == Id)
             {
                 var completedGame = game as ICompletedGame;
                 if (completedGame != null)
@@ -83,7 +90,7 @@ namespace CollegeFbsRankings.Domain.Teams
 
         public void RemoveGame(IGame game)
         {
-            _games.RemoveAll(g => g.ID == game.ID);
+            _games.RemoveAll(g => g.Id == game.Id);
         }
     }
 }

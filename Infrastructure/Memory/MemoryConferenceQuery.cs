@@ -24,9 +24,9 @@ namespace CollegeFbsRankings.Infrastructure.Memory
             return _items;
         }
 
-        public IConferenceQuery<T> ByID(ConferenceID id)
+        public IConferenceQuery<T> ById(ConferenceId id)
         {
-            return new MemoryConferenceQuery<T>(_items.Where(e => e.ID == id));
+            return new MemoryConferenceQuery<T>(_items.Where(e => e.Id == id));
         }
 
         public IConferenceQuery<T> ByName(string name)

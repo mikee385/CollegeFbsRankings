@@ -21,7 +21,7 @@ namespace CollegeFbsRankings.Domain.Games
 
     public interface IGame
     {
-        GameID ID { get; }
+        GameId Id { get; }
 
         Season Season { get; }
 
@@ -42,9 +42,27 @@ namespace CollegeFbsRankings.Domain.Games
         eSeasonType SeasonType { get; }
     }
 
+    public class GameId : Identifier<Game>
+    {
+        protected GameId(Guid id)
+            : base(id)
+        { }
+
+        public static GameId Create()
+        {
+            var id = Guid.NewGuid();
+            return new GameId(id);
+        }
+
+        public static GameId FromExisting(Guid id)
+        {
+            return new GameId(id);
+        }
+    }
+
     public abstract class Game : IGame
     {
-        private readonly GameID _id;
+        private readonly GameId _id;
         private readonly Season _season;
         private readonly int _week;
         private readonly DateTime _date;
@@ -55,7 +73,7 @@ namespace CollegeFbsRankings.Domain.Games
         private readonly eTeamType _teamType;
         private readonly eSeasonType _seasonType;
 
-        protected Game(GameID id, Season season, int week, DateTime date, Team homeTeam, Team awayTeam, string tv, string notes, eSeasonType seasonType)
+        protected Game(GameId id, Season season, int week, DateTime date, Team homeTeam, Team awayTeam, string tv, string notes, eSeasonType seasonType)
         {
             _id = id;
             _season = season;
@@ -85,7 +103,7 @@ namespace CollegeFbsRankings.Domain.Games
             _seasonType = seasonType;
         }
 
-        public GameID ID
+        public GameId Id
         {
             get { return _id; }
         }

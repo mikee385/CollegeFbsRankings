@@ -12,17 +12,20 @@ namespace CollegeFbsRankings.Domain.Rankings
     {
         public static class ConferenceStrength
         {
-            public static Ranking<ConferenceRankingValue> Overall(IEnumerable<Conference> conferences, Dictionary<Team, Data> performanceData)
+            public static Ranking<ConferenceRankingValue> Overall(IEnumerable<KeyValuePair<Conference, IReadOnlyList<Team>>> teamsByConference, Dictionary<Team, Data> performanceData)
             {
-                return Ranking.Create(conferences.Select(conference =>
+                return Ranking.Create(teamsByConference.Select(pair =>
                 {
+                    var conference = pair.Key;
+                    var teamsInConference = pair.Value;
+
                     var writer = new StringWriter();
                     writer.WriteLine(conference.Name + " Teams:");
 
-                    var maxTeamLength = conference.Teams.Max(team => team.Name.Length);
+                    var maxTeamLength = teamsInConference.Max(team => team.Name.Length);
 
-                    var conferenceData = new Data(0, 0, 0.0, String.Empty);                    
-                    foreach (var team in conference.Teams.OrderBy(t => t.Name))
+                    var conferenceData = new Data(0, 0, 0.0, String.Empty);
+                    foreach (var team in teamsInConference.OrderBy(t => t.Name))
                     {
                         var teamData = performanceData[team];
 

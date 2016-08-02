@@ -25,9 +25,9 @@ namespace CollegeFbsRankings.Domain.Games
             _team = team;
             _game = game;
 
-            if (game.HomeTeam.ID == team.ID)
+            if (game.HomeTeam.Id == team.Id)
                 _opponent = game.AwayTeam;
-            else if (game.AwayTeam.ID == team.ID)
+            else if (game.AwayTeam.Id == team.Id)
                 _opponent = game.HomeTeam;
             else
             {
@@ -37,9 +37,9 @@ namespace CollegeFbsRankings.Domain.Games
             }
         }
 
-        public GameID ID
+        public GameId Id
         {
-            get { return _game.ID; }
+            get { return _game.Id; }
         }
 
         public Season Season
@@ -102,12 +102,12 @@ namespace CollegeFbsRankings.Domain.Games
     {
         public static IEnumerable<T> Home<T>(this IEnumerable<T> games) where T : ITeamGame
         {
-            return games.Where(g => g.HomeTeam.ID == g.Team.ID);
+            return games.Where(g => g.HomeTeam.Id == g.Team.Id);
         }
 
         public static IEnumerable<T> Away<T>(this IEnumerable<T> games) where T : ITeamGame
         {
-            return games.Where(g => g.AwayTeam.ID == g.Team.ID);
+            return games.Where(g => g.AwayTeam.Id == g.Team.Id);
         }
     }
 }

@@ -1,25 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace CollegeFbsRankings.Domain.Conferences
+namespace CollegeFbsRankings.Domain
 {
-    public class ConferenceID : IEquatable<ConferenceID>
+    public abstract class Identifier<T> : IEquatable<Identifier<T>>
     {
         private readonly Guid _value;
 
-        private ConferenceID(Guid value)
+        protected Identifier(Guid value)
         {
             _value = value;
-        }
-
-        public static ConferenceID Create()
-        {
-            var id = Guid.NewGuid();
-            return new ConferenceID(id);
-        }
-
-        public static ConferenceID FromExisting(Guid id)
-        {
-            return new ConferenceID(id);
         }
 
         public Guid Value
@@ -27,14 +20,14 @@ namespace CollegeFbsRankings.Domain.Conferences
             get { return _value; }
         }
 
-        public bool Equals(ConferenceID other)
+        public bool Equals(Identifier<T> other)
         {
             return _value.Equals(other._value);
         }
 
         public override bool Equals(object obj)
         {
-            var id = obj as ConferenceID;
+            var id = obj as Identifier<T>;
             if (ReferenceEquals(id, null))
                 return false;
 
@@ -51,7 +44,7 @@ namespace CollegeFbsRankings.Domain.Conferences
             return _value.ToString();
         }
 
-        public static bool operator ==(ConferenceID id1, ConferenceID id2)
+        public static bool operator ==(Identifier<T> id1, Identifier<T> id2)
         {
             // If both are null, or both are same instance, return true.
             if (ReferenceEquals(id1, id2))
@@ -69,7 +62,7 @@ namespace CollegeFbsRankings.Domain.Conferences
             return id1.Equals(id2);
         }
 
-        public static bool operator !=(ConferenceID id1, ConferenceID id2)
+        public static bool operator !=(Identifier<T> id1, Identifier<T> id2)
         {
             return !(id1 == id2);
         }

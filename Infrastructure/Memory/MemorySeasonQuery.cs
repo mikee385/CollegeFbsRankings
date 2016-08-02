@@ -23,9 +23,9 @@ namespace CollegeFbsRankings.Infrastructure.Memory
             return _items;
         }
 
-        public ISeasonQuery ByID(SeasonID id)
+        public ISeasonQuery ById(SeasonId id)
         {
-            return new MemorySeasonQuery(_items.Where(e => e.ID == id));
+            return new MemorySeasonQuery(_items.Where(e => e.Id == id));
         }
 
         public ISeasonQuery ForYear(int year)

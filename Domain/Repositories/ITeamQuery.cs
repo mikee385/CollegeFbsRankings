@@ -8,13 +8,13 @@ namespace CollegeFbsRankings.Domain.Repositories
 {
     public interface ITeamQuery<out T> : IQuery<IEnumerable<T>> where T : Team
     {
-        ITeamQuery<T> ByID(TeamID id);
+        ITeamQuery<T> ById(TeamId id);
 
         ITeamQuery<T> ByName(string name);
 
-        ITeamQuery<T> ForConference(ConferenceID conference);
+        ITeamQuery<T> ForConference(ConferenceId conferenceId);
 
-        ITeamQuery<T> ForDivision(DivisionID division);
+        ITeamQuery<T> ForDivision(DivisionId divisionId);
 
         ITeamQuery<FbsTeam> Fbs();
 
@@ -25,22 +25,22 @@ namespace CollegeFbsRankings.Domain.Repositories
     {
         public static ITeamQuery<T> ForConference<T>(this ITeamQuery<T> query, Conference conference) where T : Team
         {
-            return query.ForConference(conference.ID);
+            return query.ForConference(conference.Id);
         }
 
         public static ITeamQuery<FbsTeam> ForConference<T>(this ITeamQuery<T> query, FbsConference conference) where T : Team
         {
-            return query.ForConference(conference.ID).Fbs();
+            return query.ForConference(conference.Id).Fbs();
         }
 
         public static ITeamQuery<T> ForDivision<T>(this ITeamQuery<T> query, Division division) where T: Team
         {
-            return query.ForDivision(division.ID);
+            return query.ForDivision(division.Id);
         }
 
         public static ITeamQuery<FbsTeam> ForDivision<T>(this ITeamQuery<T> query, FbsDivision division) where T : Team
         {
-            return query.ForDivision(division.ID).Fbs();
+            return query.ForDivision(division.Id).Fbs();
         }
     }
 }

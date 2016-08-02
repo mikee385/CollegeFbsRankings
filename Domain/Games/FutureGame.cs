@@ -12,20 +12,20 @@ namespace CollegeFbsRankings.Domain.Games
 
     public class FutureGame : Game, IFutureGame
     {
-        protected FutureGame(GameID id, Season season, int week, DateTime date, Team homeTeam, Team awayTeam, string tv, string notes, eSeasonType seasonType)
+        protected FutureGame(GameId id, Season season, int week, DateTime date, Team homeTeam, Team awayTeam, string tv, string notes, eSeasonType seasonType)
             : base(id, season, week, date, homeTeam, awayTeam, tv, notes, seasonType)
         { }
 
         public static IFutureGame Create(Season season, int week, DateTime date, Team homeTeam, Team awayTeam, string tv, string notes, eSeasonType seasonType)
         {
-            var id = GameID.Create();
+            var id = GameId.Create();
             var game = new FutureGame(id, season, week, date, homeTeam, awayTeam, tv, notes, seasonType);
             homeTeam.AddGame(game);
             awayTeam.AddGame(game);
             return game;
         }
 
-        public static IFutureGame FromExisting(GameID id, Season season, int week, DateTime date, Team homeTeam, Team awayTeam, string tv, string notes, eSeasonType seasonType)
+        public static IFutureGame FromExisting(GameId id, Season season, int week, DateTime date, Team homeTeam, Team awayTeam, string tv, string notes, eSeasonType seasonType)
         {
             var game = new FutureGame(id, season, week, date, homeTeam, awayTeam, tv, notes, seasonType);
             homeTeam.AddGame(game);

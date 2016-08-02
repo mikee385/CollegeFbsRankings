@@ -39,9 +39,9 @@ namespace CollegeFbsRankings.Infrastructure.Csv
             get { return new MemorySeasonQuery(_seasons); }
         }
 
-        public ISeasonRepository ForSeason(SeasonID season)
+        public ISeasonRepository ForSeason(SeasonId seasonId)
         {
-            return _seasonRepositories.Single(repository => repository.Season.ID == season);
+            return _seasonRepositories.Single(repository => repository.Season.Id == seasonId);
         }
     }
 }

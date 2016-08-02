@@ -116,14 +116,14 @@ namespace CollegeFbsRankings.Domain.Rankings
     {
         public static Ranking<TeamRankingValue> ForTeams(this Ranking<TeamRankingValue> ranking, IReadOnlyList<Team> teams)
         {
-            var teamIDs = teams.Select(team => team.ID).ToList();
-            return Ranking.Create(ranking.Where(rank => teamIDs.Contains(rank.Team.ID)));
+            var teamIds = teams.Select(team => team.Id).ToList();
+            return Ranking.Create(ranking.Where(rank => teamIds.Contains(rank.Team.Id)));
         }
 
         public static Ranking<GameRankingValue> ForGames(this Ranking<GameRankingValue> ranking, IReadOnlyList<IGame> games)
         {
-            var gameIDs = games.Select(game => game.ID).ToList();
-            return Ranking.Create(ranking.Where(rank => gameIDs.Contains(rank.Game.ID)));
+            var gameIds = games.Select(game => game.Id).ToList();
+            return Ranking.Create(ranking.Where(rank => gameIds.Contains(rank.Game.Id)));
         }
     }
 }
