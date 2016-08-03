@@ -52,10 +52,9 @@ namespace CollegeFbsRankings.Application.CalculateRankings
                 var seasonRepository = repository.ForSeason(season);
 
                 var fbsTeamsByConference = seasonRepository.Conferences.Fbs().Execute()
-                    .Select(conference => new KeyValuePair<Conference, IReadOnlyList<Team>>(
-                        conference,
-                        seasonRepository.Teams.ForConference(conference).Execute().ToList()))
-                    .ToList();
+                    .ToDictionary<Conference, Conference, IReadOnlyList<Team>>(
+                        conference => conference,
+                        conference => seasonRepository.Teams.ForConference(conference).Execute().ToList());
 
                 var allTeams = seasonRepository.Teams.Execute().ToList();
                 var fbsTeams = allTeams.Fbs().ToList();
@@ -76,12 +75,12 @@ namespace CollegeFbsRankings.Application.CalculateRankings
                 var yearSummaryFileName = Path.Combine(yearOutputFolder, "Summary.txt");
 
                 #endregion
-                
-                Dictionary<Team, SingleDepthWins.Data> singleDepthWinsRegularSeasonOverallData = null;
-                Dictionary<Team, SingleDepthWins.Data> singleDepthWinsRegularSeasonFbsData = null;
 
-                Dictionary<Team, SimultaneousWins.Data> simultaneousWinsRegularSeasonOverallData = null;
-                Dictionary<Team, SimultaneousWins.Data> simultaneousWinsRegularSeasonFbsData = null;
+                IReadOnlyDictionary<Team, SingleDepthWins.Data> singleDepthWinsRegularSeasonOverallData = null;
+                IReadOnlyDictionary<Team, SingleDepthWins.Data> singleDepthWinsRegularSeasonFbsData = null;
+
+                IReadOnlyDictionary<Team, SimultaneousWins.Data> simultaneousWinsRegularSeasonOverallData = null;
+                IReadOnlyDictionary<Team, SimultaneousWins.Data> simultaneousWinsRegularSeasonFbsData = null;
 
                 for (int week = 1; week <= currentWeek; ++week)
                 {
@@ -632,7 +631,7 @@ namespace CollegeFbsRankings.Application.CalculateRankings
         private static string FormatRankingSummary(int year, int week,
             Ranking<TeamRankingValue> performanceRanking,
             Ranking<TeamRankingValue> futureScheduleStrengthRanking,
-            Dictionary<int, Ranking<GameRankingValue>> gameStrengthRanking)
+            IReadOnlyDictionary<int, Ranking<GameRankingValue>> gameStrengthRanking)
         {
             var writer = new StringWriter();
 

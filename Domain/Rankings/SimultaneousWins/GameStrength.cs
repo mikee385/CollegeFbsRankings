@@ -12,17 +12,17 @@ namespace CollegeFbsRankings.Domain.Rankings
     {
         public static class GameStrength
         {
-            public static Ranking<GameRankingValue> Overall(IEnumerable<IGame> games, Dictionary<Team, Data> performanceData)
+            public static Ranking<GameRankingValue> Overall(IEnumerable<IGame> games, IReadOnlyDictionary<Team, Data> performanceData)
             {
                 return Calculate(games, performanceData);
             }
 
-            public static Dictionary<int, Ranking<GameRankingValue>> ByWeek(IEnumerable<IGame> games, Dictionary<Team, Data> performanceData)
+            public static IReadOnlyDictionary<int, Ranking<GameRankingValue>> ByWeek(IEnumerable<IGame> games, IReadOnlyDictionary<Team, Data> performanceData)
             {
                 return games.GroupBy(g => g.Week).ToDictionary(group => group.Key, group => Calculate(group, performanceData));
             }
 
-            private static Ranking<GameRankingValue> Calculate(IEnumerable<IGame> games, Dictionary<Team, Data> performanceData)
+            private static Ranking<GameRankingValue> Calculate(IEnumerable<IGame> games, IReadOnlyDictionary<Team, Data> performanceData)
             {
                 return Ranking.Create(games.Select(game =>
                 {

@@ -50,14 +50,14 @@ namespace CollegeFbsRankings.Domain.Rankings
                 return new Data(gameTotal, winTotal, opponentGameTotal, opponentWinTotal, String.Empty);
             }
 
-            public static Dictionary<Team, Data> FullSeason(IEnumerable<Team> teams)
+            public static IReadOnlyDictionary<Team, Data> FullSeason(IEnumerable<Team> teams)
             {
                 return Get(teams,
                         t => t.Games.Completed(),
                         o => o.Games.Completed());
             }
 
-            public static Dictionary<Team, Data> RegularSeason(IEnumerable<Team> teams, int week)
+            public static IReadOnlyDictionary<Team, Data> RegularSeason(IEnumerable<Team> teams, int week)
             {
                 return Get(teams,
                         t => t.Games.Where(g => g.Week <= week).Completed().RegularSeason(),
@@ -66,14 +66,14 @@ namespace CollegeFbsRankings.Domain.Rankings
 
             public static class Fbs
             {
-                public static Dictionary<Team, Data> FullSeason(IEnumerable<Team> teams)
+                public static IReadOnlyDictionary<Team, Data> FullSeason(IEnumerable<Team> teams)
                 {
                     return Get(teams,
                             t => t.Games.Completed().Fbs(),
                             o => o.Games.Completed().Fbs());
                 }
 
-                public static Dictionary<Team, Data> RegularSeason(IEnumerable<Team> teams, int week)
+                public static IReadOnlyDictionary<Team, Data> RegularSeason(IEnumerable<Team> teams, int week)
                 {
                     return Get(teams,
                             t => t.Games.Where(g => g.Week <= week).Completed().RegularSeason().Fbs(),
@@ -81,7 +81,7 @@ namespace CollegeFbsRankings.Domain.Rankings
                 }
             }
 
-            private static Dictionary<Team, Data> Get(
+            private static IReadOnlyDictionary<Team, Data> Get(
                 IEnumerable<Team> teams,
                 Func<Team, IEnumerable<ITeamCompletedGame>> teamGameFilter,
                 Func<Team, IEnumerable<ITeamCompletedGame>> opponentGameFilter)

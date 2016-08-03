@@ -11,7 +11,7 @@ namespace CollegeFbsRankings.Domain.Rankings
     {
         public static class WinStrength
         {
-            public static Ranking<TeamRankingValue> Overall(IEnumerable<Team> teams, Dictionary<Team, Data> performanceData)
+            public static Ranking<TeamRankingValue> Overall(IEnumerable<Team> teams, IReadOnlyDictionary<Team, Data> performanceData)
             {
                 return Ranking.Create(teams.Select(team =>
                 {

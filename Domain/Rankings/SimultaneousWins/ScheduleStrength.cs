@@ -12,24 +12,24 @@ namespace CollegeFbsRankings.Domain.Rankings
     {
         public static class ScheduleStrength
         {
-            public static Ranking<TeamRankingValue> Overall(IEnumerable<Team> teams, Dictionary<Team, Data> performanceData)
+            public static Ranking<TeamRankingValue> Overall(IEnumerable<Team> teams, IReadOnlyDictionary<Team, Data> performanceData)
             {
                 return Calculate(teams, performanceData, games => games.RegularSeason());
             }
 
-            public static Ranking<TeamRankingValue> Completed(IEnumerable<Team> teams, int week, Dictionary<Team, Data> performanceData)
+            public static Ranking<TeamRankingValue> Completed(IEnumerable<Team> teams, int week, IReadOnlyDictionary<Team, Data> performanceData)
             {
                 return Calculate(teams, performanceData, games => games.Where(g => g.Week <= week).Completed().RegularSeason());
             }
 
-            public static Ranking<TeamRankingValue> Future(IEnumerable<Team> teams, int week, Dictionary<Team, Data> performanceData)
+            public static Ranking<TeamRankingValue> Future(IEnumerable<Team> teams, int week, IReadOnlyDictionary<Team, Data> performanceData)
             {
                 return Calculate(teams, performanceData, games => games.Where(g => g.Week > week).RegularSeason());
             }
 
             private static Ranking<TeamRankingValue> Calculate(
                 IEnumerable<Team> teams,
-                Dictionary<Team, Data> performanceData,
+                IReadOnlyDictionary<Team, Data> performanceData,
                 Func<IEnumerable<ITeamGame>, IEnumerable<ITeamGame>> teamGameFilter)
             {
                 return Ranking.Create(teams.Select(team =>

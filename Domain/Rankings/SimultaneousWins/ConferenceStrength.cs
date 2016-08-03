@@ -12,7 +12,7 @@ namespace CollegeFbsRankings.Domain.Rankings
     {
         public static class ConferenceStrength
         {
-            public static Ranking<ConferenceRankingValue> Overall(IEnumerable<KeyValuePair<Conference, IReadOnlyList<Team>>> teamsByConference, Dictionary<Team, Data> performanceData)
+            public static Ranking<ConferenceRankingValue> Overall(IReadOnlyDictionary<Conference, IReadOnlyList<Team>> teamsByConference, IReadOnlyDictionary<Team, Data> performanceData)
             {
                 return Ranking.Create(teamsByConference.Select(pair =>
                 {
