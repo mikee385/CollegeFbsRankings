@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
 
 using CollegeFbsRankings.Domain.Conferences;
-using CollegeFbsRankings.Domain.Seasons;
 using CollegeFbsRankings.Domain.Teams;
 
 namespace CollegeFbsRankings.Domain.Repositories
 {
-    public interface ITeamQuery<out T> : IQuery<IEnumerable<T>> where T : Team
+    public interface ITeamQuery<out T> : IQuery<IReadOnlyTeamList<T>> where T : Team
     {
         ITeamQuery<T> ById(TeamId id);
 

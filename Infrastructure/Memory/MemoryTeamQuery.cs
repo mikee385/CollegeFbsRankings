@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 using CollegeFbsRankings.Domain.Conferences;
 using CollegeFbsRankings.Domain.Repositories;
-using CollegeFbsRankings.Domain.Seasons;
 using CollegeFbsRankings.Domain.Teams;
 
 namespace CollegeFbsRankings.Infrastructure.Memory
@@ -20,9 +19,9 @@ namespace CollegeFbsRankings.Infrastructure.Memory
             _items = teams;
         }
 
-        public IEnumerable<T> Execute()
+        public IReadOnlyTeamList<T> Execute()
         {
-            return _items;
+            return new TeamList<T>(_items);
         }
 
         public ITeamQuery<T> ById(TeamId id)

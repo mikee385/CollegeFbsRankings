@@ -244,7 +244,7 @@ namespace CollegeFbsRankings.Infrastructure.Sql.EntityFramework
                 var fbsConferences = seasonRepository.Conferences.Fbs().Execute();
                 foreach (var conference in fbsConferences)
                 {
-                    var fbsDivisions = seasonRepository.Divisions.ForConference(conference.Id).Execute().ToList();
+                    var fbsDivisions = seasonRepository.Divisions.ForConference(conference.Id).Execute();
                     if (fbsDivisions.Any())
                     {
                         foreach (var division in fbsDivisions)

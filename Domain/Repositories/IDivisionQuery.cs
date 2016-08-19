@@ -4,7 +4,7 @@ using CollegeFbsRankings.Domain.Conferences;
 
 namespace CollegeFbsRankings.Domain.Repositories
 {
-    public interface IDivisionQuery<out T> : IQuery<IEnumerable<T>> where T : Division
+    public interface IDivisionQuery<out T> : IQuery<IReadOnlyDivisionList<T>> where T : Division
     {
         IDivisionQuery<T> ById(DivisionId id);
 

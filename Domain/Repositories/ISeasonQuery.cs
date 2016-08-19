@@ -4,7 +4,7 @@ using CollegeFbsRankings.Domain.Seasons;
 
 namespace CollegeFbsRankings.Domain.Repositories
 {
-    public interface ISeasonQuery : IQuery<IEnumerable<Season>>
+    public interface ISeasonQuery : IQuery<IReadOnlySeasonList>
     {
         ISeasonQuery ById(SeasonId id);
 

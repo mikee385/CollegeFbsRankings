@@ -18,9 +18,9 @@ namespace CollegeFbsRankings.Infrastructure.Memory
             _items = divisions;
         }
 
-        public IEnumerable<T> Execute()
+        public IReadOnlyDivisionList<T> Execute()
         {
-            return _items;
+            return new DivisionList<T>(_items);
         }
 
         public IDivisionQuery<T> ById(DivisionId id)

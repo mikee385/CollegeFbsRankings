@@ -54,14 +54,14 @@ namespace CollegeFbsRankings.Application.CalculateRankings
                 var fbsTeamsByConference = seasonRepository.Conferences.Fbs().Execute()
                     .ToDictionary<Conference, Conference, IReadOnlyList<Team>>(
                         conference => conference,
-                        conference => seasonRepository.Teams.ForConference(conference).Execute().ToList());
+                        conference => seasonRepository.Teams.ForConference(conference).Execute());
 
-                var allTeams = seasonRepository.Teams.Execute().ToList();
+                var allTeams = seasonRepository.Teams.Execute();
                 var fbsTeams = allTeams.Fbs().ToList();
                 var fcsTeams = allTeams.Fcs().ToList();
 
-                var games = seasonRepository.Games.Execute().ToList();
-                var cancelledGames = seasonRepository.CancelledGames.Execute().ToList();
+                var games = seasonRepository.Games.Execute();
+                var cancelledGames = seasonRepository.CancelledGames.Execute();
 
                 var currentWeek = seasonRepository.NumCompletedWeeks();
 

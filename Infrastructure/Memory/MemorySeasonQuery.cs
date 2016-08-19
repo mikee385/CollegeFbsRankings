@@ -18,9 +18,9 @@ namespace CollegeFbsRankings.Infrastructure.Memory
             _items = seasons;
         }
 
-        public IEnumerable<Season> Execute()
+        public IReadOnlySeasonList Execute()
         {
-            return _items;
+            return new SeasonList(_items);
         }
 
         public ISeasonQuery ById(SeasonId id)

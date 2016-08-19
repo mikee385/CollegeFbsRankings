@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 using CollegeFbsRankings.Domain.Conferences;
 using CollegeFbsRankings.Domain.Repositories;
-using CollegeFbsRankings.Domain.Seasons;
 
 namespace CollegeFbsRankings.Infrastructure.Memory
 {
@@ -19,9 +18,9 @@ namespace CollegeFbsRankings.Infrastructure.Memory
             _items = conferences;
         }
 
-        public IEnumerable<T> Execute()
+        public IReadOnlyConferenceList<T> Execute()
         {
-            return _items;
+            return new ConferenceList<T>(_items);
         }
 
         public IConferenceQuery<T> ById(ConferenceId id)

@@ -5,7 +5,7 @@ using CollegeFbsRankings.Domain.Teams;
 
 namespace CollegeFbsRankings.Domain.Repositories
 {
-    public interface IGameQuery<out T> : IQuery<IEnumerable<T>> where T : IGame
+    public interface IGameQuery<out T> : IQuery<IReadOnlyGameList<T>> where T : IGame
     {
         IGameQuery<T> ById(GameId id);
 

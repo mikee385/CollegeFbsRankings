@@ -42,12 +42,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Conferences\Conference.cs" />
+    <Compile Include="Conferences\ConferenceList.cs" />
     <Compile Include="Conferences\Division.cs" />
+    <Compile Include="Conferences\DivisionList.cs" />
     <Compile Include="Conferences\FbsConference.cs" />
     <Compile Include="Conferences\FbsDivision.cs" />
+    <Compile Include="Conferences\IConferenceList.cs" />
+    <Compile Include="Conferences\IDivisionList.cs" />
+    <Compile Include="Conferences\IReadOnlyConferenceList.cs" />
+    <Compile Include="Conferences\IReadOnlyDivisionList.cs" />
     <Compile Include="Games\CompletedGame.cs" />
     <Compile Include="Games\FutureGame.cs" />
     <Compile Include="Games\Game.cs" />
+    <Compile Include="Games\GameList.cs" />
+    <Compile Include="Games\IGameList.cs" />
+    <Compile Include="Games\IReadOnlyGameList.cs" />
     <Compile Include="Games\TeamCompletedGame.cs" />
     <Compile Include="Games\TeamFutureGame.cs" />
     <Compile Include="Games\TeamGame.cs" />
@@ -72,6 +81,7 @@
     <Compile Include="Rankings\SingleDepthWins\ScheduleStrength.cs" />
     <Compile Include="Rankings\SingleDepthWins\WinStrength.cs" />
     <Compile Include="Rankings\TeamRankingValue.cs" />
+    <Compile Include="CovariantDictionaryWrapper.cs" />
     <Compile Include="Repositories\ICollegeFbsRepository.cs" />
     <Compile Include="Repositories\IConferenceQuery.cs" />
     <Compile Include="Repositories\IDivisionQuery.cs" />
@@ -80,10 +90,16 @@
     <Compile Include="Repositories\ISeasonQuery.cs" />
     <Compile Include="Repositories\ISeasonRepository.cs" />
     <Compile Include="Repositories\ITeamQuery.cs" />
+    <Compile Include="Seasons\IReadOnlySeasonList.cs" />
+    <Compile Include="Seasons\ISeasonList.cs" />
     <Compile Include="Seasons\Season.cs" />
+    <Compile Include="Seasons\SeasonList.cs" />
     <Compile Include="Teams\FbsTeam.cs" />
     <Compile Include="Teams\FcsTeam.cs" />
+    <Compile Include="Teams\IReadOnlyTeamList.cs" />
+    <Compile Include="Teams\ITeamList.cs" />
     <Compile Include="Teams\Team.cs" />
+    <Compile Include="Teams\TeamList.cs" />
     <Compile Include="Validations\Validation.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
