@@ -9,14 +9,15 @@ namespace CollegeFbsRankings.Domain.Seasons
 {
     public class SeasonList : KeyedCollection<SeasonId, Season>, ISeasonList
     {
-        private readonly CovariantDictionaryWrapper<SeasonId, Season, Season> _dictionary;
+        private CovariantDictionaryWrapper<SeasonId, Season, Season> _dictionary;
 
         public SeasonList()
         {
-            _dictionary = new CovariantDictionaryWrapper<SeasonId, Season, Season>(Dictionary);
+            _dictionary = null;
         }
 
         public SeasonList(IEnumerable<Season> seasons)
+            : this()
         {
             foreach (var season in seasons)
             {
@@ -31,6 +32,10 @@ namespace CollegeFbsRankings.Domain.Seasons
 
         public IReadOnlyDictionary<SeasonId, Season> AsDictionary()
         {
+            if (_dictionary == null && Dictionary != null)
+            {
+                _dictionary = new CovariantDictionaryWrapper<SeasonId, Season, Season>(Dictionary);
+            }
             return _dictionary;
         }
     }

@@ -9,14 +9,15 @@ namespace CollegeFbsRankings.Domain.Teams
 {
     public class TeamList<TValue> : KeyedCollection<TeamId, TValue>, ITeamList<TValue> where TValue : Team
     {
-        private readonly CovariantDictionaryWrapper<TeamId, TValue, Team> _dictionary;
+        private CovariantDictionaryWrapper<TeamId, TValue, Team> _dictionary;
 
         public TeamList()
         {
-            _dictionary = new CovariantDictionaryWrapper<TeamId, TValue, Team>(Dictionary);
+            _dictionary = null;
         }
 
         public TeamList(IEnumerable<TValue> teams)
+            : this()
         {
             foreach (var team in teams)
             {
@@ -31,6 +32,10 @@ namespace CollegeFbsRankings.Domain.Teams
 
         public IReadOnlyDictionary<TeamId, Team> AsDictionary()
         {
+            if (_dictionary == null && Dictionary != null)
+            {
+                _dictionary = new CovariantDictionaryWrapper<TeamId, TValue, Team>(Dictionary);
+            }
             return _dictionary;
         }
     }

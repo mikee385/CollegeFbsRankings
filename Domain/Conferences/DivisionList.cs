@@ -9,14 +9,15 @@ namespace CollegeFbsRankings.Domain.Conferences
 {
     public class DivisionList<TValue> : KeyedCollection<DivisionId, TValue>, IDivisionList<TValue> where TValue : Division
     {
-        private readonly CovariantDictionaryWrapper<DivisionId, TValue, Division> _dictionary;
+        private CovariantDictionaryWrapper<DivisionId, TValue, Division> _dictionary;
 
         public DivisionList()
         {
-            _dictionary = new CovariantDictionaryWrapper<DivisionId, TValue, Division>(Dictionary);
+            _dictionary = null;
         }
 
         public DivisionList(IEnumerable<TValue> divisions)
+            : this()
         {
             foreach (var division in divisions)
             {
@@ -31,6 +32,10 @@ namespace CollegeFbsRankings.Domain.Conferences
 
         public IReadOnlyDictionary<DivisionId, Division> AsDictionary()
         {
+            if (_dictionary == null && Dictionary != null)
+            {
+                _dictionary = new CovariantDictionaryWrapper<DivisionId, TValue, Division>(Dictionary);
+            }
             return _dictionary;
         }
     }
