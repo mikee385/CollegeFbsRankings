@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
+using CollegeFbsRankings.Domain;
 using CollegeFbsRankings.Domain.Conferences;
 using CollegeFbsRankings.Domain.Games;
 using CollegeFbsRankings.Domain.Repositories;
@@ -236,13 +237,13 @@ namespace CollegeFbsRankings.Infrastructure.Csv
                     }
                     else if (lineSplit.Length > 12)
                     {
-                        throw new Exception(String.Format(
+                        throw ThrowHelper.FormatError(String.Format(
                             "Too many items on line {0}\n\t{1}",
                             lineCount, line));
                     }
                     else
                     {
-                        throw new Exception(String.Format(
+                        throw ThrowHelper.FormatError(String.Format(
                             "Too few items on line {0}\n\t{1}",
                             lineCount, line));
                     }
@@ -250,7 +251,7 @@ namespace CollegeFbsRankings.Infrastructure.Csv
                     int key;
                     if (!Int32.TryParse(keyString, out key))
                     {
-                        throw new Exception(String.Format(
+                        throw ThrowHelper.FormatError(String.Format(
                             "Unable to convert key \"{2}\" to an Int32 on line {0}\n\t{1}",
                             lineCount, line, keyString));
                     }
@@ -258,7 +259,7 @@ namespace CollegeFbsRankings.Infrastructure.Csv
                     int week;
                     if (!Int32.TryParse(weekString, out week))
                     {
-                        throw new Exception(String.Format(
+                        throw ThrowHelper.FormatError(String.Format(
                             "Unable to convert week \"{2}\" to an Int32 on line {0}\n\t{1}",
                             lineCount, line, weekString));
                     }
@@ -266,7 +267,7 @@ namespace CollegeFbsRankings.Infrastructure.Csv
                     DateTime date;
                     if (!DateTime.TryParse(dateString + " " + timeString, out date))
                     {
-                        throw new Exception(String.Format(
+                        throw ThrowHelper.FormatError(String.Format(
                             "Unable to convert date \"{2}\" and time \"{3}\" to a DateTime on line {0}\n\t{1}",
                             lineCount, line, dateString, timeString));
                     }
@@ -283,7 +284,7 @@ namespace CollegeFbsRankings.Infrastructure.Csv
                     var firstFbsTeams = fbsTeams.Where(team => team.Name == firstTeamName).ToList();
                     if (firstFbsTeams.Count > 1)
                     {
-                        throw new Exception(String.Format(
+                        throw ThrowHelper.FormatError(String.Format(
                             "Multiple FBS teams found with the name \"{2}\" on line {0}\n\t{1}",
                             lineCount, line, firstTeamName));
                     }
@@ -291,7 +292,7 @@ namespace CollegeFbsRankings.Infrastructure.Csv
                     var firstFcsTeams = fcsTeams.Where(team => team.Name == firstTeamName).ToList();
                     if (firstFcsTeams.Count > 1)
                     {
-                        throw new Exception(String.Format(
+                        throw ThrowHelper.FormatError(String.Format(
                             "Multiple FCS teams found with the name \"{2}\" on line {0}\n\t{1}",
                             lineCount, line, firstTeamName));
                     }
@@ -311,7 +312,7 @@ namespace CollegeFbsRankings.Infrastructure.Csv
                         firstTeam = firstFcsTeams.Single();
                     else
                     {
-                        throw new Exception(String.Format(
+                        throw ThrowHelper.FormatError(String.Format(
                             "FBS team and FCS team found with the name \"{2}\" on line {0}\n\t{1}",
                             lineCount, line, firstTeamName));
                     }
@@ -324,7 +325,7 @@ namespace CollegeFbsRankings.Infrastructure.Csv
 
                         if (!Int32.TryParse(firstTeamScoreString, out firstTeamScore))
                         {
-                            throw new Exception(String.Format(
+                            throw ThrowHelper.FormatError(String.Format(
                                 "Unable to convert first team score \"{2}\" to an Int32 on line {0}\n\t{1}",
                                 lineCount, line, firstTeamScoreString));
                         }
@@ -342,7 +343,7 @@ namespace CollegeFbsRankings.Infrastructure.Csv
                         firstTeamIsHome = false;
                     else
                     {
-                        throw new Exception(String.Format(
+                        throw ThrowHelper.FormatError(String.Format(
                             "Unable to convert symbol \"{2}\" to an \"@\" on line {0}\n\t{1}",
                             lineCount, line, homeVsAwaySymbolString));
                     }
@@ -357,7 +358,7 @@ namespace CollegeFbsRankings.Infrastructure.Csv
                     var secondFbsTeams = fbsTeams.Where(team => team.Name == secondTeamName).ToList();
                     if (secondFbsTeams.Count > 1)
                     {
-                        throw new Exception(String.Format(
+                        throw ThrowHelper.FormatError(String.Format(
                             "Multiple FBS teams found with the name \"{2}\" on line {0}\n\t{1}",
                             lineCount, line, secondTeamName));
                     }
@@ -365,7 +366,7 @@ namespace CollegeFbsRankings.Infrastructure.Csv
                     var secondFcsTeams = fcsTeams.Where(team => team.Name == secondTeamName).ToList();
                     if (secondFcsTeams.Count > 1)
                     {
-                        throw new Exception(String.Format(
+                        throw ThrowHelper.FormatError(String.Format(
                             "Multiple FCS teams found with the name \"{2}\" on line {0}\n\t{1}",
                             lineCount, line, secondTeamName));
                     }
@@ -385,7 +386,7 @@ namespace CollegeFbsRankings.Infrastructure.Csv
                         secondTeam = secondFcsTeams.Single();
                     else
                     {
-                        throw new Exception(String.Format(
+                        throw ThrowHelper.FormatError(String.Format(
                             "FBS team and FCS team found with the name \"{2}\" on line {0}\n\t{1}",
                             lineCount, line, secondTeamName));
                     }
@@ -398,7 +399,7 @@ namespace CollegeFbsRankings.Infrastructure.Csv
 
                         if (!Int32.TryParse(secondTeamScoreString, out secondTeamScore))
                         {
-                            throw new Exception(String.Format(
+                            throw ThrowHelper.FormatError(String.Format(
                                 "Unable to convert second team score \"{2}\" to an Int32 on line {0}\n\t{1}",
                                 lineCount, line, secondTeamScoreString));
                         }
@@ -411,7 +412,7 @@ namespace CollegeFbsRankings.Infrastructure.Csv
 
                     if (firstTeam.Name == secondTeam.Name)
                     {
-                        throw new Exception(String.Format(
+                        throw ThrowHelper.FormatError(String.Format(
                             "First team name \"{2}\" and second team name \"{3}\" are the same on line {0}\n\t{1}",
                             lineCount, line, firstTeamNameString, secondTeamNameString));
                     }
@@ -440,7 +441,7 @@ namespace CollegeFbsRankings.Infrastructure.Csv
                     {
                         if (firstTeamScore == secondTeamScore)
                         {
-                            throw new Exception(String.Format(
+                            throw ThrowHelper.FormatError(String.Format(
                                 "First team score \"{2}\" and second team score \"{3}\" are the same on line {0}\n\t{1}",
                                 lineCount, line, firstTeamScoreString, secondTeamScoreString));
                         }
@@ -449,13 +450,13 @@ namespace CollegeFbsRankings.Infrastructure.Csv
                     }
                     else if (hasFirstTeamScore && !hasSecondTeamScore)
                     {
-                        throw new Exception(String.Format(
+                        throw ThrowHelper.FormatError(String.Format(
                             "Found a first team score \"{2}\" but not a second team score on line {0}\n\t{1}",
                             lineCount, line, firstTeamScoreString));
                     }
                     else if (!hasFirstTeamScore && hasSecondTeamScore)
                     {
-                        throw new Exception(String.Format(
+                        throw ThrowHelper.FormatError(String.Format(
                             "Found a second team score \"{2}\" but not a first team score on line {0}\n\t{1}",
                             lineCount, line, secondTeamScoreString));
                     }

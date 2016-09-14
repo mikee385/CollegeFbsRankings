@@ -14,7 +14,7 @@ namespace CollegeFbsRankings.Domain
         public CovariantDictionaryWrapper(IDictionary<TKey, TValue> dictionary)
         {
             if (dictionary == null)
-                throw new ArgumentNullException("dictionary");
+                throw ThrowHelper.ArgumentNull("dictionary");
 
             _dictionary = dictionary;
         }
@@ -72,7 +72,7 @@ namespace CollegeFbsRankings.Domain
         public CovariantReadOnlyDictionaryWrapper(IReadOnlyDictionary<TKey, TValue> dictionary)
         {
             if (dictionary == null)
-                throw new ArgumentNullException("dictionary");
+                throw ThrowHelper.ArgumentNull("dictionary");
 
             _dictionary = dictionary;
         }

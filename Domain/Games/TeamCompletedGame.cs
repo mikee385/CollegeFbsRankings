@@ -27,7 +27,7 @@ namespace CollegeFbsRankings.Domain.Games
                 _isWin = false;
             else
             {
-                throw new Exception(String.Format(
+                throw ThrowHelper.ArgumentError(String.Format(
                     "Team \"{0}\" does not appear to have played in game: {1} vs. {2}",
                     team.Name, game.HomeTeam.Name, game.AwayTeam.Name));
             }

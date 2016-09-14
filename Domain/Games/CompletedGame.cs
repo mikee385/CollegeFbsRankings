@@ -30,6 +30,13 @@ namespace CollegeFbsRankings.Domain.Games
         protected CompletedGame(GameId id, Season season, int week, DateTime date, Team homeTeam, int homeTeamScore, Team awayTeam, int awayTeamScore, string tv, string notes, eSeasonType seasonType)
             : base(id, season, week, date, homeTeam, awayTeam, tv, notes, seasonType)
         {
+            if (homeTeamScore == awayTeamScore)
+            {
+                throw ThrowHelper.ArgumentError(String.Format(
+                    "Score is identical for {0} vs. {1}: {2}-{3}",
+                    homeTeam.Name, awayTeam.Name, homeTeamScore, awayTeamScore));
+            }
+
             _homeTeamScore = homeTeamScore;
             _awayTeamScore = awayTeamScore;
         }
@@ -71,7 +78,7 @@ namespace CollegeFbsRankings.Domain.Games
                 if (AwayTeamScore > HomeTeamScore)
                     return AwayTeam;
 
-                throw new Exception(String.Format(
+                throw ThrowHelper.InvalidOperation(String.Format(
                     "Score is identical for {0} vs. {1}: {2}-{3}",
                     HomeTeam.Name, AwayTeam.Name, HomeTeamScore, AwayTeamScore));
             }
@@ -87,7 +94,7 @@ namespace CollegeFbsRankings.Domain.Games
                 if (AwayTeamScore > HomeTeamScore)
                     return HomeTeam;
 
-                throw new Exception(String.Format(
+                throw ThrowHelper.InvalidOperation(String.Format(
                     "Score is identical for {0} vs. {1}: {2}-{3}",
                     HomeTeam.Name, AwayTeam.Name, HomeTeamScore, AwayTeamScore));
             }
@@ -103,7 +110,7 @@ namespace CollegeFbsRankings.Domain.Games
                 if (AwayTeamScore > HomeTeamScore)
                     return AwayTeamScore;
 
-                throw new Exception(String.Format(
+                throw ThrowHelper.InvalidOperation(String.Format(
                     "Score is identical for {0} vs. {1}: {2}-{3}",
                     HomeTeam.Name, AwayTeam.Name, HomeTeamScore, AwayTeamScore));
             }
@@ -119,7 +126,7 @@ namespace CollegeFbsRankings.Domain.Games
                 if (AwayTeamScore > HomeTeamScore)
                     return HomeTeamScore;
 
-                throw new Exception(String.Format(
+                throw ThrowHelper.InvalidOperation(String.Format(
                     "Score is identical for {0} vs. {1}: {2}-{3}",
                     HomeTeam.Name, AwayTeam.Name, HomeTeamScore, AwayTeamScore));
             }

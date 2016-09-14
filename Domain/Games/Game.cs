@@ -95,7 +95,7 @@ namespace CollegeFbsRankings.Domain.Games
                 _teamType = eTeamType.Fcs;
             else
             {
-                throw new Exception(String.Format(
+                throw ThrowHelper.ArgumentError(String.Format(
                     "Game does not contain an FBS team: {0} vs. {1}",
                     _homeTeam.Name, _awayTeam.Name));
             }

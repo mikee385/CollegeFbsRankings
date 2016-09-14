@@ -73,7 +73,7 @@ namespace CollegeFbsRankings.Domain.Teams
                     }
                     else
                     {
-                        throw new Exception(String.Format(
+                        throw ThrowHelper.ArgumentError(String.Format(
                             "Game for {0} does not appear to be Completed or Future: {1} vs. {2}",
                             Name, game.HomeTeam.Name, game.AwayTeam.Name));
                     }
@@ -81,7 +81,7 @@ namespace CollegeFbsRankings.Domain.Teams
             }
             else
             {
-                throw new Exception(String.Format(
+                throw ThrowHelper.ArgumentError(String.Format(
                     "Cannot add game to team {0} since game is already assigned to {1} and {2}.",
                     Name, game.HomeTeam.Name, game.AwayTeam.Name));
             }
