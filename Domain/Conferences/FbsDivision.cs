@@ -41,12 +41,12 @@ namespace CollegeFbsRankings.Domain.Conferences
             return division;
         }
 
-        new public FbsDivisionId Id
+        public new FbsDivisionId Id
         {
             get { return (FbsDivisionId)base.Id; }
         }
 
-        new public FbsConferenceId ConferenceId
+        public new FbsConferenceId ConferenceId
         {
             get { return (FbsConferenceId)base.ConferenceId; }
         }

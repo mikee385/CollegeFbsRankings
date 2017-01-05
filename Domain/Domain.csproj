@@ -57,30 +57,31 @@
     <Compile Include="Games\GameList.cs" />
     <Compile Include="Games\IGameList.cs" />
     <Compile Include="Games\IReadOnlyGameList.cs" />
-    <Compile Include="Games\TeamCompletedGame.cs" />
-    <Compile Include="Games\TeamFutureGame.cs" />
-    <Compile Include="Games\TeamGame.cs" />
     <Compile Include="Identifier.cs" />
     <Compile Include="LinearAlgebra\Matrix.cs" />
     <Compile Include="LinearAlgebra\Vector.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Rankings\ConferenceRankingValue.cs" />
-    <Compile Include="Rankings\GameRankingValue.cs" />
+    <Compile Include="Rankings\IRankingValue.cs" />
+    <Compile Include="Rankings\SimultaneousWins\ConferenceRankingValue.cs" />
+    <Compile Include="Rankings\SimultaneousWins\ConferenceStrengthRanking.cs" />
+    <Compile Include="Rankings\SimultaneousWins\GameRankingValue.cs" />
+    <Compile Include="Rankings\SimultaneousWins\GameStrengthRanking.cs" />
+    <Compile Include="Rankings\SimultaneousWins\PerformanceRanking.cs" />
     <Compile Include="Rankings\Ranking.cs" />
-    <Compile Include="Rankings\RankingValue.cs" />
-    <Compile Include="Rankings\SimultaneousWins\ConferenceStrength.cs" />
-    <Compile Include="Rankings\SimultaneousWins\Data.cs" />
-    <Compile Include="Rankings\SimultaneousWins\GameStrength.cs" />
-    <Compile Include="Rankings\SimultaneousWins\Performance.cs" />
-    <Compile Include="Rankings\SimultaneousWins\ScheduleStrength.cs" />
-    <Compile Include="Rankings\SimultaneousWins\WinStrength.cs" />
-    <Compile Include="Rankings\SingleDepthWins\ConferenceStrength.cs" />
-    <Compile Include="Rankings\SingleDepthWins\Data.cs" />
-    <Compile Include="Rankings\SingleDepthWins\GameStrength.cs" />
-    <Compile Include="Rankings\SingleDepthWins\Performance.cs" />
-    <Compile Include="Rankings\SingleDepthWins\ScheduleStrength.cs" />
-    <Compile Include="Rankings\SingleDepthWins\WinStrength.cs" />
-    <Compile Include="Rankings\TeamRankingValue.cs" />
+    <Compile Include="Rankings\SimultaneousWins\RankingValue.cs" />
+    <Compile Include="Rankings\SimultaneousWins\ScheduleStrengthRanking.cs" />
+    <Compile Include="Rankings\SimultaneousWins\TeamRankingValue.cs" />
+    <Compile Include="Rankings\SimultaneousWins\WinStrengthRanking.cs" />
+    <Compile Include="Rankings\SingleDepthWins\ConferenceRankingValue.cs" />
+    <Compile Include="Rankings\SingleDepthWins\ConferenceStrengthRanking.cs" />
+    <Compile Include="Rankings\SingleDepthWins\GameRankingValue.cs" />
+    <Compile Include="Rankings\SingleDepthWins\GameStrengthRanking.cs" />
+    <Compile Include="Rankings\SingleDepthWins\PerformanceRanking.cs" />
+    <Compile Include="Rankings\SingleDepthWins\RankingValue.cs" />
+    <Compile Include="Rankings\SingleDepthWins\ScheduleStrengthRanking.cs" />
+    <Compile Include="Rankings\TeamRecordCollection.cs" />
+    <Compile Include="Rankings\SingleDepthWins\TeamRankingValue.cs" />
+    <Compile Include="Rankings\SingleDepthWins\WinStrengthRanking.cs" />
     <Compile Include="CovariantDictionaryWrapper.cs" />
     <Compile Include="Repositories\ICollegeFbsRepository.cs" />
     <Compile Include="Repositories\IConferenceQuery.cs" />
@@ -100,8 +101,11 @@
     <Compile Include="Teams\ITeamList.cs" />
     <Compile Include="Teams\Team.cs" />
     <Compile Include="Teams\TeamList.cs" />
-    <Compile Include="Validations\Validation.cs" />
+    <Compile Include="Validations\eValidationResult.cs" />
+    <Compile Include="Validations\SimultaneousWins\Validation.cs" />
+    <Compile Include="Validations\SingleDepthWins\Validation.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace CollegeFbsRankings.Domain.Games
 {
-    public class GameList<TValue> : KeyedCollection<GameId, TValue>, IGameList<TValue> where TValue : IGame
+    public class GameList<TValue> : KeyedCollection<GameId, TValue>, IGameList<TValue> where TValue : Game
     {
-        private CovariantDictionaryWrapper<GameId, TValue, IGame> _dictionary;
+        private CovariantDictionaryWrapper<GameId, TValue, Game> _dictionary;
 
         public GameList()
         {
@@ -30,11 +30,11 @@ namespace CollegeFbsRankings.Domain.Games
             return game.Id;
         }
 
-        public IReadOnlyDictionary<GameId, IGame> AsDictionary()
+        public IReadOnlyDictionary<GameId, Game> AsDictionary()
         {
             if (_dictionary == null && Dictionary != null)
             {
-                _dictionary = new CovariantDictionaryWrapper<GameId, TValue, IGame>(Dictionary);
+                _dictionary = new CovariantDictionaryWrapper<GameId, TValue, Game>(Dictionary);
             }
             return _dictionary;
         }

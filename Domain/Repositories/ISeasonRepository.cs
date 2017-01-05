@@ -21,9 +21,9 @@ namespace CollegeFbsRankings.Domain.Repositories
 
         ITeamQuery<Team> Teams { get; }
 
-        IGameQuery<IGame> Games { get; }
+        IGameQuery<Game> Games { get; }
 
-        IGameQuery<IGame> CancelledGames { get; }
+        IGameQuery<Game> CancelledGames { get; }
 
         int NumCompletedWeeks();
     }

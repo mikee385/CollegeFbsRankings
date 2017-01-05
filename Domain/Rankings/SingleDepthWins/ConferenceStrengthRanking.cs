@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using CollegeFbsRankings.Domain.Conferences;
 using CollegeFbsRankings.Domain.Teams;
 
-namespace CollegeFbsRankings.Domain.Rankings_New.SimultaneousWins
+namespace CollegeFbsRankings.Domain.Rankings.SingleDepthWins
 {
     public class ConferenceStrengthRankingValue : ConferenceRankingValue
     {
@@ -29,14 +29,25 @@ namespace CollegeFbsRankings.Domain.Rankings_New.SimultaneousWins
         }
     }
 
-    public static class ConferenceStrength
+    public class ConferenceStrengthRanking : Ranking<ConferenceId, ConferenceStrengthRankingValue>
     {
-        public static Ranking<ConferenceId, ConferenceStrengthRankingValue> Calculate(
+        public ConferenceStrengthRanking(
+            IReadOnlyDictionary<ConferenceId, Conference> conferenceMap,
+            IReadOnlyDictionary<TeamId, Team> teamMap,
+            PerformanceRanking teamRanking)
+            : this(Calculate(conferenceMap, teamMap, teamRanking))
+        { }
+
+        public ConferenceStrengthRanking(IEnumerable<KeyValuePair<ConferenceId, ConferenceStrengthRankingValue>> data)
+            : base(data)
+        { }
+
+        private static IEnumerable<KeyValuePair<ConferenceId, ConferenceStrengthRankingValue>> Calculate(
             IReadOnlyDictionary<ConferenceId, Conference> conferenceMap,
             IReadOnlyDictionary<TeamId, Team> teamMap,
             Ranking<TeamId, PerformanceRankingValue> teamRanking)
         {
-            var ranking = new Ranking<ConferenceId, ConferenceStrengthRankingValue>();
+            var ranking = new Dictionary<ConferenceId, ConferenceStrengthRankingValue>();
             foreach (var item in conferenceMap)
             {
                 ranking.Add(item.Key, new ConferenceStrengthRankingValue(item.Value));
@@ -55,6 +66,11 @@ namespace CollegeFbsRankings.Domain.Rankings_New.SimultaneousWins
             }
 
             return ranking;
+        }
+
+        public ConferenceStrengthRanking ForConferences(ICollection<ConferenceId> conferenceIds)
+        {
+            return new ConferenceStrengthRanking(this.Where(rank => conferenceIds.Contains(rank.Key)));
         }
     }
 }

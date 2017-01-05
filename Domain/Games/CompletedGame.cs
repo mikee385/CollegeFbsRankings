@@ -7,47 +7,28 @@ using CollegeFbsRankings.Domain.Teams;
 
 namespace CollegeFbsRankings.Domain.Games
 {
-    public interface ICompletedGame : IGame
-    {
-        int HomeTeamScore { get; }
-
-        int AwayTeamScore { get; }
-
-        Team WinningTeam { get; }
-
-        Team LosingTeam { get; }
-
-        int WinningTeamScore { get; }
-
-        int LosingTeamScore { get; }
-    }
-
-    public class CompletedGame : Game, ICompletedGame
+    public class CompletedGame : Game
     {
         private readonly int _homeTeamScore;
         private readonly int _awayTeamScore;
 
-        protected CompletedGame(GameId id, Season season, int week, DateTime date, Team homeTeam, int homeTeamScore, Team awayTeam, int awayTeamScore, string tv, string notes, eSeasonType seasonType)
-            : base(id, season, week, date, homeTeam, awayTeam, tv, notes, seasonType)
+        protected CompletedGame(GameId id, Season season, int week, DateTime date, TeamId homeTeamId, int homeTeamScore, TeamId awayTeamId, int awayTeamScore, string tv, string notes, eSeasonType seasonType)
+            : base(id, season, week, date, homeTeamId, awayTeamId, tv, notes, seasonType)
         {
             _homeTeamScore = homeTeamScore;
             _awayTeamScore = awayTeamScore;
         }
 
-        public static ICompletedGame Create(Season season, int week, DateTime date, Team homeTeam, int homeTeamScore, Team awayTeam, int awayTeamScore, string tv, string notes, eSeasonType seasonType)
+        public static CompletedGame Create(Season season, int week, DateTime date, TeamId homeTeamId, int homeTeamScore, TeamId awayTeamId, int awayTeamScore, string tv, string notes, eSeasonType seasonType)
         {
             var id = GameId.Create();
-            var game = new CompletedGame(id, season, week, date, homeTeam, homeTeamScore, awayTeam, awayTeamScore, tv, notes, seasonType);
-            homeTeam.AddGame(game);
-            awayTeam.AddGame(game);
+            var game = new CompletedGame(id, season, week, date, homeTeamId, homeTeamScore, awayTeamId, awayTeamScore, tv, notes, seasonType);
             return game;
         }
 
-        public static ICompletedGame FromExisting(GameId id, Season season, int week, DateTime date, Team homeTeam, int homeTeamScore, Team awayTeam, int awayTeamScore, string tv, string notes, eSeasonType seasonType)
+        public static CompletedGame FromExisting(GameId id, Season season, int week, DateTime date, TeamId homeTeamId, int homeTeamScore, TeamId awayTeamId, int awayTeamScore, string tv, string notes, eSeasonType seasonType)
         {
-            var game = new CompletedGame(id, season, week, date, homeTeam, homeTeamScore, awayTeam, awayTeamScore, tv, notes, seasonType);
-            homeTeam.AddGame(game);
-            awayTeam.AddGame(game);
+            var game = new CompletedGame(id, season, week, date, homeTeamId, homeTeamScore, awayTeamId, awayTeamScore, tv, notes, seasonType);
             return game;
         }
 
@@ -61,35 +42,35 @@ namespace CollegeFbsRankings.Domain.Games
             get { return _awayTeamScore; }
         }
 
-        public Team WinningTeam
+        public TeamId WinningTeamId
         {
             get
             {
                 if (HomeTeamScore > AwayTeamScore)
-                    return HomeTeam;
+                    return HomeTeamId;
 
                 if (AwayTeamScore > HomeTeamScore)
-                    return AwayTeam;
+                    return AwayTeamId;
 
                 throw new Exception(String.Format(
                     "Score is identical for {0} vs. {1}: {2}-{3}",
-                    HomeTeam.Name, AwayTeam.Name, HomeTeamScore, AwayTeamScore));
+                    HomeTeamId, AwayTeamId, HomeTeamScore, AwayTeamScore));
             }
         }
 
-        public Team LosingTeam
+        public TeamId LosingTeamId
         {
             get
             {
                 if (HomeTeamScore > AwayTeamScore)
-                    return AwayTeam;
+                    return AwayTeamId;
 
                 if (AwayTeamScore > HomeTeamScore)
-                    return HomeTeam;
+                    return HomeTeamId;
 
                 throw new Exception(String.Format(
                     "Score is identical for {0} vs. {1}: {2}-{3}",
-                    HomeTeam.Name, AwayTeam.Name, HomeTeamScore, AwayTeamScore));
+                    HomeTeamId, AwayTeamId, HomeTeamScore, AwayTeamScore));
             }
         }
 
@@ -105,7 +86,7 @@ namespace CollegeFbsRankings.Domain.Games
 
                 throw new Exception(String.Format(
                     "Score is identical for {0} vs. {1}: {2}-{3}",
-                    HomeTeam.Name, AwayTeam.Name, HomeTeamScore, AwayTeamScore));
+                    HomeTeamId, AwayTeamId, HomeTeamScore, AwayTeamScore));
             }
         }
 
@@ -121,16 +102,16 @@ namespace CollegeFbsRankings.Domain.Games
 
                 throw new Exception(String.Format(
                     "Score is identical for {0} vs. {1}: {2}-{3}",
-                    HomeTeam.Name, AwayTeam.Name, HomeTeamScore, AwayTeamScore));
+                    HomeTeamId, AwayTeamId, HomeTeamScore, AwayTeamScore));
             }
         }
     }
 
     public static class CompletedGameExtensions
     {
-        public static IEnumerable<ICompletedGame> Completed(this IEnumerable<IGame> games)
+        public static IEnumerable<CompletedGame> Completed(this IEnumerable<Game> games)
         {
-            return games.OfType<ICompletedGame>();
+            return games.OfType<CompletedGame>();
         }
     }
 }

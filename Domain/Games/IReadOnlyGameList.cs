@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace CollegeFbsRankings.Domain.Games
 {
-    public interface IReadOnlyGameList<out TValue> : IReadOnlyList<TValue> where TValue : IGame
+    public interface IReadOnlyGameList<out TValue> : IReadOnlyList<TValue> where TValue : Game
     {
-        IReadOnlyDictionary<GameId, IGame> AsDictionary();
+        IReadOnlyDictionary<GameId, Game> AsDictionary();
     }
 }

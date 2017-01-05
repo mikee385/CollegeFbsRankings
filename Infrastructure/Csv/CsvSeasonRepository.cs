@@ -25,9 +25,9 @@ namespace CollegeFbsRankings.Infrastructure.Csv
         private readonly List<Conference> _conferences;
         private readonly List<Division> _divisions;
         private readonly List<Team> _teams;
-        private readonly List<IGame> _games;
+        private readonly List<Game> _games;
 
-        private readonly List<IGame> _cancelledGames;
+        private readonly List<Game> _cancelledGames;
 
         public CsvSeasonRepository(Season season)
         {
@@ -35,9 +35,9 @@ namespace CollegeFbsRankings.Infrastructure.Csv
             _conferences = new List<Conference>();
             _divisions = new List<Division>();
             _teams = new List<Team>();
-            _games = new List<IGame>();
+            _games = new List<Game>();
 
-            _cancelledGames = new List<IGame>();
+            _cancelledGames = new List<Game>();
         }
 
         public void AddCsvData(TextReader fbsTeamCsvData, TextReader fbsGameCsvData)
@@ -51,8 +51,6 @@ namespace CollegeFbsRankings.Infrastructure.Csv
             foreach (var game in cancelledGames)
             {
                 _games.Remove(game);
-                game.HomeTeam.RemoveGame(game);
-                game.AwayTeam.RemoveGame(game);
             }
             _cancelledGames.AddRange(cancelledGames);
         }
@@ -162,7 +160,7 @@ namespace CollegeFbsRankings.Infrastructure.Csv
 
         private void ReadGameData(TextReader reader)
         {
-            var games = new List<IGame>();
+            var games = new List<Game>();
             var skippedGameLines = new List<string>();
 
             var fbsTeams = _teams.Fbs().ToList();
@@ -435,7 +433,7 @@ namespace CollegeFbsRankings.Infrastructure.Csv
 
                     var seasonType = (week > _season.NumWeeksInRegularSeason) ? eSeasonType.PostSeason : eSeasonType.RegularSeason;
 
-                    IGame game;
+                    Game game;
                     if (hasFirstTeamScore && hasSecondTeamScore)
                     {
                         if (firstTeamScore == secondTeamScore)
@@ -445,7 +443,7 @@ namespace CollegeFbsRankings.Infrastructure.Csv
                                 lineCount, line, firstTeamScoreString, secondTeamScoreString));
                         }
 
-                        game = CompletedGame.Create(_season, week, date, homeTeam, homeTeamScore, awayTeam, awayTeamScore, tvString, notesString, seasonType);
+                        game = CompletedGame.Create(_season, week, date, homeTeam.Id, homeTeamScore, awayTeam.Id, awayTeamScore, tvString, notesString, seasonType);
                     }
                     else if (hasFirstTeamScore && !hasSecondTeamScore)
                     {
@@ -461,7 +459,7 @@ namespace CollegeFbsRankings.Infrastructure.Csv
                     }
                     else
                     {
-                        game = FutureGame.Create(_season, week, date, homeTeam, awayTeam, tvString, notesString, seasonType);
+                        game = FutureGame.Create(_season, week, date, homeTeam.Id, awayTeam.Id, tvString, notesString, seasonType);
                     }
 
                     games.Add(game);
@@ -503,14 +501,14 @@ namespace CollegeFbsRankings.Infrastructure.Csv
             get { return new MemoryTeamQuery<Team>(_teams); }
         }
 
-        public IGameQuery<IGame> Games
+        public IGameQuery<Game> Games
         {
-            get { return new MemoryGameQuery<IGame>(_games); }
+            get { return new MemoryGameQuery<Game>(_games); }
         }
 
-        public IGameQuery<IGame> CancelledGames
+        public IGameQuery<Game> CancelledGames
         {
-            get { return new MemoryGameQuery<IGame>(_cancelledGames); }
+            get { return new MemoryGameQuery<Game>(_cancelledGames); }
         }
 
         public int NumCompletedWeeks()

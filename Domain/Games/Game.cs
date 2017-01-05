@@ -19,29 +19,6 @@ namespace CollegeFbsRankings.Domain.Games
         PostSeason
     }
 
-    public interface IGame
-    {
-        GameId Id { get; }
-
-        Season Season { get; }
-
-        int Week { get; }
-
-        DateTime Date { get; }
-
-        Team HomeTeam { get; }
-
-        Team AwayTeam { get; }
-
-        string TV { get; }
-
-        string Notes { get; }
-
-        eTeamType TeamType { get; }
-
-        eSeasonType SeasonType { get; }
-    }
-
     public class GameId : Identifier<Game>
     {
         protected GameId(Guid id)
@@ -60,44 +37,44 @@ namespace CollegeFbsRankings.Domain.Games
         }
     }
 
-    public abstract class Game : IGame
+    public abstract class Game
     {
         private readonly GameId _id;
         private readonly Season _season;
         private readonly int _week;
         private readonly DateTime _date;
-        private readonly Team _homeTeam;
-        private readonly Team _awayTeam;
+        private readonly TeamId _homeTeamId;
+        private readonly TeamId _awayTeamId;
         private readonly string _tv;
         private readonly string _notes;
         private readonly eTeamType _teamType;
         private readonly eSeasonType _seasonType;
 
-        protected Game(GameId id, Season season, int week, DateTime date, Team homeTeam, Team awayTeam, string tv, string notes, eSeasonType seasonType)
+        protected Game(GameId id, Season season, int week, DateTime date, TeamId homeTeamId, TeamId awayTeamId, string tv, string notes, eSeasonType seasonType)
         {
             _id = id;
             _season = season;
             _week = week;
             _date = date;
-            _homeTeam = homeTeam;
-            _awayTeam = awayTeam;
+            _homeTeamId = homeTeamId;
+            _awayTeamId = awayTeamId;
             _tv = tv;
             _notes = notes;
 
-            if (_homeTeam is FbsTeam)
+            if (_homeTeamId is FbsTeamId)
             {
-                if (_awayTeam is FbsTeam)
+                if (_awayTeamId is FbsTeamId)
                     _teamType = eTeamType.Fbs;
                 else
                     _teamType = eTeamType.Fcs;
             }
-            else if (_awayTeam is FbsTeam)
+            else if (_awayTeamId is FbsTeamId)
                 _teamType = eTeamType.Fcs;
             else
             {
                 throw new Exception(String.Format(
-                    "Game does not contain an FBS team: {0} vs. {1}",
-                    _homeTeam.Name, _awayTeam.Name));
+                    "Game does not contain an FBS team: {0}",
+                    id));
             }
 
             _seasonType = seasonType;
@@ -123,14 +100,14 @@ namespace CollegeFbsRankings.Domain.Games
             get { return _date; }
         }
 
-        public Team HomeTeam
+        public TeamId HomeTeamId
         {
-            get { return _homeTeam; }
+            get { return _homeTeamId; }
         }
 
-        public Team AwayTeam
+        public TeamId AwayTeamId
         {
-            get { return _awayTeam; }
+            get { return _awayTeamId; }
         }
 
         public string TV
@@ -156,21 +133,21 @@ namespace CollegeFbsRankings.Domain.Games
 
     public static class GameExtensions
     {
-        public static IEnumerable<T> Fbs<T>(this IEnumerable<T> games) where T : IGame
+        public static IEnumerable<T> Fbs<T>(this IEnumerable<T> games) where T : Game
         {
             return games.Where(g => g.TeamType == eTeamType.Fbs);
         }
 
-        public static IEnumerable<T> Fcs<T>(this IEnumerable<T> games) where T : IGame
+        public static IEnumerable<T> Fcs<T>(this IEnumerable<T> games) where T : Game
         {
             return games.Where(g => g.TeamType == eTeamType.Fcs);
         }
-        public static IEnumerable<T> RegularSeason<T>(this IEnumerable<T> games) where T : IGame
+        public static IEnumerable<T> RegularSeason<T>(this IEnumerable<T> games) where T : Game
         {
             return games.Where(g => g.SeasonType == eSeasonType.RegularSeason);
         }
 
-        public static IEnumerable<T> Postseason<T>(this IEnumerable<T> games) where T : IGame
+        public static IEnumerable<T> Postseason<T>(this IEnumerable<T> games) where T : Game
         {
             return games.Where(g => g.SeasonType == eSeasonType.PostSeason);
         }

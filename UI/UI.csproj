@@ -4,16 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{F583F3C3-4FE8-4A6D-9F8D-818F57970723}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{656E06C1-E858-4AAF-B493-F6CFA0C41B49}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CollegeFbsRankings.Application.CalculateRankings</RootNamespace>
-    <AssemblyName>CollegeFbsRankings.Application.CalculateRankings</AssemblyName>
+    <RootNamespace>CollegeFbsRankings.UI</RootNamespace>
+    <AssemblyName>CollegeFbsRankings.UI</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -24,7 +23,6 @@
     <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -35,7 +33,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -44,25 +41,30 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="Formatters\SimultaneousWins\ConferenceStrengthRanking.cs" />
+    <Compile Include="Formatters\SimultaneousWins\GameStrengthRanking.cs" />
+    <Compile Include="Formatters\SimultaneousWins\RankingFormatterService.cs" />
+    <Compile Include="Formatters\SimultaneousWins\PerformanceRanking.cs" />
+    <Compile Include="Formatters\SimultaneousWins\ScheduleStrengthRanking.cs" />
+    <Compile Include="Formatters\SimultaneousWins\Validation.cs" />
+    <Compile Include="Formatters\SimultaneousWins\WeeklySummary.cs" />
+    <Compile Include="Formatters\SimultaneousWins\WinStrengthRanking.cs" />
+    <Compile Include="Formatters\SingleDepthWins\ConferenceStrengthRanking.cs" />
+    <Compile Include="Formatters\SingleDepthWins\RankingFormatterService.cs" />
+    <Compile Include="Formatters\SingleDepthWins\GameStrengthRanking.cs" />
+    <Compile Include="Formatters\SingleDepthWins\PerformanceRanking.cs" />
+    <Compile Include="Formatters\SingleDepthWins\ScheduleStrengthRanking.cs" />
+    <Compile Include="Formatters\SingleDepthWins\Validation.cs" />
+    <Compile Include="Formatters\SingleDepthWins\WeeklySummary.cs" />
+    <Compile Include="Formatters\SingleDepthWins\WinStrengthRanking.cs" />
+    <Compile Include="Formatters\RankingItemFormat.cs" />
+    <Compile Include="Formatters\YearSummary.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RankingConfiguration.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Domain\Domain.csproj">
       <Project>{8fb28137-7bcd-475c-ac1c-480e759700b6}</Project>
       <Name>Domain</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Infrastructure\Infrastructure.csproj">
-      <Project>{fd5d0c14-0040-4ef4-b46f-2fe90e32c435}</Project>
-      <Name>Infrastructure</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\UI\UI.csproj">
-      <Project>{656e06c1-e858-4aaf-b493-f6cfa0c41b49}</Project>
-      <Name>UI</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -228,8 +228,8 @@ namespace CollegeFbsRankings.Infrastructure.Sql.EntityFramework
                 // Games
                 foreach (var game in seasonRepository.Games.Execute())
                 {
-                    var dbHomeTeam = dbTeams[game.HomeTeam.Id];
-                    var dbAwayTeam = dbTeams[game.AwayTeam.Id];
+                    var dbHomeTeam = dbTeams[game.HomeTeamId];
+                    var dbAwayTeam = dbTeams[game.AwayTeamId];
                     AddOrUpdateGame(game, dbSeason, dbHomeTeam, dbAwayTeam);
                 }
 
@@ -450,7 +450,7 @@ namespace CollegeFbsRankings.Infrastructure.Sql.EntityFramework
             existing.Name = updated.Name;
         }
 
-        private Game AddOrUpdateGame(IGame game, Season dbSeason, Team dbHomeTeam, Team dbAwayTeam)
+        private Game AddOrUpdateGame(Domain.Games.Game game, Season dbSeason, Team dbHomeTeam, Team dbAwayTeam)
         {
             var dbGameList = Games.Where(e => e.SeasonGUID == dbSeason.GUID && e.Week == game.Week && e.HomeTeamGUID == dbHomeTeam.GUID && e.AwayTeamGUID == dbAwayTeam.GUID).ToList();
             if (dbGameList.Count > 1)
@@ -474,7 +474,7 @@ namespace CollegeFbsRankings.Infrastructure.Sql.EntityFramework
             return dbGame;
         }
 
-        private Game AddGame(IGame game, Season dbSeason, Team dbHomeTeam, Team dbAwayTeam)
+        private Game AddGame(Domain.Games.Game game, Season dbSeason, Team dbHomeTeam, Team dbAwayTeam)
         {
             var dbGame = new Game
             {
@@ -483,7 +483,7 @@ namespace CollegeFbsRankings.Infrastructure.Sql.EntityFramework
                 Week = game.Week,
                 Level = (game.TeamType == eTeamType.Fbs) ? "FBS" : "FCS",
                 SeasonType = (game.SeasonType == eSeasonType.RegularSeason) ? "REGULAR_SEASON" : "POSTSEASON",
-                Status = (game is ICompletedGame) ? "COMPLETED" : "FUTURE",
+                Status = (game is CompletedGame) ? "COMPLETED" : "FUTURE",
                 Date = game.Date,
                 HomeTeamGUID = dbHomeTeam.GUID,
                 AwayTeamGUID = dbAwayTeam.GUID,
@@ -491,7 +491,7 @@ namespace CollegeFbsRankings.Infrastructure.Sql.EntityFramework
                 Notes = game.Notes
             };
 
-            var completedGame = game as ICompletedGame;
+            var completedGame = game as CompletedGame;
             if (completedGame != null)
             {
                 dbGame.HomeTeamScore = completedGame.HomeTeamScore;
@@ -508,20 +508,20 @@ namespace CollegeFbsRankings.Infrastructure.Sql.EntityFramework
             return dbGame;
         }
 
-        private void UpdateGame(Game existing, IGame updated, Season dbSeason, Team dbHomeTeam, Team dbAwayTeam)
+        private void UpdateGame(Game existing, Domain.Games.Game updated, Season dbSeason, Team dbHomeTeam, Team dbAwayTeam)
         {
             existing.SeasonGUID = dbSeason.GUID;
             existing.Week = updated.Week;
             existing.Level = (updated.TeamType == eTeamType.Fbs) ? "FBS" : "FCS";
             existing.SeasonType = (updated.SeasonType == eSeasonType.RegularSeason) ? "REGULAR_SEASON" : "POSTSEASON";
-            existing.Status = (updated is ICompletedGame) ? "COMPLETED" : "FUTURE";
+            existing.Status = (updated is CompletedGame) ? "COMPLETED" : "FUTURE";
             existing.Date = updated.Date;
             existing.HomeTeamGUID = dbHomeTeam.GUID;
             existing.AwayTeamGUID = dbAwayTeam.GUID;
             existing.TV = updated.TV;
             existing.Notes = updated.Notes;
 
-            var completedGame = updated as ICompletedGame;
+            var completedGame = updated as CompletedGame;
             if (completedGame != null)
             {
                 existing.HomeTeamScore = completedGame.HomeTeamScore;

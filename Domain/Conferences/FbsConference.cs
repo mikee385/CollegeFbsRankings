@@ -43,7 +43,7 @@ namespace CollegeFbsRankings.Domain.Conferences
             return conference;
         }
 
-        new public FbsConferenceId Id
+        public new FbsConferenceId Id
         {
             get { return (FbsConferenceId)base.Id; }
         }

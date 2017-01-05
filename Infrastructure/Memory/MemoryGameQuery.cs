@@ -10,7 +10,7 @@ using CollegeFbsRankings.Domain.Teams;
 
 namespace CollegeFbsRankings.Infrastructure.Memory
 {
-    public class MemoryGameQuery<T> : IGameQuery<T> where T : IGame
+    public class MemoryGameQuery<T> : IGameQuery<T> where T : Game
     {
         private readonly IEnumerable<T> _items;
 
@@ -41,7 +41,7 @@ namespace CollegeFbsRankings.Infrastructure.Memory
 
         public IGameQuery<T> ForTeam(TeamId teamId)
         {
-            return new MemoryGameQuery<T>(_items.Where(e => e.HomeTeam.Id == teamId || e.AwayTeam.Id == teamId));
+            return new MemoryGameQuery<T>(_items.Where(e => e.HomeTeamId == teamId || e.AwayTeamId == teamId));
         }
 
         public IGameQuery<T> Fbs()
@@ -54,14 +54,14 @@ namespace CollegeFbsRankings.Infrastructure.Memory
             return new MemoryGameQuery<T>(_items.Fcs());
         }
 
-        public IGameQuery<ICompletedGame> Completed()
+        public IGameQuery<CompletedGame> Completed()
         {
-            return new MemoryGameQuery<ICompletedGame>(_items.OfType<ICompletedGame>());
+            return new MemoryGameQuery<CompletedGame>(_items.OfType<CompletedGame>());
         }
 
-        public IGameQuery<IFutureGame> Future()
+        public IGameQuery<FutureGame> Future()
         {
-            return new MemoryGameQuery<IFutureGame>(_items.OfType<IFutureGame>());
+            return new MemoryGameQuery<FutureGame>(_items.OfType<FutureGame>());
         }
 
         //public IGameQuery<ICancelledGame> Cancelled()
@@ -81,22 +81,22 @@ namespace CollegeFbsRankings.Infrastructure.Memory
 
         public IGameQuery<T> WithHomeTeam(TeamId teamId)
         {
-            return new MemoryGameQuery<T>(_items.Where(e => e.HomeTeam.Id == teamId));
+            return new MemoryGameQuery<T>(_items.Where(e => e.HomeTeamId == teamId));
         }
 
         public IGameQuery<T> WithAwayTeam(TeamId teamId)
         {
-            return new MemoryGameQuery<T>(_items.Where(e => e.AwayTeam.Id == teamId));
+            return new MemoryGameQuery<T>(_items.Where(e => e.AwayTeamId == teamId));
         }
 
-        public IGameQuery<ICompletedGame> WonBy(TeamId teamId)
+        public IGameQuery<CompletedGame> WonBy(TeamId teamId)
         {
-            return new MemoryGameQuery<ICompletedGame>(_items.OfType<ICompletedGame>().Where(e => e.WinningTeam.Id == teamId));
+            return new MemoryGameQuery<CompletedGame>(_items.OfType<CompletedGame>().Where(e => e.WinningTeamId == teamId));
         }
 
-        public IGameQuery<ICompletedGame> LostBy(TeamId teamId)
+        public IGameQuery<CompletedGame> LostBy(TeamId teamId)
         {
-            return new MemoryGameQuery<ICompletedGame>(_items.OfType<ICompletedGame>().Where(e => e.LosingTeam.Id == teamId));
+            return new MemoryGameQuery<CompletedGame>(_items.OfType<CompletedGame>().Where(e => e.LosingTeamId == teamId));
         }
     }
 }

@@ -7,38 +7,31 @@ using CollegeFbsRankings.Domain.Teams;
 
 namespace CollegeFbsRankings.Domain.Games
 {
-    public interface IFutureGame : IGame
-    { }
-
-    public class FutureGame : Game, IFutureGame
+    public class FutureGame : Game
     {
-        protected FutureGame(GameId id, Season season, int week, DateTime date, Team homeTeam, Team awayTeam, string tv, string notes, eSeasonType seasonType)
-            : base(id, season, week, date, homeTeam, awayTeam, tv, notes, seasonType)
+        protected FutureGame(GameId id, Season season, int week, DateTime date, TeamId homeTeamId, TeamId awayTeamId, string tv, string notes, eSeasonType seasonType)
+            : base(id, season, week, date, homeTeamId, awayTeamId, tv, notes, seasonType)
         { }
 
-        public static IFutureGame Create(Season season, int week, DateTime date, Team homeTeam, Team awayTeam, string tv, string notes, eSeasonType seasonType)
+        public static FutureGame Create(Season season, int week, DateTime date, TeamId homeTeamId, TeamId awayTeamId, string tv, string notes, eSeasonType seasonType)
         {
             var id = GameId.Create();
-            var game = new FutureGame(id, season, week, date, homeTeam, awayTeam, tv, notes, seasonType);
-            homeTeam.AddGame(game);
-            awayTeam.AddGame(game);
+            var game = new FutureGame(id, season, week, date, homeTeamId, awayTeamId, tv, notes, seasonType);
             return game;
         }
 
-        public static IFutureGame FromExisting(GameId id, Season season, int week, DateTime date, Team homeTeam, Team awayTeam, string tv, string notes, eSeasonType seasonType)
+        public static FutureGame FromExisting(GameId id, Season season, int week, DateTime date, TeamId homeTeamId, TeamId awayTeamId, string tv, string notes, eSeasonType seasonType)
         {
-            var game = new FutureGame(id, season, week, date, homeTeam, awayTeam, tv, notes, seasonType);
-            homeTeam.AddGame(game);
-            awayTeam.AddGame(game);
+            var game = new FutureGame(id, season, week, date, homeTeamId, awayTeamId, tv, notes, seasonType);
             return game;
         }
     }
 
     public static class FutureGameExtensions
     {
-        public static IEnumerable<IFutureGame> Future(this IEnumerable<IGame> games)
+        public static IEnumerable<FutureGame> Future(this IEnumerable<Game> games)
         {
-            return games.OfType<IFutureGame>();
+            return games.OfType<FutureGame>();
         }
     }
 }

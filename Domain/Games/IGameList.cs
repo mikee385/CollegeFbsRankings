@@ -6,6 +6,6 @@ using System.Threading.Tasks;
 
 namespace CollegeFbsRankings.Domain.Games
 {
-    public interface IGameList<TValue> : IList<TValue>, IReadOnlyGameList<TValue> where TValue : IGame
+    public interface IGameList<TValue> : IList<TValue>, IReadOnlyGameList<TValue> where TValue : Game
     { }
 }
