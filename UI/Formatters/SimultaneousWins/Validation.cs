@@ -9,7 +9,6 @@ using CollegeFbsRankings.Domain.Games;
 using CollegeFbsRankings.Domain.Rankings.SimultaneousWins;
 using CollegeFbsRankings.Domain.Teams;
 using CollegeFbsRankings.Domain.Validations;
-using CollegeFbsRankings.Domain.Validations.SimultaneousWins;
 
 namespace CollegeFbsRankings.UI.Formatters.SimultaneousWins
 {
@@ -21,7 +20,7 @@ namespace CollegeFbsRankings.UI.Formatters.SimultaneousWins
             IReadOnlyDictionary<TeamId, Team> teamMap,
             IEnumerable<CompletedGame> games,
             PerformanceRanking performance,
-            Validation validation)
+            Validation<GameId> validation)
         {
             writer.WriteLine(title);
             writer.WriteLine("--------------------");

@@ -102,8 +102,8 @@
     <Compile Include="Teams\Team.cs" />
     <Compile Include="Teams\TeamList.cs" />
     <Compile Include="Validations\eValidationResult.cs" />
-    <Compile Include="Validations\SimultaneousWins\Validation.cs" />
-    <Compile Include="Validations\SingleDepthWins\Validation.cs" />
+    <Compile Include="Validations\Validation.cs" />
+    <Compile Include="Validations\ValidationService.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

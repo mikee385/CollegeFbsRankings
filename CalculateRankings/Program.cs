@@ -6,12 +6,13 @@ using System.Linq;
 using System.Text;
 
 using CollegeFbsRankings.Domain.Games;
+using CollegeFbsRankings.Domain.Rankings;
 using CollegeFbsRankings.Domain.Repositories;
 using CollegeFbsRankings.Domain.Teams;
+using CollegeFbsRankings.Domain.Validations;
 
 using CollegeFbsRankings.Infrastructure.Csv;
 
-using CollegeFbsRankings.Domain.Rankings;
 using CollegeFbsRankings.UI.Formatters;
 
 using SingleDepthWins_PerformanceRanking = CollegeFbsRankings.Domain.Rankings.SingleDepthWins.PerformanceRanking;
@@ -19,7 +20,6 @@ using SingleDepthWins_WinStrengthRanking = CollegeFbsRankings.Domain.Rankings.Si
 using SingleDepthWins_ScheduleStrengthRanking = CollegeFbsRankings.Domain.Rankings.SingleDepthWins.ScheduleStrengthRanking;
 using SingleDepthWins_GameStrengthRanking = CollegeFbsRankings.Domain.Rankings.SingleDepthWins.GameStrengthRanking;
 using SingleDepthWins_ConferenceStrengthRanking = CollegeFbsRankings.Domain.Rankings.SingleDepthWins.ConferenceStrengthRanking;
-using SingleDepthWins_Validation = CollegeFbsRankings.Domain.Validations.SingleDepthWins.Validation;
 using SingleDepthWins_RankingFormatterService = CollegeFbsRankings.UI.Formatters.SingleDepthWins.RankingFormatterService;
 
 using SimultaneousWins_PerformanceRanking = CollegeFbsRankings.Domain.Rankings.SimultaneousWins.PerformanceRanking;
@@ -27,7 +27,6 @@ using SimultaneousWins_WinStrengthRanking = CollegeFbsRankings.Domain.Rankings.S
 using SimultaneousWins_ScheduleStrengthRanking = CollegeFbsRankings.Domain.Rankings.SimultaneousWins.ScheduleStrengthRanking;
 using SimultaneousWins_GameStrengthRanking = CollegeFbsRankings.Domain.Rankings.SimultaneousWins.GameStrengthRanking;
 using SimultaneousWins_ConferenceStrengthRanking = CollegeFbsRankings.Domain.Rankings.SimultaneousWins.ConferenceStrengthRanking;
-using SimultaneousWins_Validation = CollegeFbsRankings.Domain.Validations.SimultaneousWins.Validation;
 using SimultaneousWins_RankingFormatterService = CollegeFbsRankings.UI.Formatters.SimultaneousWins.RankingFormatterService;
 
 namespace CollegeFbsRankings.Application.CalculateRankings
@@ -84,6 +83,8 @@ namespace CollegeFbsRankings.Application.CalculateRankings
                 var teamMap = teams.AsDictionary();
                 var conferenceMap = conferences.AsDictionary();
                 var gameMap = games.AsDictionary();
+
+                var validationService = new ValidationService();
 
                 #endregion
 
@@ -157,8 +158,8 @@ namespace CollegeFbsRankings.Application.CalculateRankings
                         var overallGameStrengthByWeek = overallGameStrength.ByWeek(gameMap);
                         var fbsGameStrengthByWeek = fbsGameStrength.ByWeek(gameMap);
 
-                        var overallGameValidation = new SingleDepthWins_Validation(fbsCompletedGames, overallPerformanceRankings);
-                        var fbsGameValidation = new SingleDepthWins_Validation(fbsCompletedGames, fbsPerformanceRankings);
+                        var overallGameValidation = validationService.GameValidationFromRanking(fbsCompletedGames, overallPerformanceRankings);
+                        var fbsGameValidation = validationService.GameValidationFromRanking(fbsCompletedGames, fbsPerformanceRankings);
 
                         #endregion
 
@@ -531,8 +532,8 @@ namespace CollegeFbsRankings.Application.CalculateRankings
                         var overallGameStrengthByWeek = overallGameStrength.ByWeek(gameMap);
                         var fbsGameStrengthByWeek = fbsGameStrength.ByWeek(gameMap);
 
-                        var overallGameValidation = new SimultaneousWins_Validation(fbsCompletedGames, overallPerformanceRankings);
-                        var fbsGameValidation = new SimultaneousWins_Validation(fbsCompletedGames, fbsPerformanceRankings);
+                        var overallGameValidation = validationService.GameValidationFromRanking(fbsCompletedGames, overallPerformanceRankings);
+                        var fbsGameValidation = validationService.GameValidationFromRanking(fbsCompletedGames, fbsPerformanceRankings);
 
                         #endregion
 
@@ -922,14 +923,14 @@ namespace CollegeFbsRankings.Application.CalculateRankings
                         var overallGameStrengthByWeek = overallGameStrength.ByWeek(gameMap);
                         var fbsGameStrengthByWeek = fbsGameStrength.ByWeek(gameMap);
 
-                        var overallGameValidation = new SingleDepthWins_Validation(fbsRegularSeasonCompletedGames, overallPerformanceRankings);
-                        var fbsGameValidation = new SingleDepthWins_Validation(fbsRegularSeasonCompletedGames, fbsPerformanceRankings);
+                        var overallGameValidation = validationService.GameValidationFromRanking(fbsRegularSeasonCompletedGames, overallPerformanceRankings);
+                        var fbsGameValidation = validationService.GameValidationFromRanking(fbsRegularSeasonCompletedGames, fbsPerformanceRankings);
 
                         var overallRegularSeasonPerformanceRankings = new SingleDepthWins_PerformanceRanking(teamMap, regularSeasonTeamRecord, regularSeasonCompletedGames);
                         var fbsRegularSeasonPerformanceRankings = new SingleDepthWins_PerformanceRanking(teamMap, fbsRegularSeasonTeamRecord, fbsRegularSeasonCompletedGames);
 
-                        var overallPostseasonPrediction = new SingleDepthWins_Validation(fbsPostseasonCompletedGames, overallRegularSeasonPerformanceRankings);
-                        var fbsPostseasonPrediction = new SingleDepthWins_Validation(fbsPostseasonCompletedGames, fbsRegularSeasonPerformanceRankings);
+                        var overallPostseasonPrediction = validationService.GameValidationFromRanking(fbsPostseasonCompletedGames, overallRegularSeasonPerformanceRankings);
+                        var fbsPostseasonPrediction = validationService.GameValidationFromRanking(fbsPostseasonCompletedGames, fbsRegularSeasonPerformanceRankings);
 
                         summary.AddSingleDepthWins("Single Depth, Overall", overallPerformanceRankings, overallGameValidation, overallPostseasonPrediction);
                         summary.AddSingleDepthWins("Single Depth, FBS", fbsPerformanceRankings, fbsGameValidation, fbsPostseasonPrediction);
@@ -1140,14 +1141,14 @@ namespace CollegeFbsRankings.Application.CalculateRankings
                         var overallGameStrengthByWeek = overallGameStrength.ByWeek(gameMap);
                         var fbsGameStrengthByWeek = fbsGameStrength.ByWeek(gameMap);
 
-                        var overallGameValidation = new SimultaneousWins_Validation(fbsRegularSeasonCompletedGames, overallPerformanceRankings);
-                        var fbsGameValidation = new SimultaneousWins_Validation(fbsRegularSeasonCompletedGames, fbsPerformanceRankings);
+                        var overallGameValidation = validationService.GameValidationFromRanking(fbsRegularSeasonCompletedGames, overallPerformanceRankings);
+                        var fbsGameValidation = validationService.GameValidationFromRanking(fbsRegularSeasonCompletedGames, fbsPerformanceRankings);
 
                         var overallRegularSeasonPerformanceRankings = new SimultaneousWins_PerformanceRanking(teamMap, regularSeasonTeamRecord, regularSeasonCompletedGames);
                         var fbsRegularSeasonPerformanceRankings = new SimultaneousWins_PerformanceRanking(teamMap, fbsRegularSeasonTeamRecord, fbsRegularSeasonCompletedGames);
 
-                        var overallPostseasonPrediction = new SimultaneousWins_Validation(fbsPostseasonCompletedGames, overallRegularSeasonPerformanceRankings);
-                        var fbsPostseasonPrediction = new SimultaneousWins_Validation(fbsPostseasonCompletedGames, fbsRegularSeasonPerformanceRankings);
+                        var overallPostseasonPrediction = validationService.GameValidationFromRanking(fbsPostseasonCompletedGames, overallRegularSeasonPerformanceRankings);
+                        var fbsPostseasonPrediction = validationService.GameValidationFromRanking(fbsPostseasonCompletedGames, fbsRegularSeasonPerformanceRankings);
 
                         summary.AddSimultaneousWins("Simultaneous Wins, Overall", overallPerformanceRankings, overallGameValidation, overallPostseasonPrediction);
                         summary.AddSimultaneousWins("Simultaneous Wins, FBS", fbsPerformanceRankings, fbsGameValidation, fbsPostseasonPrediction);

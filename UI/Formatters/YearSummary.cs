@@ -10,10 +10,7 @@ using CollegeFbsRankings.Domain.Teams;
 using CollegeFbsRankings.Domain.Validations;
 
 using SingleDepthWins_PerformanceRanking = CollegeFbsRankings.Domain.Rankings.SingleDepthWins.PerformanceRanking;
-using SingleDepthWins_Validation = CollegeFbsRankings.Domain.Validations.SingleDepthWins.Validation;
-
 using SimultaneousWins_PerformanceRanking = CollegeFbsRankings.Domain.Rankings.SimultaneousWins.PerformanceRanking;
-using SimultaneousWins_Validation = CollegeFbsRankings.Domain.Validations.SimultaneousWins.Validation;
 
 namespace CollegeFbsRankings.UI.Formatters
 {
@@ -31,14 +28,14 @@ namespace CollegeFbsRankings.UI.Formatters
         {
             private readonly string _name;
             private readonly SingleDepthWins_PerformanceRanking _performance;
-            private readonly SingleDepthWins_Validation _validation;
-            private readonly SingleDepthWins_Validation _prediction;
+            private readonly Validation<GameId> _validation;
+            private readonly Validation<GameId> _prediction;
 
             public SingleDepthWinsSummary(
                 string name,
                 SingleDepthWins_PerformanceRanking performance,
-                SingleDepthWins_Validation validation,
-                SingleDepthWins_Validation prediction)
+                Validation<GameId> validation,
+                Validation<GameId> prediction)
             {
                 _name = name;
                 _performance = performance;
@@ -56,12 +53,12 @@ namespace CollegeFbsRankings.UI.Formatters
                 get { return _performance; }
             }
 
-            public SingleDepthWins_Validation Validation
+            public Validation<GameId> Validation
             {
                 get { return _validation; }
             }
 
-            public SingleDepthWins_Validation Prediction
+            public Validation<GameId> Prediction
             {
                 get { return _prediction; }
             }
@@ -71,14 +68,14 @@ namespace CollegeFbsRankings.UI.Formatters
         {
             private readonly string _name;
             private readonly SimultaneousWins_PerformanceRanking _performance;
-            private readonly SimultaneousWins_Validation _validation;
-            private readonly SimultaneousWins_Validation _prediction;
+            private readonly Validation<GameId> _validation;
+            private readonly Validation<GameId> _prediction;
 
             public SimultaneousWinsSummary(
                 string name,
                 SimultaneousWins_PerformanceRanking performance,
-                SimultaneousWins_Validation validation,
-                SimultaneousWins_Validation prediction)
+                Validation<GameId> validation,
+                Validation<GameId> prediction)
             {
                 _name = name;
                 _performance = performance;
@@ -96,12 +93,12 @@ namespace CollegeFbsRankings.UI.Formatters
                 get { return _performance; }
             }
 
-            public SimultaneousWins_Validation Validation
+            public Validation<GameId> Validation
             {
                 get { return _validation; }
             }
 
-            public SimultaneousWins_Validation Prediction
+            public Validation<GameId> Prediction
             {
                 get { return _prediction; }
             }
@@ -150,8 +147,8 @@ namespace CollegeFbsRankings.UI.Formatters
         public void AddSingleDepthWins(
             string name,
             SingleDepthWins_PerformanceRanking performance,
-            SingleDepthWins_Validation validation,
-            SingleDepthWins_Validation prediction)
+            Validation<GameId> validation,
+            Validation<GameId> prediction)
         {
             _singleDepthWins.Add(new SingleDepthWinsSummary(name, performance, validation, prediction));
         }
@@ -164,8 +161,8 @@ namespace CollegeFbsRankings.UI.Formatters
         public void AddSimultaneousWins(
             string name,
             SimultaneousWins_PerformanceRanking performance,
-            SimultaneousWins_Validation validation,
-            SimultaneousWins_Validation prediction)
+            Validation<GameId> validation,
+            Validation<GameId> prediction)
         {
             _simultaneousWins.Add(new SimultaneousWinsSummary(name, performance, validation, prediction));
         }
