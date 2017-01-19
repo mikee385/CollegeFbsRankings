@@ -6,11 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 using CollegeFbsRankings.Domain.Games;
+using CollegeFbsRankings.Domain.Rankings;
 using CollegeFbsRankings.Domain.Teams;
 using CollegeFbsRankings.Domain.Validations;
-
-using SingleDepthWins_PerformanceRanking = CollegeFbsRankings.Domain.Rankings.SingleDepthWins.PerformanceRanking;
-using SimultaneousWins_PerformanceRanking = CollegeFbsRankings.Domain.Rankings.SimultaneousWins.PerformanceRanking;
 
 namespace CollegeFbsRankings.UI.Formatters
 {
@@ -21,19 +19,18 @@ namespace CollegeFbsRankings.UI.Formatters
         private readonly IReadOnlyList<Game> _games;
         private readonly IReadOnlyList<Game> _cancelledGames;
 
-        private readonly List<SingleDepthWinsSummary> _singleDepthWins;
-        private readonly List<SimultaneousWinsSummary> _simultaneousWins;
+        private readonly List<RankingSummary> _rankingSummaries;
 
-        public class SingleDepthWinsSummary
+        public class RankingSummary
         {
             private readonly string _name;
-            private readonly SingleDepthWins_PerformanceRanking _performance;
+            private readonly PerformanceRanking _performance;
             private readonly Validation<GameId> _validation;
             private readonly Validation<GameId> _prediction;
 
-            public SingleDepthWinsSummary(
+            public RankingSummary(
                 string name,
-                SingleDepthWins_PerformanceRanking performance,
+                PerformanceRanking performance,
                 Validation<GameId> validation,
                 Validation<GameId> prediction)
             {
@@ -48,47 +45,7 @@ namespace CollegeFbsRankings.UI.Formatters
                 get { return _name; }
             }
 
-            public SingleDepthWins_PerformanceRanking Performance
-            {
-                get { return _performance; }
-            }
-
-            public Validation<GameId> Validation
-            {
-                get { return _validation; }
-            }
-
-            public Validation<GameId> Prediction
-            {
-                get { return _prediction; }
-            }
-        }
-
-        public class SimultaneousWinsSummary
-        {
-            private readonly string _name;
-            private readonly SimultaneousWins_PerformanceRanking _performance;
-            private readonly Validation<GameId> _validation;
-            private readonly Validation<GameId> _prediction;
-
-            public SimultaneousWinsSummary(
-                string name,
-                SimultaneousWins_PerformanceRanking performance,
-                Validation<GameId> validation,
-                Validation<GameId> prediction)
-            {
-                _name = name;
-                _performance = performance;
-                _validation = validation;
-                _prediction = prediction;
-            }
-
-            public string Name
-            {
-                get { return _name; }
-            }
-
-            public SimultaneousWins_PerformanceRanking Performance
+            public PerformanceRanking Performance
             {
                 get { return _performance; }
             }
@@ -115,8 +72,7 @@ namespace CollegeFbsRankings.UI.Formatters
             _games = games;
             _cancelledGames = cancelledGames;
 
-            _singleDepthWins = new List<SingleDepthWinsSummary>();
-            _simultaneousWins = new List<SimultaneousWinsSummary>();
+            _rankingSummaries = new List<RankingSummary>();
         }
 
         public IReadOnlyList<FbsTeam> FbsTeams
@@ -139,32 +95,18 @@ namespace CollegeFbsRankings.UI.Formatters
             get { return _cancelledGames; }
         }
 
-        public IReadOnlyList<SingleDepthWinsSummary> SingleDepthWins
+        public IReadOnlyList<RankingSummary> RankingSummaries
         {
-            get { return _singleDepthWins; }
+            get { return _rankingSummaries; }
         }
 
-        public void AddSingleDepthWins(
+        public void AddRankingSummary(
             string name,
-            SingleDepthWins_PerformanceRanking performance,
+            PerformanceRanking performance,
             Validation<GameId> validation,
             Validation<GameId> prediction)
         {
-            _singleDepthWins.Add(new SingleDepthWinsSummary(name, performance, validation, prediction));
-        }
-
-        public IReadOnlyList<SimultaneousWinsSummary> SimultaneousWins
-        {
-            get { return _simultaneousWins; }
-        }
-
-        public void AddSimultaneousWins(
-            string name,
-            SimultaneousWins_PerformanceRanking performance,
-            Validation<GameId> validation,
-            Validation<GameId> prediction)
-        {
-            _simultaneousWins.Add(new SimultaneousWinsSummary(name, performance, validation, prediction));
+            _rankingSummaries.Add(new RankingSummary(name, performance, validation, prediction));
         }
 
         public static void Format(TextWriter writer, int year, IReadOnlyDictionary<TeamId, Team> teamMap, YearSummary summary)
@@ -209,18 +151,9 @@ namespace CollegeFbsRankings.UI.Formatters
                 writer.WriteLine();
             }
 
-            var singleDepthWinsTitleLength = summary.SingleDepthWins.Any() ? summary.SingleDepthWins.Max(s => s.Name.Length) : 0;
-            var simultaneousWinsTitleLength = summary.SimultaneousWins.Any() ? summary.SimultaneousWins.Max(s => s.Name.Length) : 0;
-            var maxTitleLength = Math.Max(singleDepthWinsTitleLength, simultaneousWinsTitleLength);
+            var maxTitleLength = summary.RankingSummaries.Any() ? summary.RankingSummaries.Max(s => s.Name.Length) : 0;
 
-            foreach (var method in summary.SingleDepthWins)
-            {
-                var validationCorrect = method.Validation.Count(r => r.Value == eValidationResult.Correct);
-                var validationIncorrect = method.Validation.Count(r => r.Value == eValidationResult.Incorrect);
-                var validationPercent = (double)validationCorrect / (validationCorrect + validationIncorrect);
-                writer.WriteLine("Regular Season Retrodiction for {0,-" + maxTitleLength + "} = {1:F8} %", method.Name, validationPercent);
-            }
-            foreach (var method in summary.SimultaneousWins)
+            foreach (var method in summary.RankingSummaries)
             {
                 var validationCorrect = method.Validation.Count(r => r.Value == eValidationResult.Correct);
                 var validationIncorrect = method.Validation.Count(r => r.Value == eValidationResult.Incorrect);
@@ -229,14 +162,7 @@ namespace CollegeFbsRankings.UI.Formatters
             }
             writer.WriteLine();
 
-            foreach (var method in summary.SingleDepthWins)
-            {
-                var predictionCorrect = method.Prediction.Count(r => r.Value == eValidationResult.Correct);
-                var predictionIncorrect = method.Prediction.Count(r => r.Value == eValidationResult.Incorrect);
-                var predictionPercent = (double)predictionCorrect / (predictionCorrect + predictionIncorrect);
-                writer.WriteLine("Postseason Prediction for {0,-" + maxTitleLength + "} = {1:F8} %", method.Name, predictionPercent);
-            }
-            foreach (var method in summary.SimultaneousWins)
+            foreach (var method in summary.RankingSummaries)
             {
                 var predictionCorrect = method.Prediction.Count(r => r.Value == eValidationResult.Correct);
                 var predictionIncorrect = method.Prediction.Count(r => r.Value == eValidationResult.Incorrect);
@@ -245,21 +171,7 @@ namespace CollegeFbsRankings.UI.Formatters
             }
             writer.WriteLine();
 
-            foreach (var method in summary.SingleDepthWins)
-            {
-                var title = String.Format("Top 5 for {0}:", method.Name);
-
-                var top5Teams = method.Performance
-                    .Where(rank => rank.Key is FbsTeamId)
-                    .Take(5)
-                    .Select(rank => rank.Key)
-                    .ToList();
-                var top5PerformanceRanking = method.Performance.ForTeams(top5Teams);
-
-                FormatRanking(writer, title, teamMap, top5PerformanceRanking);
-                writer.WriteLine();
-            }
-            foreach (var method in summary.SimultaneousWins)
+            foreach (var method in summary.RankingSummaries)
             {
                 var title = String.Format("Top 5 for {0}:", method.Name);
 
@@ -280,43 +192,7 @@ namespace CollegeFbsRankings.UI.Formatters
             TextWriter writer,
             string title, 
             IReadOnlyDictionary<TeamId, Team> teamMap,
-            SingleDepthWins_PerformanceRanking ranking)
-        {
-            writer.WriteLine(title);
-            writer.WriteLine("--------------------");
-
-            // Calculate the formatting information for the titles.
-            var maxTitleLength = ranking.Max(rank => teamMap[rank.Key].Name.Length);
-
-            // Output the rankings.
-            int index = 1, outputIndex = 1;
-            List<double> previousValues = null;
-
-            foreach (var rank in ranking)
-            {
-                var currentValues = rank.Value.Values.ToList();
-                if (index != 1)
-                {
-                    if (!currentValues.SequenceEqual(previousValues))
-                        outputIndex = index;
-                }
-
-                var teamName = teamMap[rank.Key].Name;
-                var titleInfo = String.Format("{0,-4} {1,-" + (maxTitleLength + 3) + "}", outputIndex, teamName);
-                var rankingInfo = String.Join("   ", currentValues.Select(value => String.Format("{0:F8}", value)));
-
-                writer.WriteLine(String.Join(" ", titleInfo, rankingInfo));
-
-                ++index;
-                previousValues = currentValues;
-            }
-        }
-
-        private static void FormatRanking(
-            TextWriter writer,
-            string title,
-            IReadOnlyDictionary<TeamId, Team> teamMap,
-            SimultaneousWins_PerformanceRanking ranking)
+            PerformanceRanking ranking)
         {
             writer.WriteLine(title);
             writer.WriteLine("--------------------");

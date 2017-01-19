@@ -5,24 +5,34 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using CollegeFbsRankings.Domain.Conferences;
 using CollegeFbsRankings.Domain.Games;
-using CollegeFbsRankings.Domain.Rankings.SingleDepthWins;
+using CollegeFbsRankings.Domain.Rankings;
 using CollegeFbsRankings.Domain.Teams;
 
-namespace CollegeFbsRankings.UI.Formatters.SingleDepthWins
+namespace CollegeFbsRankings.UI.Formatters
 {
-    public partial class RankingFormatterService
+    public class SummaryFormatterService
     {
+        private readonly IReadOnlyDictionary<TeamId, Team> _teamMap;
+        private readonly IReadOnlyDictionary<GameId, Game> _gameMap;
+
+        public SummaryFormatterService(
+            IReadOnlyDictionary<TeamId, Team> teamMap,
+            IReadOnlyDictionary<GameId, Game> gameMap)
+        {
+            _teamMap = teamMap;
+            _gameMap = gameMap;
+        }
+
         public void FormatWeeklySummary(
             TextWriter writer,
             int year,
             int week,
-            IReadOnlyDictionary<TeamId, Team> teamMap,
-            IReadOnlyDictionary<GameId, Game> gameMap,
             PerformanceRanking performance,
             ScheduleStrengthRanking futureScheduleStrength,
             IReadOnlyDictionary<int, GameStrengthRanking> gameStrengthByWeek)
-        {
+        { 
             // Output the performance rankings.
             writer.WriteLine("{0} Week {1} Performance Rankings", year, week);
             writer.WriteLine("---------------------------------");
@@ -40,7 +50,7 @@ namespace CollegeFbsRankings.UI.Formatters.SingleDepthWins
                         outputIndex = index;
                 }
 
-                writer.WriteLine("{0}. {1}", outputIndex, teamMap[rank.Key].Name);
+                writer.WriteLine("{0}. {1}", outputIndex, _teamMap[rank.Key].Name);
 
                 ++index;
                 previousValues = currentValues;
@@ -65,7 +75,7 @@ namespace CollegeFbsRankings.UI.Formatters.SingleDepthWins
                         outputIndex = index;
                 }
 
-                writer.WriteLine("{0}. {1}", outputIndex, teamMap[rank.Key].Name);
+                writer.WriteLine("{0}. {1}", outputIndex, _teamMap[rank.Key].Name);
 
                 ++index;
                 previousValues = currentValues;
@@ -93,9 +103,9 @@ namespace CollegeFbsRankings.UI.Formatters.SingleDepthWins
                             outputIndex = index;
                     }
 
-                    var game = gameMap[rank.Key];
-                    var homeTeam = teamMap[game.HomeTeamId];
-                    var awayTeam = teamMap[game.AwayTeamId];
+                    var game = _gameMap[rank.Key];
+                    var homeTeam = _teamMap[game.HomeTeamId];
+                    var awayTeam = _teamMap[game.AwayTeamId];
 
                     writer.WriteLine("{0}. {1} vs. {2}", outputIndex, homeTeam.Name, awayTeam.Name);
 
@@ -106,4 +116,5 @@ namespace CollegeFbsRankings.UI.Formatters.SingleDepthWins
             writer.WriteLine();
         }
     }
+
 }

@@ -16,20 +16,6 @@ using CollegeFbsRankings.Infrastructure.Csv;
 
 using CollegeFbsRankings.UI.Formatters;
 
-using SingleDepthWins_PerformanceRanking = CollegeFbsRankings.Domain.Rankings.SingleDepthWins.PerformanceRanking;
-using SingleDepthWins_WinStrengthRanking = CollegeFbsRankings.Domain.Rankings.SingleDepthWins.WinStrengthRanking;
-using SingleDepthWins_ScheduleStrengthRanking = CollegeFbsRankings.Domain.Rankings.SingleDepthWins.ScheduleStrengthRanking;
-using SingleDepthWins_GameStrengthRanking = CollegeFbsRankings.Domain.Rankings.SingleDepthWins.GameStrengthRanking;
-using SingleDepthWins_ConferenceStrengthRanking = CollegeFbsRankings.Domain.Rankings.SingleDepthWins.ConferenceStrengthRanking;
-using SingleDepthWins_RankingFormatterService = CollegeFbsRankings.UI.Formatters.SingleDepthWins.RankingFormatterService;
-
-using SimultaneousWins_PerformanceRanking = CollegeFbsRankings.Domain.Rankings.SimultaneousWins.PerformanceRanking;
-using SimultaneousWins_WinStrengthRanking = CollegeFbsRankings.Domain.Rankings.SimultaneousWins.WinStrengthRanking;
-using SimultaneousWins_ScheduleStrengthRanking = CollegeFbsRankings.Domain.Rankings.SimultaneousWins.ScheduleStrengthRanking;
-using SimultaneousWins_GameStrengthRanking = CollegeFbsRankings.Domain.Rankings.SimultaneousWins.GameStrengthRanking;
-using SimultaneousWins_ConferenceStrengthRanking = CollegeFbsRankings.Domain.Rankings.SimultaneousWins.ConferenceStrengthRanking;
-using SimultaneousWins_RankingFormatterService = CollegeFbsRankings.UI.Formatters.SimultaneousWins.RankingFormatterService;
-
 namespace CollegeFbsRankings.Application.CalculateRankings
 {
     public static class Program
@@ -48,7 +34,7 @@ namespace CollegeFbsRankings.Application.CalculateRankings
                 throw ThrowHelper.ArgumentError("Unable to find the output directory information (tried to find a section called 'output' in 'app.config'");
             }
 
-            foreach (var input in inputData.Seasons)
+            foreach (var input in inputData.Seasons.Reverse())
             {
                 var year = input.Year;
                 var numWeeksInRegularSeason = input.NumWeeksInRegularSeason;
@@ -86,6 +72,9 @@ namespace CollegeFbsRankings.Application.CalculateRankings
                 var gameMap = games.AsDictionary();
 
                 var validationService = new ValidationService();
+                var summaryFormatter = new SummaryFormatterService(
+                    teamMap,
+                    gameMap);
 
                 #endregion
 
@@ -107,12 +96,11 @@ namespace CollegeFbsRankings.Application.CalculateRankings
                     #region Calculate Data for Week
 
                     var completedGames = games.Where(g => g.Week <= week).Completed().RegularSeason().ToList();
-                    var fbsCompletedGames = games.Where(g => g.Week <= week).Completed().RegularSeason().Fbs().ToList();
-
                     var futureGames = games.Where(g => g.Week > week).RegularSeason().ToList();
-                    var fbsFutureGames = games.Where(g => g.Week > week).RegularSeason().Fbs().ToList();
-
                     var teamRecord = new TeamRecordCollection(teamMap, completedGames);
+
+                    var fbsCompletedGames = games.Where(g => g.Week <= week).Completed().RegularSeason().Fbs().ToList();
+                    var fbsFutureGames = games.Where(g => g.Week > week).RegularSeason().Fbs().ToList();
                     var fbsTeamRecord = new TeamRecordCollection(teamMap, fbsCompletedGames);
 
                     #endregion
@@ -121,19 +109,43 @@ namespace CollegeFbsRankings.Application.CalculateRankings
                     {
                         #region Calculate Data
 
-                        var overallPerformanceRankings = new SingleDepthWins_PerformanceRanking(teamMap, teamRecord, completedGames);
-                        var fbsPerformanceRankings = new SingleDepthWins_PerformanceRanking(teamMap, fbsTeamRecord, fbsCompletedGames);
+                        var overallRanking = new SingleDepthWinsRankingService(
+                            conferenceMap,
+                            teamMap,
+                            gameMap,
+                            teamRecord,
+                            regularSeasonGames,
+                            completedGames,
+                            futureGames);
 
-                        var overallWinStrength = new SingleDepthWins_WinStrengthRanking(teamMap, overallPerformanceRankings);
-                        var fbsWinStrength = new SingleDepthWins_WinStrengthRanking(teamMap, fbsPerformanceRankings);
+                        var overallPerformanceRankings = overallRanking.CalculatePerformanceRanking();
+                        var overallWinStrength = overallRanking.CalculateWinStrengthRanking();
+                        var overallScheduleStrength = overallRanking.CalculateOverallScheduleStrengthRanking();
+                        var completedScheduleStrength = overallRanking.CalculateCompletedScheduleStrengthRanking();
+                        var futureScheduleStrength = overallRanking.CalculateFutureScheduleStrengthRanking();
+                        var overallConferenceStrength = overallRanking.CalculateConferenceStrengthRanking();
+                        var overallGameStrength = overallRanking.CalculateGameStrengthRanking();
+                        var overallGameStrengthByWeek = overallGameStrength.ByWeek();
+                        var overallGameValidation = validationService.GameValidationFromRanking(fbsCompletedGames, overallPerformanceRankings);
 
-                        var overallScheduleStrength = new SingleDepthWins_ScheduleStrengthRanking(teamMap, regularSeasonGames, overallPerformanceRankings);
-                        var completedScheduleStrength = new SingleDepthWins_ScheduleStrengthRanking(teamMap, completedGames, overallPerformanceRankings);
-                        var futureScheduleStrength = new SingleDepthWins_ScheduleStrengthRanking(teamMap, futureGames, overallPerformanceRankings);
+                        var fbsRanking = new SingleDepthWinsRankingService(
+                            conferenceMap,
+                            teamMap,
+                            gameMap,
+                            fbsTeamRecord,
+                            fbsRegularSeasonGames,
+                            fbsCompletedGames,
+                            fbsFutureGames);
 
-                        var fbsOverallScheduleStrength = new SingleDepthWins_ScheduleStrengthRanking(teamMap, fbsRegularSeasonGames, fbsPerformanceRankings);
-                        var fbsCompletedScheduleStrength = new SingleDepthWins_ScheduleStrengthRanking(teamMap, fbsCompletedGames, fbsPerformanceRankings);
-                        var fbsFutureScheduleStrength = new SingleDepthWins_ScheduleStrengthRanking(teamMap, fbsFutureGames, fbsPerformanceRankings);
+                        var fbsPerformanceRankings = fbsRanking.CalculatePerformanceRanking();
+                        var fbsWinStrength = fbsRanking.CalculateWinStrengthRanking();
+                        var fbsOverallScheduleStrength = fbsRanking.CalculateOverallScheduleStrengthRanking();
+                        var fbsCompletedScheduleStrength = fbsRanking.CalculateCompletedScheduleStrengthRanking();
+                        var fbsFutureScheduleStrength = fbsRanking.CalculateFutureScheduleStrengthRanking();
+                        var fbsConferenceStrength = fbsRanking.CalculateConferenceStrengthRanking();
+                        var fbsGameStrength = fbsRanking.CalculateGameStrengthRanking();
+                        var fbsGameStrengthByWeek = fbsGameStrength.ByWeek();
+                        var fbsGameValidation = validationService.GameValidationFromRanking(fbsCompletedGames, fbsPerformanceRankings);
 
                         var top25Teams = fbsPerformanceRankings
                             .Where(rank => rank.Key is FbsTeamId)
@@ -142,6 +154,7 @@ namespace CollegeFbsRankings.Application.CalculateRankings
                             .ToList();
 
                         var top25FbsPerformanceRankings = fbsPerformanceRankings.ForTeams(top25Teams);
+
                         var top25OverallScheduleStrength = overallScheduleStrength.ForTeams(top25Teams);
                         var top25CompletedScheduleStrength = completedScheduleStrength.ForTeams(top25Teams);
                         var top25FutureScheduleStrength = futureScheduleStrength.ForTeams(top25Teams);
@@ -149,18 +162,6 @@ namespace CollegeFbsRankings.Application.CalculateRankings
                         var top25FbsOverallScheduleStrength = fbsOverallScheduleStrength.ForTeams(top25Teams);
                         var top25FbsCompletedScheduleStrength = fbsCompletedScheduleStrength.ForTeams(top25Teams);
                         var top25FbsFutureScheduleStrength = fbsFutureScheduleStrength.ForTeams(top25Teams);
-
-                        var overallConferenceStrength = new SingleDepthWins_ConferenceStrengthRanking(conferenceMap, teamMap, overallPerformanceRankings);
-                        var fbsConferenceStrength = new SingleDepthWins_ConferenceStrengthRanking(conferenceMap, teamMap, fbsPerformanceRankings);
-
-                        var overallGameStrength = new SingleDepthWins_GameStrengthRanking(fbsRegularSeasonGames, teamMap, overallPerformanceRankings);
-                        var fbsGameStrength = new SingleDepthWins_GameStrengthRanking(fbsRegularSeasonGames, teamMap, fbsPerformanceRankings);
-
-                        var overallGameStrengthByWeek = overallGameStrength.ByWeek(gameMap);
-                        var fbsGameStrengthByWeek = fbsGameStrength.ByWeek(gameMap);
-
-                        var overallGameValidation = validationService.GameValidationFromRanking(fbsCompletedGames, overallPerformanceRankings);
-                        var fbsGameValidation = validationService.GameValidationFromRanking(fbsCompletedGames, fbsPerformanceRankings);
 
                         #endregion
 
@@ -214,274 +215,222 @@ namespace CollegeFbsRankings.Application.CalculateRankings
 
                         #region Output Results to Files
 
-                        var formatter = new SingleDepthWins_RankingFormatterService();
+                        var overallFormatter = new RankingFormatterService(
+                            conferenceMap,
+                            teamMap,
+                            gameMap,
+                            teamRecord,
+                            regularSeasonGames,
+                            completedGames,
+                            futureGames,
+                            overallPerformanceRankings);
 
                         using (var writer = CreateFileWriter(overallPerformanceFileName))
                         {
-                            formatter.FormatPerformanceRanking(
+                            overallFormatter.FormatPerformanceRanking(
                                 writer,
-                                "Performance Rankings (Overall)",
-                                teamMap,
-                                completedGames,
-                                overallPerformanceRankings);
-                        }
-
-                        using (var writer = CreateFileWriter(fbsPerformanceFileName))
-                        {
-                            formatter.FormatPerformanceRanking(
-                                writer,
-                                "Performance Rankings (FBS)",
-                                teamMap,
-                                fbsCompletedGames,
-                                fbsPerformanceRankings);
+                                "Performance Rankings (Overall)");
                         }
 
                         using (var writer = CreateFileWriter(overallWinStrengthFileName))
                         {
-                            formatter.FormatWinStrengthRanking(
+                            overallFormatter.FormatWinStrengthRanking(
                                 writer,
                                 "Win Strength (Overall)",
-                                teamMap,
-                                completedGames,
                                 overallWinStrength);
-                        }
-
-                        using (var writer = CreateFileWriter(fbsWinStrengthFileName))
-                        {
-                            formatter.FormatWinStrengthRanking(
-                                writer,
-                                "Win Strength (FBS)",
-                                teamMap,
-                                fbsCompletedGames,
-                                fbsWinStrength);
                         }
 
                         using (var writer = CreateFileWriter(overallScheduleStrengthFileName))
                         {
-                            formatter.FormatScheduleStrengthRanking(
+                            overallFormatter.FormatOverallScheduleStrengthRanking(
                                 writer,
                                 "Schedule Strength (Overall)",
-                                teamMap,
-                                regularSeasonGames,
-                                overallPerformanceRankings,
                                 overallScheduleStrength);
                         }
 
                         using (var writer = CreateFileWriter(completedScheduleStrengthFileName))
                         {
-                            formatter.FormatScheduleStrengthRanking(
+                            overallFormatter.FormatCompletedScheduleStrengthRanking(
                                 writer,
                                 "Schedule Strength (Completed)",
-                                teamMap,
-                                completedGames,
-                                overallPerformanceRankings,
                                 completedScheduleStrength);
                         }
 
                         using (var writer = CreateFileWriter(futureScheduleStrengthFileName))
                         {
-                            formatter.FormatScheduleStrengthRanking(
+                            overallFormatter.FormatFutureScheduleStrengthRanking(
                                 writer,
                                 "Schedule Strength (Future)",
-                                teamMap,
-                                futureGames,
-                                overallPerformanceRankings,
                                 futureScheduleStrength);
-                        }
-
-                        using (var writer = CreateFileWriter(fbsOverallScheduleStrengthFileName))
-                        {
-                            formatter.FormatScheduleStrengthRanking(
-                                writer,
-                                "FBS Schedule Strength (Overall)",
-                                teamMap,
-                                fbsRegularSeasonGames,
-                                fbsPerformanceRankings,
-                                fbsOverallScheduleStrength);
-                        }
-
-                        using (var writer = CreateFileWriter(fbsCompletedScheduleStrengthFileName))
-                        {
-                            formatter.FormatScheduleStrengthRanking(
-                                writer,
-                                "FBS Schedule Strength (Completed)",
-                                teamMap,
-                                fbsCompletedGames,
-                                fbsPerformanceRankings,
-                                fbsCompletedScheduleStrength);
-                        }
-
-                        using (var writer = CreateFileWriter(fbsFutureScheduleStrengthFileName))
-                        {
-                            formatter.FormatScheduleStrengthRanking(
-                                writer,
-                                "FBS Schedule Strength (Future)",
-                                teamMap,
-                                fbsFutureGames,
-                                fbsPerformanceRankings,
-                                fbsFutureScheduleStrength);
                         }
 
                         using (var writer = CreateFileWriter(top25OverallScheduleStrengthFileName))
                         {
-                            formatter.FormatScheduleStrengthRanking(
+                            overallFormatter.FormatOverallScheduleStrengthRanking(
                                 writer,
                                 "Top 25 Schedule Strength (Overall)",
-                                teamMap,
-                                regularSeasonGames,
-                                overallPerformanceRankings,
                                 top25OverallScheduleStrength);
                         }
 
                         using (var writer = CreateFileWriter(top25CompletedScheduleStrengthFileName))
                         {
-                            formatter.FormatScheduleStrengthRanking(
+                            overallFormatter.FormatCompletedScheduleStrengthRanking(
                                 writer,
                                 "Top 25 Schedule Strength (Completed)",
-                                teamMap,
-                                completedGames,
-                                overallPerformanceRankings,
                                 top25CompletedScheduleStrength);
                         }
 
                         using (var writer = CreateFileWriter(top25FutureScheduleStrengthFileName))
                         {
-                            formatter.FormatScheduleStrengthRanking(
+                            overallFormatter.FormatFutureScheduleStrengthRanking(
                                 writer,
                                 "Top 25 Schedule Strength (Future)",
-                                teamMap,
-                                futureGames,
-                                overallPerformanceRankings,
                                 top25FutureScheduleStrength);
+                        }
+
+                        using (var writer = CreateFileWriter(overallGameStrengthByWeekFileName))
+                        {
+                            overallFormatter.FormatGameStrengthRankingByWeek(
+                                writer,
+                                "Game Strength (Overall)",
+                                overallGameStrengthByWeek);
+                        }
+
+                        using (var writer = CreateFileWriter(overallConferenceStrengthFileName))
+                        {
+                            overallFormatter.FormatConferenceStrengthRanking(
+                                writer,
+                                "Conference Strength (Overall)",
+                                overallConferenceStrength);
+                        }
+
+                        using (var writer = CreateFileWriter(overallGameStrengthFileName))
+                        {
+                            overallFormatter.FormatGameStrengthRanking(
+                                writer,
+                                "Game Strength (Overall)",
+                                overallGameStrength);
+                        }
+
+                        using (var writer = CreateFileWriter(overallGameValidationFileName))
+                        {
+                            overallFormatter.FormatValidation(
+                                writer,
+                                "Game Validation (Overall)",
+                                overallGameValidation);
+                        }
+
+                        var fbsFormatter = new RankingFormatterService(
+                            conferenceMap,
+                            teamMap,
+                            gameMap,
+                            fbsTeamRecord,
+                            fbsRegularSeasonGames,
+                            fbsCompletedGames,
+                            fbsFutureGames,
+                            fbsPerformanceRankings);
+
+                        using (var writer = CreateFileWriter(fbsPerformanceFileName))
+                        {
+                            fbsFormatter.FormatPerformanceRanking(
+                                writer,
+                                "Performance Rankings (FBS)");
+                        }
+
+                        using (var writer = CreateFileWriter(fbsWinStrengthFileName))
+                        {
+                            fbsFormatter.FormatWinStrengthRanking(
+                                writer,
+                                "Win Strength (FBS)",
+                                fbsWinStrength);
+                        }
+
+                        using (var writer = CreateFileWriter(fbsOverallScheduleStrengthFileName))
+                        {
+                            fbsFormatter.FormatOverallScheduleStrengthRanking(
+                                writer,
+                                "FBS Schedule Strength (Overall)",
+                                fbsOverallScheduleStrength);
+                        }
+
+                        using (var writer = CreateFileWriter(fbsCompletedScheduleStrengthFileName))
+                        {
+                            fbsFormatter.FormatCompletedScheduleStrengthRanking(
+                                writer,
+                                "FBS Schedule Strength (Completed)",
+                                fbsCompletedScheduleStrength);
+                        }
+
+                        using (var writer = CreateFileWriter(fbsFutureScheduleStrengthFileName))
+                        {
+                            fbsFormatter.FormatFutureScheduleStrengthRanking(
+                                writer,
+                                "FBS Schedule Strength (Future)",
+                                fbsFutureScheduleStrength);
                         }
 
                         using (var writer = CreateFileWriter(top25FbsOverallScheduleStrengthFileName))
                         {
-                            formatter.FormatScheduleStrengthRanking(
+                            fbsFormatter.FormatOverallScheduleStrengthRanking(
                                 writer,
                                 "Top 25 FBS Schedule Strength (Overall)",
-                                teamMap,
-                                fbsRegularSeasonGames,
-                                fbsPerformanceRankings,
                                 top25FbsOverallScheduleStrength);
                         }
 
                         using (var writer = CreateFileWriter(top25FbsCompletedScheduleStrengthFileName))
                         {
-                            formatter.FormatScheduleStrengthRanking(
+                            fbsFormatter.FormatCompletedScheduleStrengthRanking(
                                 writer,
                                 "Top 25 FBS Schedule Strength (Completed)",
-                                teamMap,
-                                fbsCompletedGames,
-                                fbsPerformanceRankings,
                                 top25FbsCompletedScheduleStrength);
                         }
 
                         using (var writer = CreateFileWriter(top25FbsFutureScheduleStrengthFileName))
                         {
-                            formatter.FormatScheduleStrengthRanking(
+                            fbsFormatter.FormatFutureScheduleStrengthRanking(
                                 writer,
                                 "Top 25 FBS Schedule Strength (Future)",
-                                teamMap,
-                                fbsFutureGames,
-                                fbsPerformanceRankings,
                                 top25FbsFutureScheduleStrength);
-                        }
-
-                        using (var writer = CreateFileWriter(overallConferenceStrengthFileName))
-                        {
-                            formatter.FormatConferenceStrengthRanking(
-                                writer,
-                                "Conference Strength (Overall)",
-                                conferenceMap,
-                                teamMap,
-                                overallPerformanceRankings,
-                                overallConferenceStrength);
                         }
 
                         using (var writer = CreateFileWriter(fbsConferenceStrengthFileName))
                         {
-                            formatter.FormatConferenceStrengthRanking(
+                            fbsFormatter.FormatConferenceStrengthRanking(
                                 writer,
                                 "Conference Strength (FBS)",
-                                conferenceMap,
-                                teamMap,
-                                fbsPerformanceRankings,
                                 fbsConferenceStrength);
-                        }
-
-                        using (var writer = CreateFileWriter(overallGameStrengthFileName))
-                        {
-                            formatter.FormatGameStrengthRanking(
-                                writer,
-                                "Game Strength (Overall)",
-                                teamMap,
-                                gameMap,
-                                overallPerformanceRankings,
-                                overallGameStrength);
                         }
 
                         using (var writer = CreateFileWriter(fbsGameStrengthFileName))
                         {
-                            formatter.FormatGameStrengthRanking(
+                            fbsFormatter.FormatGameStrengthRanking(
                                 writer,
                                 "Game Strength (FBS)",
-                                teamMap,
-                                gameMap,
-                                fbsPerformanceRankings,
                                 fbsGameStrength);
-                        }
-
-                        using (var writer = CreateFileWriter(overallGameStrengthByWeekFileName))
-                        {
-                            formatter.FormatGameStrengthRankingByWeek(
-                                writer,
-                                "Game Strength (Overall)",
-                                teamMap,
-                                gameMap,
-                                overallGameStrengthByWeek);
                         }
 
                         using (var writer = CreateFileWriter(fbsGameStrengthByWeekFileName))
                         {
-                            formatter.FormatGameStrengthRankingByWeek(
+                            fbsFormatter.FormatGameStrengthRankingByWeek(
                                 writer,
                                 "Game Strength (FBS)",
-                                teamMap,
-                                gameMap,
                                 fbsGameStrengthByWeek);
-                        }
-
-                        using (var writer = CreateFileWriter(overallGameValidationFileName))
-                        {
-                            formatter.FormatValidation(
-                                writer,
-                                "Game Validation (Overall)",
-                                teamMap,
-                                fbsCompletedGames,
-                                overallPerformanceRankings,
-                                overallGameValidation);
                         }
 
                         using (var writer = CreateFileWriter(fbsGameValidationFileName))
                         {
-                            formatter.FormatValidation(
+                            fbsFormatter.FormatValidation(
                                 writer,
                                 "Game Validation (FBS)",
-                                teamMap,
-                                fbsCompletedGames,
-                                fbsPerformanceRankings,
                                 fbsGameValidation);
                         }
 
                         using (var writer = CreateFileWriter(weeklySummaryFileName))
                         {
-                            formatter.FormatWeeklySummary(
+                            summaryFormatter.FormatWeeklySummary(
                                 writer,
                                 year,
                                 week,
-                                teamMap,
-                                gameMap,
                                 top25FbsPerformanceRankings,
                                 top25FbsFutureScheduleStrength,
                                 fbsGameStrengthByWeek);
@@ -489,26 +438,51 @@ namespace CollegeFbsRankings.Application.CalculateRankings
 
                         #endregion
                     }
+
                     #endregion
                     
                     #region Simultaneous Wins
                     {
                         #region Calculate Data
 
-                        var overallPerformanceRankings = new SimultaneousWins_PerformanceRanking(teamMap, teamRecord, completedGames);
-                        var fbsPerformanceRankings = new SimultaneousWins_PerformanceRanking(teamMap, fbsTeamRecord, fbsCompletedGames);
+                        var overallRanking = new SimultaneousWinsRankingService(
+                            conferenceMap,
+                            teamMap,
+                            gameMap,
+                            teamRecord,
+                            regularSeasonGames,
+                            completedGames,
+                            futureGames);
 
-                        var overallWinStrength = new SimultaneousWins_WinStrengthRanking(teamMap, overallPerformanceRankings);
-                        var fbsWinStrength = new SimultaneousWins_WinStrengthRanking(teamMap, fbsPerformanceRankings);
+                        var overallPerformanceRankings = overallRanking.CalculatePerformanceRanking();
+                        var overallWinStrength = overallRanking.CalculateWinStrengthRanking();
+                        var overallScheduleStrength = overallRanking.CalculateOverallScheduleStrengthRanking();
+                        var completedScheduleStrength = overallRanking.CalculateCompletedScheduleStrengthRanking();
+                        var futureScheduleStrength = overallRanking.CalculateFutureScheduleStrengthRanking();
+                        var overallConferenceStrength = overallRanking.CalculateConferenceStrengthRanking();
+                        var overallGameStrength = overallRanking.CalculateGameStrengthRanking();
+                        var overallGameStrengthByWeek = overallGameStrength.ByWeek();
+                        var overallGameValidation = validationService.GameValidationFromRanking(fbsCompletedGames, overallPerformanceRankings);
 
-                        var overallScheduleStrength = new SimultaneousWins_ScheduleStrengthRanking(teamMap, teamRecord, regularSeasonGames, overallPerformanceRankings);
-                        var completedScheduleStrength = new SimultaneousWins_ScheduleStrengthRanking(teamMap, teamRecord, completedGames, overallPerformanceRankings);
-                        var futureScheduleStrength = new SimultaneousWins_ScheduleStrengthRanking(teamMap, teamRecord, futureGames, overallPerformanceRankings);
+                        var fbsRanking = new SimultaneousWinsRankingService(
+                            conferenceMap,
+                            teamMap,
+                            gameMap,
+                            fbsTeamRecord,
+                            fbsRegularSeasonGames,
+                            fbsCompletedGames,
+                            fbsFutureGames);
 
-                        var fbsOverallScheduleStrength = new SimultaneousWins_ScheduleStrengthRanking(teamMap, fbsTeamRecord, fbsRegularSeasonGames, fbsPerformanceRankings);
-                        var fbsCompletedScheduleStrength = new SimultaneousWins_ScheduleStrengthRanking(teamMap, fbsTeamRecord, fbsCompletedGames, fbsPerformanceRankings);
-                        var fbsFutureScheduleStrength = new SimultaneousWins_ScheduleStrengthRanking(teamMap, fbsTeamRecord, fbsFutureGames, fbsPerformanceRankings);
-                        
+                        var fbsPerformanceRankings = fbsRanking.CalculatePerformanceRanking();
+                        var fbsWinStrength = fbsRanking.CalculateWinStrengthRanking();
+                        var fbsOverallScheduleStrength = fbsRanking.CalculateOverallScheduleStrengthRanking();
+                        var fbsCompletedScheduleStrength = fbsRanking.CalculateCompletedScheduleStrengthRanking();
+                        var fbsFutureScheduleStrength = fbsRanking.CalculateFutureScheduleStrengthRanking();
+                        var fbsConferenceStrength = fbsRanking.CalculateConferenceStrengthRanking();
+                        var fbsGameStrength = fbsRanking.CalculateGameStrengthRanking();
+                        var fbsGameStrengthByWeek = fbsGameStrength.ByWeek();
+                        var fbsGameValidation = validationService.GameValidationFromRanking(fbsCompletedGames, fbsPerformanceRankings);
+
                         var top25Teams = fbsPerformanceRankings
                             .Where(rank => rank.Key is FbsTeamId)
                             .Take(25)
@@ -516,6 +490,7 @@ namespace CollegeFbsRankings.Application.CalculateRankings
                             .ToList();
 
                         var top25FbsPerformanceRankings = fbsPerformanceRankings.ForTeams(top25Teams);
+
                         var top25OverallScheduleStrength = overallScheduleStrength.ForTeams(top25Teams);
                         var top25CompletedScheduleStrength = completedScheduleStrength.ForTeams(top25Teams);
                         var top25FutureScheduleStrength = futureScheduleStrength.ForTeams(top25Teams);
@@ -523,18 +498,6 @@ namespace CollegeFbsRankings.Application.CalculateRankings
                         var top25FbsOverallScheduleStrength = fbsOverallScheduleStrength.ForTeams(top25Teams);
                         var top25FbsCompletedScheduleStrength = fbsCompletedScheduleStrength.ForTeams(top25Teams);
                         var top25FbsFutureScheduleStrength = fbsFutureScheduleStrength.ForTeams(top25Teams);
-
-                        var overallConferenceStrength = new SimultaneousWins_ConferenceStrengthRanking(conferenceMap, teamMap, overallPerformanceRankings);
-                        var fbsConferenceStrength = new SimultaneousWins_ConferenceStrengthRanking(conferenceMap, teamMap, fbsPerformanceRankings);
-
-                        var overallGameStrength = new SimultaneousWins_GameStrengthRanking(fbsRegularSeasonGames, teamMap, overallPerformanceRankings);
-                        var fbsGameStrength = new SimultaneousWins_GameStrengthRanking(fbsRegularSeasonGames, teamMap, fbsPerformanceRankings);
-
-                        var overallGameStrengthByWeek = overallGameStrength.ByWeek(gameMap);
-                        var fbsGameStrengthByWeek = fbsGameStrength.ByWeek(gameMap);
-
-                        var overallGameValidation = validationService.GameValidationFromRanking(fbsCompletedGames, overallPerformanceRankings);
-                        var fbsGameValidation = validationService.GameValidationFromRanking(fbsCompletedGames, fbsPerformanceRankings);
 
                         #endregion
 
@@ -588,297 +551,230 @@ namespace CollegeFbsRankings.Application.CalculateRankings
 
                         #region Output Results to Files
 
-                        var formatter = new SimultaneousWins_RankingFormatterService();
+                        var overallFormatter = new RankingFormatterService(
+                            conferenceMap,
+                            teamMap,
+                            gameMap,
+                            teamRecord,
+                            regularSeasonGames,
+                            completedGames,
+                            futureGames,
+                            overallPerformanceRankings);
 
                         using (var writer = CreateFileWriter(overallPerformanceFileName))
                         {
-                            formatter.FormatPerformanceRanking(
-                                writer, 
-                                "Performance Rankings (Overall)", 
-                                teamMap,
-                                teamRecord,
-                                completedGames,
-                                overallPerformanceRankings);
-                        }
-
-                        using (var writer = CreateFileWriter(fbsPerformanceFileName))
-                        {
-                            formatter.FormatPerformanceRanking(
-                                writer, 
-                                "Performance Rankings (FBS)", 
-                                teamMap,
-                                fbsTeamRecord,
-                                fbsCompletedGames,
-                                fbsPerformanceRankings);
+                            overallFormatter.FormatPerformanceRanking(
+                                writer,
+                                "Performance Rankings (Overall)");
                         }
 
                         using (var writer = CreateFileWriter(overallWinStrengthFileName))
                         {
-                            formatter.FormatWinStrengthRanking(
+                            overallFormatter.FormatWinStrengthRanking(
                                 writer,
                                 "Win Strength (Overall)",
-                                teamMap,
-                                teamRecord,
-                                completedGames,
                                 overallWinStrength);
-                        }
-
-                        using (var writer = CreateFileWriter(fbsWinStrengthFileName))
-                        {
-                            formatter.FormatWinStrengthRanking(
-                                writer,
-                                "Win Strength (FBS)",
-                                teamMap,
-                                fbsTeamRecord,
-                                fbsCompletedGames,
-                                fbsWinStrength);
                         }
 
                         using (var writer = CreateFileWriter(overallScheduleStrengthFileName))
                         {
-                            formatter.FormatScheduleStrengthRanking(
-                                writer, 
-                                "Schedule Strength (Overall)", 
-                                teamMap,
-                                teamRecord,
-                                regularSeasonGames,
-                                overallPerformanceRankings,
+                            overallFormatter.FormatOverallScheduleStrengthRanking(
+                                writer,
+                                "Schedule Strength (Overall)",
                                 overallScheduleStrength);
                         }
 
                         using (var writer = CreateFileWriter(completedScheduleStrengthFileName))
                         {
-                            formatter.FormatScheduleStrengthRanking(
+                            overallFormatter.FormatCompletedScheduleStrengthRanking(
                                 writer,
                                 "Schedule Strength (Completed)",
-                                teamMap,
-                                teamRecord,
-                                completedGames,
-                                overallPerformanceRankings,
                                 completedScheduleStrength);
                         }
 
                         using (var writer = CreateFileWriter(futureScheduleStrengthFileName))
                         {
-                            formatter.FormatScheduleStrengthRanking(
+                            overallFormatter.FormatFutureScheduleStrengthRanking(
                                 writer,
                                 "Schedule Strength (Future)",
-                                teamMap,
-                                teamRecord,
-                                futureGames,
-                                overallPerformanceRankings,
                                 futureScheduleStrength);
-                        }
-
-                        using (var writer = CreateFileWriter(fbsOverallScheduleStrengthFileName))
-                        {
-                            formatter.FormatScheduleStrengthRanking(
-                                writer,
-                                "FBS Schedule Strength (Overall)",
-                                teamMap,
-                                fbsTeamRecord,
-                                fbsRegularSeasonGames,
-                                fbsPerformanceRankings,
-                                fbsOverallScheduleStrength);
-                        }
-
-                        using (var writer = CreateFileWriter(fbsCompletedScheduleStrengthFileName))
-                        {
-                            formatter.FormatScheduleStrengthRanking(
-                                writer,
-                                "FBS Schedule Strength (Completed)",
-                                teamMap,
-                                fbsTeamRecord,
-                                fbsCompletedGames,
-                                fbsPerformanceRankings,
-                                fbsCompletedScheduleStrength);
-                        }
-
-                        using (var writer = CreateFileWriter(fbsFutureScheduleStrengthFileName))
-                        {
-                            formatter.FormatScheduleStrengthRanking(
-                                writer,
-                                "FBS Schedule Strength (Future)",
-                                teamMap,
-                                fbsTeamRecord,
-                                fbsFutureGames,
-                                fbsPerformanceRankings,
-                                fbsFutureScheduleStrength);
                         }
 
                         using (var writer = CreateFileWriter(top25OverallScheduleStrengthFileName))
                         {
-                            formatter.FormatScheduleStrengthRanking(
-                                writer, 
+                            overallFormatter.FormatOverallScheduleStrengthRanking(
+                                writer,
                                 "Top 25 Schedule Strength (Overall)",
-                                teamMap,
-                                teamRecord,
-                                regularSeasonGames,
-                                overallPerformanceRankings,
                                 top25OverallScheduleStrength);
                         }
 
                         using (var writer = CreateFileWriter(top25CompletedScheduleStrengthFileName))
                         {
-                            formatter.FormatScheduleStrengthRanking(
-                                writer, 
+                            overallFormatter.FormatCompletedScheduleStrengthRanking(
+                                writer,
                                 "Top 25 Schedule Strength (Completed)",
-                                teamMap,
-                                teamRecord,
-                                completedGames,
-                                overallPerformanceRankings,
                                 top25CompletedScheduleStrength);
                         }
 
                         using (var writer = CreateFileWriter(top25FutureScheduleStrengthFileName))
                         {
-                            formatter.FormatScheduleStrengthRanking(
-                                writer, 
+                            overallFormatter.FormatFutureScheduleStrengthRanking(
+                                writer,
                                 "Top 25 Schedule Strength (Future)",
-                                teamMap,
-                                teamRecord,
-                                futureGames,
-                                overallPerformanceRankings,
                                 top25FutureScheduleStrength);
+                        }
+
+                        using (var writer = CreateFileWriter(overallGameStrengthByWeekFileName))
+                        {
+                            overallFormatter.FormatGameStrengthRankingByWeek(
+                                writer,
+                                "Game Strength (Overall)",
+                                overallGameStrengthByWeek);
+                        }
+
+                        using (var writer = CreateFileWriter(overallConferenceStrengthFileName))
+                        {
+                            overallFormatter.FormatConferenceStrengthRanking(
+                                writer,
+                                "Conference Strength (Overall)",
+                                overallConferenceStrength);
+                        }
+
+                        using (var writer = CreateFileWriter(overallGameStrengthFileName))
+                        {
+                            overallFormatter.FormatGameStrengthRanking(
+                                writer,
+                                "Game Strength (Overall)",
+                                overallGameStrength);
+                        }
+
+                        using (var writer = CreateFileWriter(overallGameValidationFileName))
+                        {
+                            overallFormatter.FormatValidation(
+                                writer,
+                                "Game Validation (Overall)",
+                                overallGameValidation);
+                        }
+
+                        var fbsFormatter = new RankingFormatterService(
+                            conferenceMap,
+                            teamMap,
+                            gameMap,
+                            fbsTeamRecord,
+                            fbsRegularSeasonGames,
+                            fbsCompletedGames,
+                            fbsFutureGames,
+                            fbsPerformanceRankings);
+
+                        using (var writer = CreateFileWriter(fbsPerformanceFileName))
+                        {
+                            fbsFormatter.FormatPerformanceRanking(
+                                writer,
+                                "Performance Rankings (FBS)");
+                        }
+
+                        using (var writer = CreateFileWriter(fbsWinStrengthFileName))
+                        {
+                            fbsFormatter.FormatWinStrengthRanking(
+                                writer,
+                                "Win Strength (FBS)",
+                                fbsWinStrength);
+                        }
+
+                        using (var writer = CreateFileWriter(fbsOverallScheduleStrengthFileName))
+                        {
+                            fbsFormatter.FormatOverallScheduleStrengthRanking(
+                                writer,
+                                "FBS Schedule Strength (Overall)",
+                                fbsOverallScheduleStrength);
+                        }
+
+                        using (var writer = CreateFileWriter(fbsCompletedScheduleStrengthFileName))
+                        {
+                            fbsFormatter.FormatCompletedScheduleStrengthRanking(
+                                writer,
+                                "FBS Schedule Strength (Completed)",
+                                fbsCompletedScheduleStrength);
+                        }
+
+                        using (var writer = CreateFileWriter(fbsFutureScheduleStrengthFileName))
+                        {
+                            fbsFormatter.FormatFutureScheduleStrengthRanking(
+                                writer,
+                                "FBS Schedule Strength (Future)",
+                                fbsFutureScheduleStrength);
                         }
 
                         using (var writer = CreateFileWriter(top25FbsOverallScheduleStrengthFileName))
                         {
-                            formatter.FormatScheduleStrengthRanking(
-                                writer, 
+                            fbsFormatter.FormatOverallScheduleStrengthRanking(
+                                writer,
                                 "Top 25 FBS Schedule Strength (Overall)",
-                                teamMap,
-                                fbsTeamRecord,
-                                fbsRegularSeasonGames,
-                                fbsPerformanceRankings,
                                 top25FbsOverallScheduleStrength);
                         }
 
                         using (var writer = CreateFileWriter(top25FbsCompletedScheduleStrengthFileName))
                         {
-                            formatter.FormatScheduleStrengthRanking(
-                                writer, 
+                            fbsFormatter.FormatCompletedScheduleStrengthRanking(
+                                writer,
                                 "Top 25 FBS Schedule Strength (Completed)",
-                                teamMap,
-                                fbsTeamRecord,
-                                fbsCompletedGames,
-                                fbsPerformanceRankings,
                                 top25FbsCompletedScheduleStrength);
                         }
 
                         using (var writer = CreateFileWriter(top25FbsFutureScheduleStrengthFileName))
                         {
-                            formatter.FormatScheduleStrengthRanking(
-                                writer, 
+                            fbsFormatter.FormatFutureScheduleStrengthRanking(
+                                writer,
                                 "Top 25 FBS Schedule Strength (Future)",
-                                teamMap,
-                                fbsTeamRecord,
-                                fbsFutureGames,
-                                fbsPerformanceRankings,
                                 top25FbsFutureScheduleStrength);
-                        }
-
-                        using (var writer = CreateFileWriter(overallConferenceStrengthFileName))
-                        {
-                            formatter.FormatConferenceStrengthRanking(
-                                writer, 
-                                "Conference Strength (Overall)",
-                                conferenceMap,
-                                teamMap,
-                                overallPerformanceRankings, 
-                                overallConferenceStrength);
                         }
 
                         using (var writer = CreateFileWriter(fbsConferenceStrengthFileName))
                         {
-                            formatter.FormatConferenceStrengthRanking(
-                                writer, 
+                            fbsFormatter.FormatConferenceStrengthRanking(
+                                writer,
                                 "Conference Strength (FBS)",
-                                conferenceMap,
-                                teamMap,
-                                fbsPerformanceRankings, 
                                 fbsConferenceStrength);
-                        }
-
-                        using (var writer = CreateFileWriter(overallGameStrengthFileName))
-                        {
-                            formatter.FormatGameStrengthRanking(
-                                writer, 
-                                "Game Strength (Overall)",
-                                teamMap,
-                                gameMap,
-                                overallPerformanceRankings,
-                                overallGameStrength);
                         }
 
                         using (var writer = CreateFileWriter(fbsGameStrengthFileName))
                         {
-                            formatter.FormatGameStrengthRanking(
+                            fbsFormatter.FormatGameStrengthRanking(
                                 writer,
                                 "Game Strength (FBS)",
-                                teamMap, 
-                                gameMap,
-                                fbsPerformanceRankings,
                                 fbsGameStrength);
-                        }
-
-                        using (var writer = CreateFileWriter(overallGameStrengthByWeekFileName))
-                        {
-                            formatter.FormatGameStrengthRankingByWeek(
-                                writer,
-                                "Game Strength (Overall)",
-                                teamMap,
-                                gameMap,
-                                overallGameStrengthByWeek);
                         }
 
                         using (var writer = CreateFileWriter(fbsGameStrengthByWeekFileName))
                         {
-                            formatter.FormatGameStrengthRankingByWeek(
+                            fbsFormatter.FormatGameStrengthRankingByWeek(
                                 writer,
                                 "Game Strength (FBS)",
-                                teamMap,
-                                gameMap,
                                 fbsGameStrengthByWeek);
-                        }
-
-                        using (var writer = CreateFileWriter(overallGameValidationFileName))
-                        {
-                            formatter.FormatValidation(
-                                writer, 
-                                "Game Validation (Overall)",
-                                teamMap,
-                                fbsCompletedGames, 
-                                overallPerformanceRankings,
-                                overallGameValidation);
                         }
 
                         using (var writer = CreateFileWriter(fbsGameValidationFileName))
                         {
-                            formatter.FormatValidation(
-                                writer, 
+                            fbsFormatter.FormatValidation(
+                                writer,
                                 "Game Validation (FBS)",
-                                teamMap,
-                                fbsCompletedGames, 
-                                fbsPerformanceRankings,
                                 fbsGameValidation);
                         }
 
                         using (var writer = CreateFileWriter(weeklySummaryFileName))
                         {
-                            formatter.FormatWeeklySummary(
-                                writer, 
-                                year, 
-                                week, 
-                                teamMap,
-                                gameMap,
-                                top25FbsPerformanceRankings, 
-                                top25FbsFutureScheduleStrength, 
+                            summaryFormatter.FormatWeeklySummary(
+                                writer,
+                                year,
+                                week,
+                                top25FbsPerformanceRankings,
+                                top25FbsFutureScheduleStrength,
                                 fbsGameStrengthByWeek);
                         }
 
                         #endregion
                     }
+
                     #endregion
                 }
 
@@ -909,32 +805,65 @@ namespace CollegeFbsRankings.Application.CalculateRankings
                     {
                         #region Calculate Data
 
-                        var overallPerformanceRankings = new SingleDepthWins_PerformanceRanking(teamMap, fullSeasonTeamRecord, fullSeasonCompletedGames);
-                        var fbsPerformanceRankings = new SingleDepthWins_PerformanceRanking(teamMap, fbsFullSeasonTeamRecord, fbsFullSeasonCompletedGames);
+                        var overallFullSeasonRanking = new SingleDepthWinsRankingService(
+                            conferenceMap,
+                            teamMap,
+                            gameMap,
+                            fullSeasonTeamRecord,
+                            regularSeasonCompletedGames,
+                            fullSeasonCompletedGames,
+                            Enumerable.Empty<Game>());
 
-                        var overallWinStrength = new SingleDepthWins_WinStrengthRanking(teamMap, overallPerformanceRankings);
-                        var fbsWinStrength = new SingleDepthWins_WinStrengthRanking(teamMap, fbsPerformanceRankings);
-
-                        var overallConferenceStrength = new SingleDepthWins_ConferenceStrengthRanking(conferenceMap, teamMap, overallPerformanceRankings);
-                        var fbsConferenceStrength = new SingleDepthWins_ConferenceStrengthRanking(conferenceMap, teamMap, fbsPerformanceRankings);
-
-                        var overallGameStrength = new SingleDepthWins_GameStrengthRanking(fbsRegularSeasonGames, teamMap, overallPerformanceRankings);
-                        var fbsGameStrength = new SingleDepthWins_GameStrengthRanking(fbsRegularSeasonGames, teamMap, fbsPerformanceRankings);
-
-                        var overallGameStrengthByWeek = overallGameStrength.ByWeek(gameMap);
-                        var fbsGameStrengthByWeek = fbsGameStrength.ByWeek(gameMap);
-
+                        var overallPerformanceRankings = overallFullSeasonRanking.CalculatePerformanceRanking();
+                        var overallWinStrength = overallFullSeasonRanking.CalculateWinStrengthRanking();
+                        var overallConferenceStrength = overallFullSeasonRanking.CalculateConferenceStrengthRanking();
+                        var overallGameStrength = overallFullSeasonRanking.CalculateGameStrengthRanking();
+                        var overallGameStrengthByWeek = overallGameStrength.ByWeek();
                         var overallGameValidation = validationService.GameValidationFromRanking(fbsRegularSeasonCompletedGames, overallPerformanceRankings);
+
+                        var overallRegularSeasonRanking = new SingleDepthWinsRankingService(
+                            conferenceMap,
+                            teamMap,
+                            gameMap,
+                            regularSeasonTeamRecord,
+                            regularSeasonCompletedGames,
+                            regularSeasonCompletedGames,
+                            Enumerable.Empty<Game>());
+
+                        var overallRegularSeasonPerformanceRankings = overallRegularSeasonRanking.CalculatePerformanceRanking();
+                        var overallPostseasonPrediction = validationService.GameValidationFromRanking(fbsPostseasonCompletedGames, overallRegularSeasonPerformanceRankings);
+
+                        summary.AddRankingSummary("Single Depth, Overall", overallPerformanceRankings, overallGameValidation, overallPostseasonPrediction);
+
+                        var fbsFullSeasonRanking = new SingleDepthWinsRankingService(
+                            conferenceMap,
+                            teamMap,
+                            gameMap,
+                            fbsFullSeasonTeamRecord,
+                            fbsRegularSeasonCompletedGames,
+                            fbsFullSeasonCompletedGames,
+                            Enumerable.Empty<Game>());
+
+                        var fbsPerformanceRankings = fbsFullSeasonRanking.CalculatePerformanceRanking();
+                        var fbsWinStrength = fbsFullSeasonRanking.CalculateWinStrengthRanking();
+                        var fbsConferenceStrength = fbsFullSeasonRanking.CalculateConferenceStrengthRanking();
+                        var fbsGameStrength = fbsFullSeasonRanking.CalculateGameStrengthRanking();
+                        var fbsGameStrengthByWeek = fbsGameStrength.ByWeek();
                         var fbsGameValidation = validationService.GameValidationFromRanking(fbsRegularSeasonCompletedGames, fbsPerformanceRankings);
 
-                        var overallRegularSeasonPerformanceRankings = new SingleDepthWins_PerformanceRanking(teamMap, regularSeasonTeamRecord, regularSeasonCompletedGames);
-                        var fbsRegularSeasonPerformanceRankings = new SingleDepthWins_PerformanceRanking(teamMap, fbsRegularSeasonTeamRecord, fbsRegularSeasonCompletedGames);
+                        var fbsRegularSeasonRanking = new SingleDepthWinsRankingService(
+                            conferenceMap,
+                            teamMap,
+                            gameMap,
+                            fbsRegularSeasonTeamRecord,
+                            fbsRegularSeasonCompletedGames,
+                            fbsRegularSeasonCompletedGames,
+                            Enumerable.Empty<Game>());
 
-                        var overallPostseasonPrediction = validationService.GameValidationFromRanking(fbsPostseasonCompletedGames, overallRegularSeasonPerformanceRankings);
+                        var fbsRegularSeasonPerformanceRankings = fbsRegularSeasonRanking.CalculatePerformanceRanking();
                         var fbsPostseasonPrediction = validationService.GameValidationFromRanking(fbsPostseasonCompletedGames, fbsRegularSeasonPerformanceRankings);
 
-                        summary.AddSingleDepthWins("Single Depth, Overall", overallPerformanceRankings, overallGameValidation, overallPostseasonPrediction);
-                        summary.AddSingleDepthWins("Single Depth, FBS", fbsPerformanceRankings, fbsGameValidation, fbsPostseasonPrediction);
+                        summary.AddRankingSummary("Single Depth, FBS", fbsPerformanceRankings, fbsGameValidation, fbsPostseasonPrediction);
 
                         #endregion
 
@@ -970,152 +899,173 @@ namespace CollegeFbsRankings.Application.CalculateRankings
 
                         #region Output Results to Files
 
-                        var formatter = new SingleDepthWins_RankingFormatterService();
+                        var overallFullSeasonFormatter = new RankingFormatterService(
+                            conferenceMap,
+                            teamMap,
+                            gameMap,
+                            fullSeasonTeamRecord,
+                            fullSeasonCompletedGames,
+                            fullSeasonCompletedGames,
+                            Enumerable.Empty<Game>(),
+                            overallPerformanceRankings);
+                        
                         using (var writer = CreateFileWriter(overallPerformanceFileName))
                         {
-                            formatter.FormatPerformanceRanking(
+                            overallFullSeasonFormatter.FormatPerformanceRanking(
                                 writer,
-                                "Performance Rankings (Overall)",
-                                teamMap,
-                                fullSeasonCompletedGames,
-                                overallPerformanceRankings);
-                        }
-
-                        using (var writer = CreateFileWriter(fbsPerformanceFileName))
-                        {
-                            formatter.FormatPerformanceRanking(
-                                writer,
-                                "Performance Rankings (FBS)",
-                                teamMap,
-                                fbsFullSeasonCompletedGames,
-                                fbsPerformanceRankings);
+                                "Performance Rankings (Overall)");
                         }
 
                         using (var writer = CreateFileWriter(overallWinStrengthFileName))
                         {
-                            formatter.FormatWinStrengthRanking(
+                            overallFullSeasonFormatter.FormatWinStrengthRanking(
                                 writer,
                                 "Win Strength (Overall)",
-                                teamMap,
-                                fullSeasonCompletedGames,
                                 overallWinStrength);
-                        }
-
-                        using (var writer = CreateFileWriter(fbsWinStrengthFileName))
-                        {
-                            formatter.FormatWinStrengthRanking(
-                                writer,
-                                "Win Strength (FBS)",
-                                teamMap,
-                                fbsFullSeasonCompletedGames,
-                                fbsWinStrength);
                         }
 
                         using (var writer = CreateFileWriter(overallConferenceStrengthFileName))
                         {
-                            formatter.FormatConferenceStrengthRanking(
+                            overallFullSeasonFormatter.FormatConferenceStrengthRanking(
                                 writer,
                                 "Conference Strength (Overall)",
-                                conferenceMap,
-                                teamMap,
-                                overallPerformanceRankings,
                                 overallConferenceStrength);
-                        }
-
-                        using (var writer = CreateFileWriter(fbsConferenceStrengthFileName))
-                        {
-                            formatter.FormatConferenceStrengthRanking(
-                                writer,
-                                "Conference Strength (FBS)",
-                                conferenceMap,
-                                teamMap,
-                                fbsPerformanceRankings,
-                                fbsConferenceStrength);
                         }
 
                         using (var writer = CreateFileWriter(overallGameStrengthFileName))
                         {
-                            formatter.FormatGameStrengthRanking(
+                            overallFullSeasonFormatter.FormatGameStrengthRanking(
                                 writer,
                                 "Game Strength (Overall)",
-                                teamMap,
-                                gameMap,
-                                overallPerformanceRankings,
                                 overallGameStrength);
-                        }
-
-                        using (var writer = CreateFileWriter(fbsGameStrengthFileName))
-                        {
-                            formatter.FormatGameStrengthRanking(
-                                writer,
-                                "Game Strength (FBS)",
-                                teamMap,
-                                gameMap,
-                                fbsPerformanceRankings,
-                                fbsGameStrength);
                         }
 
                         using (var writer = CreateFileWriter(overallGameStrengthByWeekFileName))
                         {
-                            formatter.FormatGameStrengthRankingByWeek(
+                            overallFullSeasonFormatter.FormatGameStrengthRankingByWeek(
                                 writer,
                                 "Game Strength (Overall)",
-                                teamMap,
-                                gameMap,
                                 overallGameStrengthByWeek);
+                        }
+
+                        var overallRegularSeasonFormatter = new RankingFormatterService(
+                            conferenceMap,
+                            teamMap,
+                            gameMap,
+                            regularSeasonTeamRecord,
+                            fbsRegularSeasonCompletedGames,
+                            fbsRegularSeasonCompletedGames,
+                            Enumerable.Empty<Game>(),
+                            overallPerformanceRankings);
+
+                        using (var writer = CreateFileWriter(overallGameValidationFileName))
+                        {
+                            overallRegularSeasonFormatter.FormatValidation(
+                                writer,
+                                "Game Validation (Overall)",
+                                overallGameValidation);
+                        }
+
+                        var overallPostseasonFormatter = new RankingFormatterService(
+                            conferenceMap,
+                            teamMap,
+                            gameMap,
+                            regularSeasonTeamRecord,
+                            fbsPostseasonCompletedGames,
+                            fbsPostseasonCompletedGames,
+                            Enumerable.Empty<Game>(),
+                            overallRegularSeasonPerformanceRankings);
+
+                        using (var writer = CreateFileWriter(overallPostseasonPredictionFileName))
+                        {
+                            overallPostseasonFormatter.FormatValidation(
+                                writer,
+                                "Postseason Prediction (Overall)",
+                                overallPostseasonPrediction);
+                        }
+
+                        var fbsFullSeasonFormatter = new RankingFormatterService(
+                            conferenceMap,
+                            teamMap,
+                            gameMap,
+                            fbsFullSeasonTeamRecord,
+                            fbsFullSeasonCompletedGames,
+                            fbsFullSeasonCompletedGames,
+                            Enumerable.Empty<Game>(),
+                            fbsPerformanceRankings);
+
+                        using (var writer = CreateFileWriter(fbsPerformanceFileName))
+                        {
+                            fbsFullSeasonFormatter.FormatPerformanceRanking(
+                                writer,
+                                "Performance Rankings (FBS)");
+                        }
+
+                        using (var writer = CreateFileWriter(fbsWinStrengthFileName))
+                        {
+                            fbsFullSeasonFormatter.FormatWinStrengthRanking(
+                                writer,
+                                "Win Strength (FBS)",
+                                fbsWinStrength);
+                        }
+
+                        using (var writer = CreateFileWriter(fbsConferenceStrengthFileName))
+                        {
+                            fbsFullSeasonFormatter.FormatConferenceStrengthRanking(
+                                writer,
+                                "Conference Strength (FBS)",
+                                fbsConferenceStrength);
+                        }
+
+                        using (var writer = CreateFileWriter(fbsGameStrengthFileName))
+                        {
+                            fbsFullSeasonFormatter.FormatGameStrengthRanking(
+                                writer,
+                                "Game Strength (FBS)",
+                                fbsGameStrength);
                         }
 
                         using (var writer = CreateFileWriter(fbsGameStrengthByWeekFileName))
                         {
-                            formatter.FormatGameStrengthRankingByWeek(
+                            fbsFullSeasonFormatter.FormatGameStrengthRankingByWeek(
                                 writer,
                                 "Game Strength (FBS)",
-                                teamMap,
-                                gameMap,
                                 fbsGameStrengthByWeek);
                         }
 
-                        using (var writer = CreateFileWriter(overallGameValidationFileName))
-                        {
-                            formatter.FormatValidation(
-                                writer,
-                                "Game Validation (Overall)",
-                                teamMap,
-                                fbsRegularSeasonCompletedGames,
-                                overallPerformanceRankings,
-                                overallGameValidation);
-                        }
+                        var fbsRegularSeasonFormatter = new RankingFormatterService(
+                            conferenceMap,
+                            teamMap,
+                            gameMap,
+                            fbsRegularSeasonTeamRecord,
+                            fbsRegularSeasonCompletedGames,
+                            fbsRegularSeasonCompletedGames,
+                            Enumerable.Empty<Game>(),
+                            fbsPerformanceRankings);
 
                         using (var writer = CreateFileWriter(fbsGameValidationFileName))
                         {
-                            formatter.FormatValidation(
+                            fbsRegularSeasonFormatter.FormatValidation(
                                 writer,
                                 "Game Validation (FBS)",
-                                teamMap,
-                                fbsRegularSeasonCompletedGames,
-                                fbsPerformanceRankings,
                                 fbsGameValidation);
                         }
 
-                        using (var writer = CreateFileWriter(overallPostseasonPredictionFileName))
-                        {
-                            formatter.FormatValidation(
-                                writer,
-                                "Postseason Prediction (Overall)",
-                                teamMap,
-                                fbsPostseasonCompletedGames,
-                                overallRegularSeasonPerformanceRankings,
-                                overallPostseasonPrediction);
-                        }
+                        var fbsPostseasonFormatter = new RankingFormatterService(
+                            conferenceMap,
+                            teamMap,
+                            gameMap,
+                            fbsRegularSeasonTeamRecord,
+                            fbsPostseasonCompletedGames,
+                            fbsPostseasonCompletedGames,
+                            Enumerable.Empty<Game>(),
+                            fbsRegularSeasonPerformanceRankings);
 
                         using (var writer = CreateFileWriter(fbsPostseasonPredictionFileName))
                         {
-                            formatter.FormatValidation(
+                            fbsPostseasonFormatter.FormatValidation(
                                 writer,
                                 "Postseason Prediction (FBS)",
-                                teamMap,
-                                fbsPostseasonCompletedGames,
-                                fbsRegularSeasonPerformanceRankings,
                                 fbsPostseasonPrediction);
                         }
 
@@ -1126,33 +1076,66 @@ namespace CollegeFbsRankings.Application.CalculateRankings
                     #region Simultaneous Wins
                     {
                         #region Calculate Data
-                        
-                        var overallPerformanceRankings = new SimultaneousWins_PerformanceRanking(teamMap, fullSeasonTeamRecord, fullSeasonCompletedGames);
-                        var fbsPerformanceRankings = new SimultaneousWins_PerformanceRanking(teamMap, fbsFullSeasonTeamRecord, fbsFullSeasonCompletedGames);
 
-                        var overallWinStrength = new SimultaneousWins_WinStrengthRanking(teamMap, overallPerformanceRankings);
-                        var fbsWinStrength = new SimultaneousWins_WinStrengthRanking(teamMap, fbsPerformanceRankings);
+                        var overallFullSeasonRanking = new SimultaneousWinsRankingService(
+                            conferenceMap,
+                            teamMap,
+                            gameMap,
+                            fullSeasonTeamRecord,
+                            regularSeasonCompletedGames,
+                            fullSeasonCompletedGames,
+                            Enumerable.Empty<Game>());
 
-                        var overallConferenceStrength = new SimultaneousWins_ConferenceStrengthRanking(conferenceMap, teamMap, overallPerformanceRankings);
-                        var fbsConferenceStrength = new SimultaneousWins_ConferenceStrengthRanking(conferenceMap, teamMap, fbsPerformanceRankings);
-
-                        var overallGameStrength = new SimultaneousWins_GameStrengthRanking(fbsRegularSeasonGames, teamMap, overallPerformanceRankings);
-                        var fbsGameStrength = new SimultaneousWins_GameStrengthRanking(fbsRegularSeasonGames, teamMap, fbsPerformanceRankings);
-
-                        var overallGameStrengthByWeek = overallGameStrength.ByWeek(gameMap);
-                        var fbsGameStrengthByWeek = fbsGameStrength.ByWeek(gameMap);
-
+                        var overallPerformanceRankings = overallFullSeasonRanking.CalculatePerformanceRanking();
+                        var overallWinStrength = overallFullSeasonRanking.CalculateWinStrengthRanking();
+                        var overallConferenceStrength = overallFullSeasonRanking.CalculateConferenceStrengthRanking();
+                        var overallGameStrength = overallFullSeasonRanking.CalculateGameStrengthRanking();
+                        var overallGameStrengthByWeek = overallGameStrength.ByWeek();
                         var overallGameValidation = validationService.GameValidationFromRanking(fbsRegularSeasonCompletedGames, overallPerformanceRankings);
+
+                        var overallRegularSeasonRanking = new SimultaneousWinsRankingService(
+                            conferenceMap,
+                            teamMap,
+                            gameMap,
+                            regularSeasonTeamRecord,
+                            regularSeasonCompletedGames,
+                            regularSeasonCompletedGames,
+                            Enumerable.Empty<Game>());
+
+                        var overallRegularSeasonPerformanceRankings = overallRegularSeasonRanking.CalculatePerformanceRanking();
+                        var overallPostseasonPrediction = validationService.GameValidationFromRanking(fbsPostseasonCompletedGames, overallRegularSeasonPerformanceRankings);
+
+                        summary.AddRankingSummary("Simultaneous Wins, Overall", overallPerformanceRankings, overallGameValidation, overallPostseasonPrediction);
+
+                        var fbsFullSeasonRanking = new SimultaneousWinsRankingService(
+                            conferenceMap,
+                            teamMap,
+                            gameMap,
+                            fbsFullSeasonTeamRecord,
+                            fbsRegularSeasonCompletedGames,
+                            fbsFullSeasonCompletedGames,
+                            Enumerable.Empty<Game>());
+
+                        var fbsPerformanceRankings = fbsFullSeasonRanking.CalculatePerformanceRanking();
+                        var fbsWinStrength = fbsFullSeasonRanking.CalculateWinStrengthRanking();
+                        var fbsConferenceStrength = fbsFullSeasonRanking.CalculateConferenceStrengthRanking();
+                        var fbsGameStrength = fbsFullSeasonRanking.CalculateGameStrengthRanking();
+                        var fbsGameStrengthByWeek = fbsGameStrength.ByWeek();
                         var fbsGameValidation = validationService.GameValidationFromRanking(fbsRegularSeasonCompletedGames, fbsPerformanceRankings);
 
-                        var overallRegularSeasonPerformanceRankings = new SimultaneousWins_PerformanceRanking(teamMap, regularSeasonTeamRecord, regularSeasonCompletedGames);
-                        var fbsRegularSeasonPerformanceRankings = new SimultaneousWins_PerformanceRanking(teamMap, fbsRegularSeasonTeamRecord, fbsRegularSeasonCompletedGames);
+                        var fbsRegularSeasonRanking = new SimultaneousWinsRankingService(
+                            conferenceMap,
+                            teamMap,
+                            gameMap,
+                            fbsRegularSeasonTeamRecord,
+                            fbsRegularSeasonCompletedGames,
+                            fbsRegularSeasonCompletedGames,
+                            Enumerable.Empty<Game>());
 
-                        var overallPostseasonPrediction = validationService.GameValidationFromRanking(fbsPostseasonCompletedGames, overallRegularSeasonPerformanceRankings);
+                        var fbsRegularSeasonPerformanceRankings = fbsRegularSeasonRanking.CalculatePerformanceRanking();
                         var fbsPostseasonPrediction = validationService.GameValidationFromRanking(fbsPostseasonCompletedGames, fbsRegularSeasonPerformanceRankings);
 
-                        summary.AddSimultaneousWins("Simultaneous Wins, Overall", overallPerformanceRankings, overallGameValidation, overallPostseasonPrediction);
-                        summary.AddSimultaneousWins("Simultaneous Wins, FBS", fbsPerformanceRankings, fbsGameValidation, fbsPostseasonPrediction);
+                        summary.AddRankingSummary("Simultaneous Wins, FBS", fbsPerformanceRankings, fbsGameValidation, fbsPostseasonPrediction);
 
                         #endregion
 
@@ -1188,157 +1171,173 @@ namespace CollegeFbsRankings.Application.CalculateRankings
 
                         #region Output Results to Files
 
-                        var formatter = new SimultaneousWins_RankingFormatterService();
+                        var overallFullSeasonFormatter = new RankingFormatterService(
+                            conferenceMap,
+                            teamMap,
+                            gameMap,
+                            fullSeasonTeamRecord,
+                            fullSeasonCompletedGames,
+                            fullSeasonCompletedGames,
+                            Enumerable.Empty<Game>(),
+                            overallPerformanceRankings);
 
                         using (var writer = CreateFileWriter(overallPerformanceFileName))
                         {
-                            formatter.FormatPerformanceRanking(
+                            overallFullSeasonFormatter.FormatPerformanceRanking(
                                 writer, 
-                                "Performance Rankings (Overall)", 
-                                teamMap,
-                                fullSeasonTeamRecord,
-                                fullSeasonCompletedGames,
-                                overallPerformanceRankings);
-                        }
-
-                        using (var writer = CreateFileWriter(fbsPerformanceFileName))
-                        {
-                            formatter.FormatPerformanceRanking(
-                                writer, 
-                                "Performance Rankings (FBS)",
-                                teamMap,
-                                fbsFullSeasonTeamRecord,
-                                fbsFullSeasonCompletedGames,
-                                fbsPerformanceRankings);
+                                "Performance Rankings (Overall)");
                         }
 
                         using (var writer = CreateFileWriter(overallWinStrengthFileName))
                         {
-                            formatter.FormatWinStrengthRanking(
-                                writer, 
+                            overallFullSeasonFormatter.FormatWinStrengthRanking(
+                                writer,
                                 "Win Strength (Overall)",
-                                teamMap,
-                                fullSeasonTeamRecord, 
-                                fullSeasonCompletedGames, 
                                 overallWinStrength);
-                        }
-
-                        using (var writer = CreateFileWriter(fbsWinStrengthFileName))
-                        {
-                            formatter.FormatWinStrengthRanking(
-                                writer, 
-                                "Win Strength (FBS)",
-                                teamMap,
-                                fbsFullSeasonTeamRecord,
-                                fbsFullSeasonCompletedGames,
-                                fbsWinStrength);
                         }
 
                         using (var writer = CreateFileWriter(overallConferenceStrengthFileName))
                         {
-                            formatter.FormatConferenceStrengthRanking(
-                                writer, 
-                                "Conference Strength (Overall)", 
-                                conferenceMap,
-                                teamMap,
-                                overallPerformanceRankings,
+                            overallFullSeasonFormatter.FormatConferenceStrengthRanking(
+                                writer,
+                                "Conference Strength (Overall)",
                                 overallConferenceStrength);
-                        }
-
-                        using (var writer = CreateFileWriter(fbsConferenceStrengthFileName))
-                        {
-                            formatter.FormatConferenceStrengthRanking(
-                                writer, 
-                                "Conference Strength (FBS)", 
-                                conferenceMap,
-                                teamMap,
-                                fbsPerformanceRankings, 
-                                fbsConferenceStrength);
                         }
 
                         using (var writer = CreateFileWriter(overallGameStrengthFileName))
                         {
-                            formatter.FormatGameStrengthRanking(
-                                writer, 
-                                "Game Strength (Overall)", 
-                                teamMap,
-                                gameMap,
-                                overallPerformanceRankings, 
+                            overallFullSeasonFormatter.FormatGameStrengthRanking(
+                                writer,
+                                "Game Strength (Overall)",
                                 overallGameStrength);
-                        }
-
-                        using (var writer = CreateFileWriter(fbsGameStrengthFileName))
-                        {
-                            formatter.FormatGameStrengthRanking(
-                                writer, 
-                                "Game Strength (FBS)",
-                                teamMap,
-                                gameMap,
-                                fbsPerformanceRankings,
-                                fbsGameStrength);
                         }
 
                         using (var writer = CreateFileWriter(overallGameStrengthByWeekFileName))
                         {
-                            formatter.FormatGameStrengthRankingByWeek(
-                                writer, 
-                                "Game Strength (Overall)", 
-                                teamMap,
-                                gameMap,
+                            overallFullSeasonFormatter.FormatGameStrengthRankingByWeek(
+                                writer,
+                                "Game Strength (Overall)",
                                 overallGameStrengthByWeek);
+                        }
+
+                        var overallRegularSeasonFormatter = new RankingFormatterService(
+                            conferenceMap,
+                            teamMap,
+                            gameMap,
+                            regularSeasonTeamRecord,
+                            fbsRegularSeasonCompletedGames,
+                            fbsRegularSeasonCompletedGames,
+                            Enumerable.Empty<Game>(),
+                            overallPerformanceRankings);
+
+                        using (var writer = CreateFileWriter(overallGameValidationFileName))
+                        {
+                            overallRegularSeasonFormatter.FormatValidation(
+                                writer,
+                                "Game Validation (Overall)",
+                                overallGameValidation);
+                        }
+
+                        var overallPostseasonFormatter = new RankingFormatterService(
+                            conferenceMap,
+                            teamMap,
+                            gameMap,
+                            regularSeasonTeamRecord,
+                            fbsPostseasonCompletedGames,
+                            fbsPostseasonCompletedGames,
+                            Enumerable.Empty<Game>(),
+                            overallRegularSeasonPerformanceRankings);
+
+                        using (var writer = CreateFileWriter(overallPostseasonPredictionFileName))
+                        {
+                            overallPostseasonFormatter.FormatValidation(
+                                writer,
+                                "Postseason Prediction (Overall)",
+                                overallPostseasonPrediction);
+                        }
+
+                        var fbsFullSeasonFormatter = new RankingFormatterService(
+                            conferenceMap,
+                            teamMap,
+                            gameMap,
+                            fbsFullSeasonTeamRecord,
+                            fbsFullSeasonCompletedGames,
+                            fbsFullSeasonCompletedGames,
+                            Enumerable.Empty<Game>(),
+                            fbsPerformanceRankings);
+
+                        using (var writer = CreateFileWriter(fbsPerformanceFileName))
+                        {
+                            fbsFullSeasonFormatter.FormatPerformanceRanking(
+                                writer, 
+                                "Performance Rankings (FBS)");
+                        }
+
+                        using (var writer = CreateFileWriter(fbsWinStrengthFileName))
+                        {
+                            fbsFullSeasonFormatter.FormatWinStrengthRanking(
+                                writer, 
+                                "Win Strength (FBS)",
+                                fbsWinStrength);
+                        }
+
+                        using (var writer = CreateFileWriter(fbsConferenceStrengthFileName))
+                        {
+                            fbsFullSeasonFormatter.FormatConferenceStrengthRanking(
+                                writer, 
+                                "Conference Strength (FBS)",
+                                fbsConferenceStrength);
+                        }
+
+                        using (var writer = CreateFileWriter(fbsGameStrengthFileName))
+                        {
+                            fbsFullSeasonFormatter.FormatGameStrengthRanking(
+                                writer, 
+                                "Game Strength (FBS)",
+                                fbsGameStrength);
                         }
 
                         using (var writer = CreateFileWriter(fbsGameStrengthByWeekFileName))
                         {
-                            formatter.FormatGameStrengthRankingByWeek(
+                            fbsFullSeasonFormatter.FormatGameStrengthRankingByWeek(
                                 writer, 
                                 "Game Strength (FBS)",
-                                teamMap,
-                                gameMap,
                                 fbsGameStrengthByWeek);
                         }
 
-                        using (var writer = CreateFileWriter(overallGameValidationFileName))
-                        {
-                            formatter.FormatValidation(
-                                writer, 
-                                "Game Validation (Overall)", 
-                                teamMap,
-                                fbsRegularSeasonCompletedGames, 
-                                overallPerformanceRankings,
-                                overallGameValidation);
-                        }
+                        var fbsRegularSeasonFormatter = new RankingFormatterService(
+                            conferenceMap,
+                            teamMap,
+                            gameMap,
+                            fbsRegularSeasonTeamRecord,
+                            fbsRegularSeasonCompletedGames,
+                            fbsRegularSeasonCompletedGames,
+                            Enumerable.Empty<Game>(),
+                            fbsPerformanceRankings);
 
                         using (var writer = CreateFileWriter(fbsGameValidationFileName))
                         {
-                            formatter.FormatValidation(
+                            fbsRegularSeasonFormatter.FormatValidation(
                                 writer, 
                                 "Game Validation (FBS)", 
-                                teamMap,
-                                fbsRegularSeasonCompletedGames, 
-                                fbsPerformanceRankings,
                                 fbsGameValidation);
                         }
 
-                        using (var writer = CreateFileWriter(overallPostseasonPredictionFileName))
-                        {
-                            formatter.FormatValidation(
-                                writer, 
-                                "Postseason Prediction (Overall)", 
-                                teamMap,
-                                fbsPostseasonCompletedGames, 
-                                overallRegularSeasonPerformanceRankings,
-                                overallPostseasonPrediction);
-                        }
+                        var fbsPostseasonFormatter = new RankingFormatterService(
+                            conferenceMap,
+                            teamMap,
+                            gameMap,
+                            fbsRegularSeasonTeamRecord,
+                            fbsPostseasonCompletedGames,
+                            fbsPostseasonCompletedGames,
+                            Enumerable.Empty<Game>(),
+                            fbsRegularSeasonPerformanceRankings);
 
                         using (var writer = CreateFileWriter(fbsPostseasonPredictionFileName))
                         {
-                            formatter.FormatValidation(
+                            fbsPostseasonFormatter.FormatValidation(
                                 writer,
                                 "Postseason Prediction (FBS)",
-                                teamMap,
-                                fbsPostseasonCompletedGames, 
-                                fbsRegularSeasonPerformanceRankings,
                                 fbsPostseasonPrediction);
                         }
 

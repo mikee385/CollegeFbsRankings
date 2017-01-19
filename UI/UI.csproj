@@ -41,23 +41,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Formatters\SimultaneousWins\ConferenceStrengthRanking.cs" />
-    <Compile Include="Formatters\SimultaneousWins\GameStrengthRanking.cs" />
-    <Compile Include="Formatters\SimultaneousWins\RankingFormatterService.cs" />
-    <Compile Include="Formatters\SimultaneousWins\PerformanceRanking.cs" />
-    <Compile Include="Formatters\SimultaneousWins\ScheduleStrengthRanking.cs" />
-    <Compile Include="Formatters\SimultaneousWins\Validation.cs" />
-    <Compile Include="Formatters\SimultaneousWins\WeeklySummary.cs" />
-    <Compile Include="Formatters\SimultaneousWins\WinStrengthRanking.cs" />
-    <Compile Include="Formatters\SingleDepthWins\ConferenceStrengthRanking.cs" />
-    <Compile Include="Formatters\SingleDepthWins\RankingFormatterService.cs" />
-    <Compile Include="Formatters\SingleDepthWins\GameStrengthRanking.cs" />
-    <Compile Include="Formatters\SingleDepthWins\PerformanceRanking.cs" />
-    <Compile Include="Formatters\SingleDepthWins\ScheduleStrengthRanking.cs" />
-    <Compile Include="Formatters\SingleDepthWins\Validation.cs" />
-    <Compile Include="Formatters\SingleDepthWins\WeeklySummary.cs" />
-    <Compile Include="Formatters\SingleDepthWins\WinStrengthRanking.cs" />
+    <Compile Include="Formatters\IRankingFormatterService.cs" />
+    <Compile Include="Formatters\RankingFormatterService.cs" />
     <Compile Include="Formatters\RankingItemFormat.cs" />
+    <Compile Include="Formatters\SummaryFormatterService.cs" />
     <Compile Include="Formatters\YearSummary.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
