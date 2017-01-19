@@ -101,6 +101,7 @@
     <Compile Include="Teams\ITeamList.cs" />
     <Compile Include="Teams\Team.cs" />
     <Compile Include="Teams\TeamList.cs" />
+    <Compile Include="ThrowHelper.cs" />
     <Compile Include="Validations\eValidationResult.cs" />
     <Compile Include="Validations\Validation.cs" />
     <Compile Include="Validations\ValidationService.cs" />

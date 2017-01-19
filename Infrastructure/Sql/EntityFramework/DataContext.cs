@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using CollegeFbsRankings.Domain;
 using CollegeFbsRankings.Domain.Conferences;
 using CollegeFbsRankings.Domain.Games;
 using CollegeFbsRankings.Domain.Repositories;
@@ -185,7 +186,7 @@ namespace CollegeFbsRankings.Infrastructure.Sql.EntityFramework
 
             if (invalidMessages.Any())
             {
-                throw new InvalidOperationException(String.Join(Environment.NewLine, invalidMessages));
+                throw ThrowHelper.InvalidOperation(String.Join(Environment.NewLine, invalidMessages));
             }
         }
 
@@ -290,7 +291,7 @@ namespace CollegeFbsRankings.Infrastructure.Sql.EntityFramework
             var dbSeasonList = Seasons.Where(e => e.Year == season.Year).ToList();
             if (dbSeasonList.Count > 1)
             {
-                throw new InvalidOperationException(
+                throw ThrowHelper.InvalidOperation(
                     String.Format("Found multiple seasons in the database for year: '{0}'", season.Year));
             }
 
@@ -332,7 +333,7 @@ namespace CollegeFbsRankings.Infrastructure.Sql.EntityFramework
             var dbConferenceList = Conferences.Where(e => e.Name == conference.Name).ToList();
             if (dbConferenceList.Count > 1)
             {
-                throw new InvalidOperationException(
+                throw ThrowHelper.InvalidOperation(
                     String.Format("Found multiple conferences in the database with name: '{0}'", conference.Name));
             }
 
@@ -372,7 +373,7 @@ namespace CollegeFbsRankings.Infrastructure.Sql.EntityFramework
             var dbDivisionList = Divisions.Where(e => e.ConferenceGUID == dbConference.GUID && e.Name == division.Name).ToList();
             if (dbDivisionList.Count > 1)
             {
-                throw new InvalidOperationException(
+                throw ThrowHelper.InvalidOperation(
                     String.Format("Found multiple divisions for conference '{0}' in the database with name: '{1}'",
                     dbConference.Name, division.Name));
             }
@@ -415,7 +416,7 @@ namespace CollegeFbsRankings.Infrastructure.Sql.EntityFramework
             var dbTeamList = Teams.Where(e => e.Name == team.Name).ToList();
             if (dbTeamList.Count > 1)
             {
-                throw new InvalidOperationException(
+                throw ThrowHelper.InvalidOperation(
                     String.Format("Found multiple teams in the database with name: '{0}'", team.Name));
             }
 
@@ -455,7 +456,7 @@ namespace CollegeFbsRankings.Infrastructure.Sql.EntityFramework
             var dbGameList = Games.Where(e => e.SeasonGUID == dbSeason.GUID && e.Week == game.Week && e.HomeTeamGUID == dbHomeTeam.GUID && e.AwayTeamGUID == dbAwayTeam.GUID).ToList();
             if (dbGameList.Count > 1)
             {
-                throw new InvalidOperationException(
+                throw ThrowHelper.InvalidOperation(
                     String.Format("Found multiple games in the database for season '{0}' and week '{1}' between '{2}' and '{3}'",
                     dbSeason.Year, game.Week, dbHomeTeam.Name, dbAwayTeam.Name));
             }
@@ -539,7 +540,7 @@ namespace CollegeFbsRankings.Infrastructure.Sql.EntityFramework
             var dbTeamBySeasonList = TeamsBySeason.Where(e => e.Level == level && e.SeasonGUID == dbSeason.GUID && e.TeamGUID == dbTeam.GUID).ToList();
             if (dbTeamBySeasonList.Count > 1)
             {
-                throw new InvalidOperationException(
+                throw ThrowHelper.InvalidOperation(
                     String.Format("Found multiple teams '{1}' in the database for season '{0}'",
                     dbSeason.Year, dbTeam.Name));
             }

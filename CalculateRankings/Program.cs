@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
+using CollegeFbsRankings.Domain;
 using CollegeFbsRankings.Domain.Games;
 using CollegeFbsRankings.Domain.Rankings;
 using CollegeFbsRankings.Domain.Repositories;
@@ -38,13 +39,13 @@ namespace CollegeFbsRankings.Application.CalculateRankings
             var inputData = ConfigurationManager.GetSection("input") as CsvRepositoryConfiguration;
             if (inputData == null)
             {
-                throw new ArgumentException("Unable to find the input information for the CSV data (tried to find a section called 'input' in 'app.config'");
+                throw ThrowHelper.ArgumentError("Unable to find the input information for the CSV data (tried to find a section called 'input' in 'app.config'");
             }
 
             var outputData = ConfigurationManager.GetSection("output") as RankingConfiguration;
             if (outputData == null)
             {
-                throw new ArgumentException("Unable to find the output directory information (tried to find a section called 'output' in 'app.config'");
+                throw ThrowHelper.ArgumentError("Unable to find the output directory information (tried to find a section called 'output' in 'app.config'");
             }
 
             foreach (var input in inputData.Seasons)

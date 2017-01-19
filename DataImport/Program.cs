@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using CollegeFbsRankings.Domain;
 using CollegeFbsRankings.Domain.Repositories;
 
 using CollegeFbsRankings.Infrastructure.Csv;
@@ -22,13 +23,13 @@ namespace CollegeFbsRankings.Application.DataImport
             var inputData = ConfigurationManager.GetSection("input") as CsvRepositoryConfiguration;
             if (inputData == null)
             {
-                throw new ArgumentException("Unable to find the input information for the CSV data (tried to find a section called 'input' in 'app.config'");
+                throw ThrowHelper.ArgumentError("Unable to find the input information for the CSV data (tried to find a section called 'input' in 'app.config'");
             }
 
             var outputData = ConfigurationManager.GetSection("output") as SqlRepositoryConfiguration;
             if (outputData == null)
             {
-                throw new ArgumentException("Unable to find the SQL connection information for the output data (tried to find a section called 'output' in 'app.config'");
+                throw ThrowHelper.ArgumentError("Unable to find the SQL connection information for the output data (tried to find a section called 'output' in 'app.config'");
             }
 
             foreach (var season in inputData.Seasons)
@@ -61,7 +62,7 @@ namespace CollegeFbsRankings.Application.DataImport
             {
                 if (connection == null)
                 {
-                    throw new Exception(String.Format("Unable to establish a connection to '{0}' using '{1}'",
+                    throw ThrowHelper.ArgumentError(String.Format("Unable to establish a connection to '{0}' using '{1}'",
                         configuration.ProviderName, configuration.ConnectionString));
                 }
 
