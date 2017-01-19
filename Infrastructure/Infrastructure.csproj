@@ -188,6 +188,12 @@
     <None Include="..\Data\2015\FBS Teams.txt">
       <Link>Csv\Data\2015\FBS Teams.txt</Link>
     </None>
+    <None Include="..\Data\2016\FBS Scores.txt">
+      <Link>Csv\Data\2016\FBS Scores.txt</Link>
+    </None>
+    <None Include="..\Data\2016\FBS Teams.txt">
+      <Link>Csv\Data\2016\FBS Teams.txt</Link>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
