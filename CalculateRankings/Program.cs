@@ -119,7 +119,6 @@ namespace CollegeFbsRankings.Application.CalculateRankings
                             futureGames);
 
                         var overallPerformanceRankings = overallRanking.CalculatePerformanceRanking();
-                        var overallWinStrength = overallRanking.CalculateWinStrengthRanking();
                         var overallScheduleStrength = overallRanking.CalculateOverallScheduleStrengthRanking();
                         var completedScheduleStrength = overallRanking.CalculateCompletedScheduleStrengthRanking();
                         var futureScheduleStrength = overallRanking.CalculateFutureScheduleStrengthRanking();
@@ -138,7 +137,6 @@ namespace CollegeFbsRankings.Application.CalculateRankings
                             fbsFutureGames);
 
                         var fbsPerformanceRankings = fbsRanking.CalculatePerformanceRanking();
-                        var fbsWinStrength = fbsRanking.CalculateWinStrengthRanking();
                         var fbsOverallScheduleStrength = fbsRanking.CalculateOverallScheduleStrengthRanking();
                         var fbsCompletedScheduleStrength = fbsRanking.CalculateCompletedScheduleStrengthRanking();
                         var fbsFutureScheduleStrength = fbsRanking.CalculateFutureScheduleStrengthRanking();
@@ -177,9 +175,6 @@ namespace CollegeFbsRankings.Application.CalculateRankings
 
                         var overallPerformanceFileName = Path.Combine(overallOutputFolder, "Performance Rankings.txt");
                         var fbsPerformanceFileName = Path.Combine(fbsOutputFolder, "Performance Rankings.txt");
-
-                        var overallWinStrengthFileName = Path.Combine(overallOutputFolder, "Win Strength.txt");
-                        var fbsWinStrengthFileName = Path.Combine(fbsOutputFolder, "Win Strength.txt");
 
                         var overallScheduleStrengthFileName = Path.Combine(overallOutputFolder, "Overall Schedule Stength.txt");
                         var completedScheduleStrengthFileName = Path.Combine(overallOutputFolder, "Completed Schedule Stength.txt");
@@ -230,14 +225,6 @@ namespace CollegeFbsRankings.Application.CalculateRankings
                             overallFormatter.FormatPerformanceRanking(
                                 writer,
                                 "Performance Rankings (Overall)");
-                        }
-
-                        using (var writer = CreateFileWriter(overallWinStrengthFileName))
-                        {
-                            overallFormatter.FormatWinStrengthRanking(
-                                writer,
-                                "Win Strength (Overall)",
-                                overallWinStrength);
                         }
 
                         using (var writer = CreateFileWriter(overallScheduleStrengthFileName))
@@ -335,14 +322,6 @@ namespace CollegeFbsRankings.Application.CalculateRankings
                             fbsFormatter.FormatPerformanceRanking(
                                 writer,
                                 "Performance Rankings (FBS)");
-                        }
-
-                        using (var writer = CreateFileWriter(fbsWinStrengthFileName))
-                        {
-                            fbsFormatter.FormatWinStrengthRanking(
-                                writer,
-                                "Win Strength (FBS)",
-                                fbsWinStrength);
                         }
 
                         using (var writer = CreateFileWriter(fbsOverallScheduleStrengthFileName))
@@ -455,7 +434,6 @@ namespace CollegeFbsRankings.Application.CalculateRankings
                             futureGames);
 
                         var overallPerformanceRankings = overallRanking.CalculatePerformanceRanking();
-                        var overallWinStrength = overallRanking.CalculateWinStrengthRanking();
                         var overallScheduleStrength = overallRanking.CalculateOverallScheduleStrengthRanking();
                         var completedScheduleStrength = overallRanking.CalculateCompletedScheduleStrengthRanking();
                         var futureScheduleStrength = overallRanking.CalculateFutureScheduleStrengthRanking();
@@ -474,7 +452,6 @@ namespace CollegeFbsRankings.Application.CalculateRankings
                             fbsFutureGames);
 
                         var fbsPerformanceRankings = fbsRanking.CalculatePerformanceRanking();
-                        var fbsWinStrength = fbsRanking.CalculateWinStrengthRanking();
                         var fbsOverallScheduleStrength = fbsRanking.CalculateOverallScheduleStrengthRanking();
                         var fbsCompletedScheduleStrength = fbsRanking.CalculateCompletedScheduleStrengthRanking();
                         var fbsFutureScheduleStrength = fbsRanking.CalculateFutureScheduleStrengthRanking();
@@ -513,9 +490,6 @@ namespace CollegeFbsRankings.Application.CalculateRankings
 
                         var overallPerformanceFileName = Path.Combine(overallOutputFolder, "Performance Rankings.txt");
                         var fbsPerformanceFileName = Path.Combine(fbsOutputFolder, "Performance Rankings.txt");
-
-                        var overallWinStrengthFileName = Path.Combine(overallOutputFolder, "Win Strength.txt");
-                        var fbsWinStrengthFileName = Path.Combine(fbsOutputFolder, "Win Strength.txt");
 
                         var overallScheduleStrengthFileName = Path.Combine(overallOutputFolder, "Overall Schedule Stength.txt");
                         var completedScheduleStrengthFileName = Path.Combine(overallOutputFolder, "Completed Schedule Stength.txt");
@@ -566,14 +540,6 @@ namespace CollegeFbsRankings.Application.CalculateRankings
                             overallFormatter.FormatPerformanceRanking(
                                 writer,
                                 "Performance Rankings (Overall)");
-                        }
-
-                        using (var writer = CreateFileWriter(overallWinStrengthFileName))
-                        {
-                            overallFormatter.FormatWinStrengthRanking(
-                                writer,
-                                "Win Strength (Overall)",
-                                overallWinStrength);
                         }
 
                         using (var writer = CreateFileWriter(overallScheduleStrengthFileName))
@@ -671,14 +637,6 @@ namespace CollegeFbsRankings.Application.CalculateRankings
                             fbsFormatter.FormatPerformanceRanking(
                                 writer,
                                 "Performance Rankings (FBS)");
-                        }
-
-                        using (var writer = CreateFileWriter(fbsWinStrengthFileName))
-                        {
-                            fbsFormatter.FormatWinStrengthRanking(
-                                writer,
-                                "Win Strength (FBS)",
-                                fbsWinStrength);
                         }
 
                         using (var writer = CreateFileWriter(fbsOverallScheduleStrengthFileName))
@@ -815,7 +773,6 @@ namespace CollegeFbsRankings.Application.CalculateRankings
                             Enumerable.Empty<Game>());
 
                         var overallPerformanceRankings = overallFullSeasonRanking.CalculatePerformanceRanking();
-                        var overallWinStrength = overallFullSeasonRanking.CalculateWinStrengthRanking();
                         var overallConferenceStrength = overallFullSeasonRanking.CalculateConferenceStrengthRanking();
                         var overallGameStrength = overallFullSeasonRanking.CalculateGameStrengthRanking();
                         var overallGameStrengthByWeek = overallGameStrength.ByWeek();
@@ -845,7 +802,6 @@ namespace CollegeFbsRankings.Application.CalculateRankings
                             Enumerable.Empty<Game>());
 
                         var fbsPerformanceRankings = fbsFullSeasonRanking.CalculatePerformanceRanking();
-                        var fbsWinStrength = fbsFullSeasonRanking.CalculateWinStrengthRanking();
                         var fbsConferenceStrength = fbsFullSeasonRanking.CalculateConferenceStrengthRanking();
                         var fbsGameStrength = fbsFullSeasonRanking.CalculateGameStrengthRanking();
                         var fbsGameStrengthByWeek = fbsGameStrength.ByWeek();
@@ -876,9 +832,6 @@ namespace CollegeFbsRankings.Application.CalculateRankings
 
                         var overallPerformanceFileName = Path.Combine(overallOutputFolder, "Performance Rankings.txt");
                         var fbsPerformanceFileName = Path.Combine(fbsOutputFolder, "Performance Rankings.txt");
-
-                        var overallWinStrengthFileName = Path.Combine(overallOutputFolder, "Win Strength.txt");
-                        var fbsWinStrengthFileName = Path.Combine(fbsOutputFolder, "Win Strength.txt");
 
                         var overallConferenceStrengthFileName = Path.Combine(overallOutputFolder, "Conference Strength.txt");
                         var fbsConferenceStrengthFileName = Path.Combine(fbsOutputFolder, "Conference Strength.txt");
@@ -914,14 +867,6 @@ namespace CollegeFbsRankings.Application.CalculateRankings
                             overallFullSeasonFormatter.FormatPerformanceRanking(
                                 writer,
                                 "Performance Rankings (Overall)");
-                        }
-
-                        using (var writer = CreateFileWriter(overallWinStrengthFileName))
-                        {
-                            overallFullSeasonFormatter.FormatWinStrengthRanking(
-                                writer,
-                                "Win Strength (Overall)",
-                                overallWinStrength);
                         }
 
                         using (var writer = CreateFileWriter(overallConferenceStrengthFileName))
@@ -999,14 +944,6 @@ namespace CollegeFbsRankings.Application.CalculateRankings
                             fbsFullSeasonFormatter.FormatPerformanceRanking(
                                 writer,
                                 "Performance Rankings (FBS)");
-                        }
-
-                        using (var writer = CreateFileWriter(fbsWinStrengthFileName))
-                        {
-                            fbsFullSeasonFormatter.FormatWinStrengthRanking(
-                                writer,
-                                "Win Strength (FBS)",
-                                fbsWinStrength);
                         }
 
                         using (var writer = CreateFileWriter(fbsConferenceStrengthFileName))
@@ -1087,7 +1024,6 @@ namespace CollegeFbsRankings.Application.CalculateRankings
                             Enumerable.Empty<Game>());
 
                         var overallPerformanceRankings = overallFullSeasonRanking.CalculatePerformanceRanking();
-                        var overallWinStrength = overallFullSeasonRanking.CalculateWinStrengthRanking();
                         var overallConferenceStrength = overallFullSeasonRanking.CalculateConferenceStrengthRanking();
                         var overallGameStrength = overallFullSeasonRanking.CalculateGameStrengthRanking();
                         var overallGameStrengthByWeek = overallGameStrength.ByWeek();
@@ -1117,7 +1053,6 @@ namespace CollegeFbsRankings.Application.CalculateRankings
                             Enumerable.Empty<Game>());
 
                         var fbsPerformanceRankings = fbsFullSeasonRanking.CalculatePerformanceRanking();
-                        var fbsWinStrength = fbsFullSeasonRanking.CalculateWinStrengthRanking();
                         var fbsConferenceStrength = fbsFullSeasonRanking.CalculateConferenceStrengthRanking();
                         var fbsGameStrength = fbsFullSeasonRanking.CalculateGameStrengthRanking();
                         var fbsGameStrengthByWeek = fbsGameStrength.ByWeek();
@@ -1148,9 +1083,6 @@ namespace CollegeFbsRankings.Application.CalculateRankings
 
                         var overallPerformanceFileName = Path.Combine(overallOutputFolder, "Performance Rankings.txt");
                         var fbsPerformanceFileName = Path.Combine(fbsOutputFolder, "Performance Rankings.txt");
-
-                        var overallWinStrengthFileName = Path.Combine(overallOutputFolder, "Win Strength.txt");
-                        var fbsWinStrengthFileName = Path.Combine(fbsOutputFolder, "Win Strength.txt");
 
                         var overallConferenceStrengthFileName = Path.Combine(overallOutputFolder, "Conference Strength.txt");
                         var fbsConferenceStrengthFileName = Path.Combine(fbsOutputFolder, "Conference Strength.txt");
@@ -1186,14 +1118,6 @@ namespace CollegeFbsRankings.Application.CalculateRankings
                             overallFullSeasonFormatter.FormatPerformanceRanking(
                                 writer, 
                                 "Performance Rankings (Overall)");
-                        }
-
-                        using (var writer = CreateFileWriter(overallWinStrengthFileName))
-                        {
-                            overallFullSeasonFormatter.FormatWinStrengthRanking(
-                                writer,
-                                "Win Strength (Overall)",
-                                overallWinStrength);
                         }
 
                         using (var writer = CreateFileWriter(overallConferenceStrengthFileName))
@@ -1271,14 +1195,6 @@ namespace CollegeFbsRankings.Application.CalculateRankings
                             fbsFullSeasonFormatter.FormatPerformanceRanking(
                                 writer, 
                                 "Performance Rankings (FBS)");
-                        }
-
-                        using (var writer = CreateFileWriter(fbsWinStrengthFileName))
-                        {
-                            fbsFullSeasonFormatter.FormatWinStrengthRanking(
-                                writer, 
-                                "Win Strength (FBS)",
-                                fbsWinStrength);
                         }
 
                         using (var writer = CreateFileWriter(fbsConferenceStrengthFileName))

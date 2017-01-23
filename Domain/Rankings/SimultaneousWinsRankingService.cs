@@ -27,16 +27,6 @@ namespace CollegeFbsRankings.Domain.Rankings
             public int WinTotal { get; set; }
 
             public double PerformanceValue { get; set; }
-
-            public double TeamValue
-            {
-                get { return (GameTotal > 0) ? (double)WinTotal / GameTotal : 0.0; }
-            }
-
-            public double OpponentValue
-            {
-                get { return PerformanceValue - TeamValue; }
-            }
         }
 
         private readonly IReadOnlyDictionary<ConferenceId, Conference> _conferenceMap;
@@ -145,28 +135,7 @@ namespace CollegeFbsRankings.Domain.Rankings
                         team.Name,
                         values.GameTotal,
                         values.WinTotal,
-                        values.PerformanceValue,
-                        values.OpponentValue));
-            }));
-        }
-
-        public WinStrengthRanking CalculateWinStrengthRanking()
-        {
-            if (_performanceData == null)
-                CalculatePerformanceData();
-
-            return new WinStrengthRanking(_performanceData.Select(d =>
-            {
-                var team = _teamMap[d.Key];
-                var values = d.Value;
-
-                return new KeyValuePair<TeamId, WinStrengthRankingValue>(
-                    team.Id,
-                    new WinStrengthRankingValue(
-                        team.Id,
-                        team.Name,
-                        values.OpponentValue,
-                        values.TeamValue));
+                        values.PerformanceValue));
             }));
         }
 
@@ -227,10 +196,7 @@ namespace CollegeFbsRankings.Domain.Rankings
                     new ScheduleStrengthRankingValue(
                         team.Id,
                         team.Name,
-                        values.GameTotal,
-                        values.WinTotal,
-                        values.PerformanceValue,
-                        values.OpponentValue));
+                        values.PerformanceValue));
             }));
         }
 
@@ -298,8 +264,7 @@ namespace CollegeFbsRankings.Domain.Rankings
                         conference.Name,
                         values.GameTotal,
                         values.WinTotal,
-                        values.PerformanceValue,
-                        values.OpponentValue));
+                        values.PerformanceValue));
             }));
         }
 
@@ -347,8 +312,7 @@ namespace CollegeFbsRankings.Domain.Rankings
                         game.Date,
                         values.GameTotal,
                         values.WinTotal,
-                        values.PerformanceValue,
-                        values.OpponentValue));
+                        values.PerformanceValue));
             }));
         }
     }

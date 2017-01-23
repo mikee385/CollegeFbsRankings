@@ -89,7 +89,7 @@ namespace CollegeFbsRankings.UI.Formatters
                 {
                     var losingTeamRecord = _teamRecord[game.LosingTeamId];
 
-                    var losingTeamValue = game.TeamType == eTeamType.Fbs
+                    var losingTeamPerformance = game.TeamType == eTeamType.Fbs
                         ? _performance[game.LosingTeamId].PerformanceValue
                         : 0.0;
 
@@ -97,7 +97,7 @@ namespace CollegeFbsRankings.UI.Formatters
                         gameTitle,
                         losingTeamRecord.WinTotal,
                         losingTeamRecord.GameTotal,
-                        losingTeamValue);
+                        losingTeamPerformance);
                 }
 
                 RankingItemFormat losingTeamSummary;
@@ -144,10 +144,9 @@ namespace CollegeFbsRankings.UI.Formatters
                 var teamSummary = summaries[rank.Key];
                 var teamData = rank.Value;
 
-                var teamGameTotal = teamData.GameTotal;
-                var teamWinTotal = teamData.WinTotal;
-                var teamValue = teamData.WinPercentage;
-                var opponentValue = teamData.WinStrength;
+                var gameTotal = teamData.GameTotal;
+                var winTotal = teamData.WinTotal;
+                var winPercentage = teamData.WinPercentage;
                 var performanceValue = teamData.PerformanceValue;
 
                 writer.WriteLine("{0} Games:", teamSummary.Title);
@@ -163,124 +162,8 @@ namespace CollegeFbsRankings.UI.Formatters
                     writer.WriteLine();
                 }
 
-                writer.WriteLine("Team Value    : {0:F8} ({1} / {2})", teamValue, teamWinTotal, teamGameTotal);
-                writer.WriteLine("Opponent Value: {0:F8}", opponentValue);
+                writer.WriteLine("Win Percentage: {0:F8} ({1} / {2})", winPercentage, winTotal, gameTotal);
                 writer.WriteLine("Performance   : {0:F8}", performanceValue);
-                writer.WriteLine();
-                writer.WriteLine();
-            }
-        }
-
-        public void FormatWinStrengthRanking(TextWriter writer, string title, WinStrengthRanking ranking)
-        {
-            writer.WriteLine(title);
-            writer.WriteLine("--------------------");
-
-            // Create the summary for each team.
-            var summaries = new Dictionary<TeamId, RankingItemFormat>();
-            foreach (var item in ranking)
-            {
-                var teamName = _teamMap[item.Key].Name;
-                summaries.Add(item.Key, new RankingItemFormat(teamName));
-            }
-
-            // Calculate the formatting information for the titles.
-            var maxTitleLength = summaries.Max(item => item.Value.Title.Length);
-            var maxSummaryLength = maxTitleLength * 2 + 6;
-
-            // Populate the summary for each team.
-            foreach (var game in _completedGames.OrderBy(g => g.Week))
-            {
-                var winningTeam = _teamMap[game.WinningTeamId];
-                var losingTeam = _teamMap[game.LosingTeamId];
-
-                var combinedTeamTitle = String.Format("{0} beat {1}",
-                    winningTeam.Name,
-                    losingTeam.Name);
-                var gameTitle = String.Format("    Week {0,-2} {1,-" + maxSummaryLength + "} = {2,2}-{3,2}",
-                                game.Week,
-                                combinedTeamTitle,
-                                game.WinningTeamScore,
-                                game.LosingTeamScore);
-
-                const string gameSummary = "{0} ({1,2} / {2,2}) ({3:F8})";
-
-                RankingItemFormat winningTeamSummary;
-                if (summaries.TryGetValue(game.WinningTeamId, out winningTeamSummary))
-                {
-                    var losingTeamRecord = _teamRecord[game.LosingTeamId];
-
-                    var losingTeamValue = game.TeamType == eTeamType.Fbs
-                        ? _performance[game.LosingTeamId].PerformanceValue
-                        : 0.0;
-
-                    winningTeamSummary.Summary.WriteLine(gameSummary,
-                        gameTitle,
-                        losingTeamRecord.WinTotal,
-                        losingTeamRecord.GameTotal,
-                        losingTeamValue);
-                }
-
-                RankingItemFormat losingTeamSummary;
-                if (summaries.TryGetValue(game.LosingTeamId, out losingTeamSummary))
-                {
-                    var winningTeamRecord = _teamRecord[game.WinningTeamId];
-
-                    losingTeamSummary.Summary.WriteLine(gameSummary,
-                        gameTitle,
-                        winningTeamRecord.WinTotal,
-                        winningTeamRecord.GameTotal,
-                        0.0);
-                }
-            }
-
-            // Output the rankings.
-            int index = 1, outputIndex = 1;
-            List<double> previousValues = null;
-
-            foreach (var rank in ranking.Where(item => item.Key is FbsTeamId))
-            {
-                var currentValues = rank.Value.Values.ToList();
-                if (index != 1)
-                {
-                    if (!currentValues.SequenceEqual(previousValues))
-                        outputIndex = index;
-                }
-
-                var teamName = summaries[rank.Key].Title;
-                var titleInfo = String.Format("{0,-4} {1,-" + (maxTitleLength + 3) + "}", outputIndex, teamName);
-                var rankingInfo = String.Join("   ", currentValues.Select(value => String.Format("{0:F8}", value)));
-
-                writer.WriteLine(String.Join(" ", titleInfo, rankingInfo));
-
-                ++index;
-                previousValues = currentValues;
-            }
-            writer.WriteLine();
-            writer.WriteLine();
-
-            // Output the team summaries.
-            foreach (var rank in ranking.Where(item => item.Key is FbsTeamId))
-            {
-                var teamSummary = summaries[rank.Key];
-                var teamData = rank.Value;
-
-                var winStrength = teamData.WinStrength;
-
-                writer.WriteLine("{0} Games:", teamSummary.Title);
-
-                var summary = teamSummary.Summary.ToString();
-                if (!String.IsNullOrEmpty(summary))
-                {
-                    writer.WriteLine(summary);
-                }
-                else
-                {
-                    writer.WriteLine("    [None]");
-                    writer.WriteLine();
-                }
-
-                writer.WriteLine("Opponent Value: {0:F8}", winStrength);
                 writer.WriteLine();
                 writer.WriteLine();
             }
@@ -323,22 +206,22 @@ namespace CollegeFbsRankings.UI.Formatters
                 {
                     var awayTeamRecord = _teamRecord[game.AwayTeamId];
 
-                    double awayTeamValue;
+                    double awayTeamPerformance;
                     PerformanceRankingValue awayTeamData;
                     if (_performance.TryGetValue(game.AwayTeamId, out awayTeamData))
                     {
-                        awayTeamValue = awayTeamData.PerformanceValue;
+                        awayTeamPerformance = awayTeamData.PerformanceValue;
                     }
                     else
                     {
-                        awayTeamValue = 0.0;
+                        awayTeamPerformance = 0.0;
                     }
 
                     homeTeamSummary.Summary.WriteLine(gameSummary,
                         gameTitle,
                         awayTeamRecord.WinTotal,
                         awayTeamRecord.GameTotal,
-                        awayTeamValue);
+                        awayTeamPerformance);
                 }
 
                 RankingItemFormat awayTeamSummary;
@@ -346,22 +229,22 @@ namespace CollegeFbsRankings.UI.Formatters
                 {
                     var homeTeamRecord = _teamRecord[game.HomeTeamId];
 
-                    double homeTeamValue;
+                    double homeTeamPerformance;
                     PerformanceRankingValue homeTeamData;
                     if (_performance.TryGetValue(game.HomeTeamId, out homeTeamData))
                     {
-                        homeTeamValue = homeTeamData.PerformanceValue;
+                        homeTeamPerformance = homeTeamData.PerformanceValue;
                     }
                     else
                     {
-                        homeTeamValue = 0.0;
+                        homeTeamPerformance = 0.0;
                     }
 
                     awayTeamSummary.Summary.WriteLine(gameSummary,
                         gameTitle,
                         homeTeamRecord.WinTotal,
                         homeTeamRecord.GameTotal,
-                        homeTeamValue);
+                        homeTeamPerformance);
                 }
             }
 
@@ -394,13 +277,9 @@ namespace CollegeFbsRankings.UI.Formatters
             foreach (var rank in ranking.Where(item => item.Key is FbsTeamId))
             {
                 var teamSummary = summaries[rank.Key];
-                var teamValues = rank.Value;
+                var teamData = rank.Value;
 
-                var teamGameTotal = teamValues.GameTotal;
-                var teamWinTotal = teamValues.WinTotal;
-                var teamValue = teamValues.WinPercentage;
-                var opponentValue = teamValues.WinStrength;
-                var performanceValue = teamValues.PerformanceValue;
+                var scheduleStrength = teamData.ScheduleStrength;
 
                 writer.WriteLine("{0} Games:", teamSummary.Title);
 
@@ -414,10 +293,8 @@ namespace CollegeFbsRankings.UI.Formatters
                     writer.WriteLine("    [None]");
                     writer.WriteLine();
                 }
-
-                writer.WriteLine("Team Value    : {0:F8} ({1} / {2})", teamValue, teamWinTotal, teamGameTotal);
-                writer.WriteLine("Opponent Value: {0:F8}", opponentValue);
-                writer.WriteLine("Performance   : {0:F8}", performanceValue);
+                
+                writer.WriteLine("Schedule Strength: {0:F8}", scheduleStrength);
                 writer.WriteLine();
                 writer.WriteLine();
             }
@@ -466,12 +343,12 @@ namespace CollegeFbsRankings.UI.Formatters
                 {
                     var teamPerformance = _performance[item.Key];
 
-                    conferenceSummary.Summary.WriteLine("    {0,-" + maxSummaryLength + "}: Team = {1:F8} ({2,2} / {3,2}), Opponent = {4:F8}",
+                    conferenceSummary.Summary.WriteLine("    {0,-" + maxSummaryLength + "}: Team = {1:F8} ({2,2} / {3,2}, {4:F8})",
                         team.Name,
-                        teamPerformance.WinPercentage,
+                        teamPerformance.PerformanceValue,
                         teamPerformance.WinTotal,
                         teamPerformance.GameTotal,
-                        teamPerformance.WinStrength);
+                        teamPerformance.WinPercentage);
                 }
             }
 
@@ -508,14 +385,12 @@ namespace CollegeFbsRankings.UI.Formatters
 
                 var gameTotal = conferenceData.GameTotal;
                 var winTotal = conferenceData.WinTotal;
-                var teamValue = conferenceData.WinPercentage;
-                var opponentValue = conferenceData.WinStrength;
+                var winPercentage = conferenceData.WinPercentage;
                 var performanceValue = conferenceData.ConferenceStrength;
 
                 writer.WriteLine("{0} Teams:", conferenceSummary.Title);
                 writer.WriteLine(conferenceSummary.Summary);
-                writer.WriteLine("Team Value    : {0:F8} ({1} / {2})", teamValue, winTotal, gameTotal);
-                writer.WriteLine("Opponent Value: {0:F8}", opponentValue);
+                writer.WriteLine("Win Percentage: {0:F8} ({1} / {2})", winPercentage, winTotal, gameTotal);
                 writer.WriteLine("Performance   : {0:F8}", performanceValue);
                 writer.WriteLine();
                 writer.WriteLine();
@@ -546,21 +421,21 @@ namespace CollegeFbsRankings.UI.Formatters
                 
                 var homeTeamData = _performance[game.HomeTeamId];
 
-                gameSummary.Summary.WriteLine("    {0,-" + maxSummaryLength + "}: Team = {1:F8} ({2,2} / {3,2}), Opponent = {4:F8}",
+                gameSummary.Summary.WriteLine("    {0,-" + maxSummaryLength + "}: Team = {1:F8} ({2,2} / {3,2}, {4:F8})",
                     homeTeam.Name,
-                    homeTeamData.WinPercentage,
+                    homeTeamData.PerformanceValue,
                     homeTeamData.WinTotal,
                     homeTeamData.GameTotal,
-                    homeTeamData.WinStrength);
+                    homeTeamData.WinPercentage);
                 
                 var awayTeamData = _performance[game.AwayTeamId];
 
-                gameSummary.Summary.WriteLine("    {0,-" + maxSummaryLength + "}: Team = {1:F8} ({2,2} / {3,2}), Opponent = {4:F8}",
+                gameSummary.Summary.WriteLine("    {0,-" + maxSummaryLength + "}: Team = {1:F8} ({2,2} / {3,2}, {4:F8})",
                     awayTeam.Name,
-                    awayTeamData.WinPercentage,
+                    awayTeamData.PerformanceValue,
                     awayTeamData.WinTotal,
                     awayTeamData.GameTotal,
-                    awayTeamData.WinStrength);
+                    awayTeamData.WinPercentage);
 
                 summaries.Add(item.Key, gameSummary);
             }
@@ -601,14 +476,12 @@ namespace CollegeFbsRankings.UI.Formatters
 
                 var gameTotal = gameData.GameTotal;
                 var winTotal = gameData.WinTotal;
-                var teamValue = gameData.WinPercentage;
-                var opponentValue = gameData.WinStrength;
+                var winPercentage = gameData.WinPercentage;
                 var performanceValue = gameData.GameStrength;
 
                 writer.WriteLine("{0}:", gameSummary.Title);
                 writer.WriteLine(gameSummary.Summary);
-                writer.WriteLine("Team Value    : {0:F8} ({1} / {2})", teamValue, winTotal, gameTotal);
-                writer.WriteLine("Opponent Value: {0:F8}", opponentValue);
+                writer.WriteLine("Win Percentage: {0:F8} ({1} / {2})", winPercentage, winTotal, gameTotal);
                 writer.WriteLine("Performance   : {0:F8}", performanceValue);
                 writer.WriteLine();
                 writer.WriteLine();

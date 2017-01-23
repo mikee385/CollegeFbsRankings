@@ -14,11 +14,10 @@ namespace CollegeFbsRankings.Domain.Rankings
 
         private readonly double _performanceValue;
         private readonly double _winPercentage;
-        private readonly double _winStrength;
 
         private readonly IEnumerable<double> _values;
 
-        public PerformanceRankingValue(TeamId id, string name, int gameTotal, int winTotal, double performanceValue, double winStrength)
+        public PerformanceRankingValue(TeamId id, string name, int gameTotal, int winTotal, double performanceValue)
             : base(id, name)
         {
             _gametotal = gameTotal;
@@ -26,9 +25,8 @@ namespace CollegeFbsRankings.Domain.Rankings
 
             _performanceValue = performanceValue;
             _winPercentage = gameTotal > 0 ? (double)winTotal / gameTotal : 0.0;
-            _winStrength = winStrength;
 
-            _values = new[] { _performanceValue, _winPercentage, _winStrength };
+            _values = new[] { _performanceValue, _winPercentage };
         }
 
         public int GameTotal
@@ -49,11 +47,6 @@ namespace CollegeFbsRankings.Domain.Rankings
         public double WinPercentage
         {
             get { return _winPercentage; }
-        }
-
-        public double WinStrength
-        {
-            get { return _winStrength; }
         }
 
         public override IEnumerable<double> Values

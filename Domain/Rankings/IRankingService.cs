@@ -10,8 +10,6 @@ namespace CollegeFbsRankings.Domain.Rankings
     {
         PerformanceRanking CalculatePerformanceRanking();
 
-        WinStrengthRanking CalculateWinStrengthRanking();
-
         ScheduleStrengthRanking CalculateOverallScheduleStrengthRanking();
 
         ScheduleStrengthRanking CalculateCompletedScheduleStrengthRanking();

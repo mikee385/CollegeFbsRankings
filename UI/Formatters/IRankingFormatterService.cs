@@ -12,8 +12,6 @@ namespace CollegeFbsRankings.UI.Formatters
     {
         void FormatPerformanceRanking(TextWriter writer, string title);
 
-        void FormatWinStrengthRanking(TextWriter writer, string title, WinStrengthRanking ranking);
-
         void FormatOverallScheduleStrengthRanking(TextWriter writer, string title, ScheduleStrengthRanking ranking);
 
         void FormatCompletedScheduleStrengthRanking(TextWriter writer, string title, ScheduleStrengthRanking ranking);

@@ -127,28 +127,7 @@ namespace CollegeFbsRankings.Domain.Rankings
                         team.Name,
                         values.GameTotal,
                         values.WinTotal,
-                        values.PerformanceValue,
-                        values.OpponentValue));
-            }));
-        }
-
-        public WinStrengthRanking CalculateWinStrengthRanking()
-        {
-            if (_performanceData == null)
-                CalculatePerformanceData();
-
-            return new WinStrengthRanking(_performanceData.Select(d =>
-            {
-                var team = _teamMap[d.Key];
-                var values = d.Value;
-
-                return new KeyValuePair<TeamId, WinStrengthRankingValue>(
-                    team.Id,
-                    new WinStrengthRankingValue(
-                        team.Id,
-                        team.Name,
-                        values.OpponentValue,
-                        values.TeamValue));
+                        values.PerformanceValue));
             }));
         }
 
@@ -190,9 +169,6 @@ namespace CollegeFbsRankings.Domain.Rankings
                     new ScheduleStrengthRankingValue(
                         team.Id,
                         team.Name,
-                        values.GameTotal,
-                        values.WinTotal,
-                        values.OpponentValue,
                         values.OpponentValue));
             }));
         }
@@ -256,8 +232,7 @@ namespace CollegeFbsRankings.Domain.Rankings
                         conference.Name,
                         values.GameTotal,
                         values.WinTotal,
-                        values.PerformanceValue,
-                        values.OpponentValue));
+                        values.PerformanceValue));
             }));
         }
 
@@ -299,8 +274,7 @@ namespace CollegeFbsRankings.Domain.Rankings
                         game.Date,
                         values.GameTotal,
                         values.WinTotal,
-                        values.PerformanceValue,
-                        values.OpponentValue));
+                        values.PerformanceValue));
             }));
         }
     }

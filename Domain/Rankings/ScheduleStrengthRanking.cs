@@ -10,51 +10,21 @@ namespace CollegeFbsRankings.Domain.Rankings
 {
     public class ScheduleStrengthRankingValue : TeamRankingValue
     {
-        private readonly int _gametotal;
-        private readonly int _wintotal;
-
-        private readonly double _performanceValue;
-        private readonly double _winPercentage;
-        private readonly double _winStrength;
+        private readonly double _scheduleStrength;
 
         private readonly IEnumerable<double> _values;
 
-        public ScheduleStrengthRankingValue(TeamId id, string name, int gameTotal, int winTotal, double performanceValue, double winStrength)
+        public ScheduleStrengthRankingValue(TeamId id, string name, double scheduleStrength)
             : base(id, name)
         {
-            _gametotal = gameTotal;
-            _wintotal = winTotal;
+            _scheduleStrength = scheduleStrength;
 
-            _performanceValue = performanceValue;
-            _winPercentage = gameTotal > 0 ? (double)winTotal / gameTotal : 0.0;
-            _winStrength = winStrength;
-
-            _values = new[] { _performanceValue };
+            _values = new[] { _scheduleStrength };
         }
 
-        public int GameTotal
+        public double ScheduleStrength
         {
-            get { return _gametotal; }
-        }
-
-        public int WinTotal
-        {
-            get { return _wintotal; }
-        }
-
-        public double PerformanceValue
-        {
-            get { return _performanceValue; }
-        }
-
-        public double WinPercentage
-        {
-            get { return _winPercentage; }
-        }
-
-        public double WinStrength
-        {
-            get { return _winStrength; }
+            get { return _scheduleStrength; }
         }
 
         public override IEnumerable<double> Values
