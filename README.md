@@ -1,6 +1,6 @@
 # College FBS Rankings
 
-Using CSV data from sports-reference.com, this project calculates rankings for college FBS teams using various criteria.
+Using CSV data from sports-reference.com, this project calculates rankings for college FBS teams using various criteria. Written in C#.
 
 ## License
 
